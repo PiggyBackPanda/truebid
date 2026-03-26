@@ -1,65 +1,89 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex-1">
+      <div className="max-w-4xl mx-auto px-6 py-20 text-center">
+        {/* Logo */}
+        <div className="inline-flex items-center gap-3 mb-12">
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              background: "#e8a838",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "DM Serif Display, Georgia, serif",
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#0f1a2e",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            T
+          </div>
+          <span
+            style={{
+              fontFamily: "DM Serif Display, Georgia, serif",
+              fontSize: 20,
+              color: "#0f1a2e",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            TrueBid
+          </span>
+        </div>
+
+        <h1
+          style={{
+            fontFamily: "DM Serif Display, Georgia, serif",
+            fontSize: 56,
+            lineHeight: 1.1,
+            letterSpacing: "-0.03em",
+            fontWeight: 400,
+            color: "#0f1a2e",
+          }}
+          className="mb-6"
+        >
+          Property sales.
+          <br />
+          Transparent. Free.
+        </h1>
+
+        <p className="text-lg text-text-muted max-w-xl mx-auto mb-10">
+          Sellers list for free. Buyers bid openly. No agent commissions.
+          No middleman. Just honest property sales.
+        </p>
+
+        <div className="flex gap-4 justify-center">
+          <a
+            href="/listings"
+            style={{
+              background: "#e8a838",
+              color: "#0f1a2e",
+              fontWeight: 600,
+              padding: "14px 32px",
+              borderRadius: 10,
+              boxShadow: "0 4px 16px rgba(232, 168, 56, 0.3)",
+              textDecoration: "none",
+            }}
+          >
+            Browse Listings
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/register"
+            style={{
+              background: "#0f1a2e",
+              color: "#ffffff",
+              fontWeight: 500,
+              padding: "12px 24px",
+              borderRadius: 10,
+              textDecoration: "none",
+            }}
           >
-            Documentation
+            List Your Property
           </a>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

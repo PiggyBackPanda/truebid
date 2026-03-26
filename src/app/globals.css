@@ -1,26 +1,115 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
+@theme {
+  /* Colours — Primary */
+  --color-navy: #0f1a2e;
+  --color-navy-light: #1a2a45;
+  --color-navy-mid: #243656;
+  --color-slate: #334766;
+
+  /* Colours — Accent */
+  --color-amber: #e8a838;
+  --color-amber-light: #f5c563;
+
+  /* Colours — Semantic */
+  --color-green: #3db87a;
+  --color-green-bg: #e8f5e9;
+  --color-red: #e05252;
+  --color-sky: #4a90d9;
+
+  /* Colours — Neutrals */
+  --color-bg: #f7f5f0;
+  --color-bg-card: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-text-light: #9ca3af;
+  --color-border: #e5e2db;
+
+  /* Typography */
+  --font-serif: "DM Serif Display", Georgia, serif;
+  --font-sans: "Outfit", -apple-system, sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  /* Shadows */
+  --shadow:
+    0 1px 3px rgba(15, 26, 46, 0.06), 0 4px 12px rgba(15, 26, 46, 0.04);
+  --shadow-lg:
+    0 4px 6px rgba(15, 26, 46, 0.04), 0 12px 32px rgba(15, 26, 46, 0.08);
+  --shadow-amber: 0 4px 16px rgba(232, 168, 56, 0.3);
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.4s ease-out both;
+  --animate-pulse-dot: pulseDot 2s infinite;
+  --animate-highlight-new: highlightNew 1.5s ease-out;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── Keyframes ─────────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes highlightNew {
+  0% {
+    background-color: rgba(232, 168, 56, 0.15);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* ── Base Styles ───────────────────────────────────────────────────────────── */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* ── Utility Classes ───────────────────────────────────────────────────────── */
+.card-hover {
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-green);
+  animation: var(--animate-pulse-dot);
+}
+
+.offer-row-new {
+  animation: var(--animate-highlight-new);
+}
+
+.fade-in {
+  animation: var(--animate-fade-in);
 }
