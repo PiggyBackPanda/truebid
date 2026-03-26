@@ -44,21 +44,39 @@ const VALID_SETTLEMENT_DAYS = [14, 21, 30, 45, 60, 90, 120] as const;
 
 // ── Auth schemas ──────────────────────────────────────────────────────────────
 
-export const registerSchema = z.object({
-  email: z.string().email("Invalid email address"),
+// API schema — what the register endpoint accepts
+export const registerApiSchema = z.object({
+  firstName: z.string().min(1, "First name is required").max(50).trim(),
+  lastName: z.string().min(1, "Last name is required").max(50).trim(),
+  email: z.string().email("Invalid email address").toLowerCase().trim(),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Must contain at least one number"),
   phone: z
     .string()
-    .regex(/^04\d{2}\s?\d{3}\s?\d{3}$/, "Invalid Australian phone number")
-    .optional(),
+    .regex(/^04\d{2}\s?\d{3}\s?\d{3}$/, "Invalid Australian phone number (e.g. 0412 345 678)")
+    .optional()
+    .or(z.literal("")),
   role: UserRoleSchema,
 });
+
+// Form schema — includes confirmPassword and terms for client-side validation
+export const registerFormSchema = registerApiSchema
+  .extend({
+    confirmPassword: z.string(),
+    agreedToTerms: z.literal(true, {
+      error: "You must agree to the terms to continue",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+// Keep old name as alias for backwards compat
+export const registerSchema = registerApiSchema;
 
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -130,7 +148,33 @@ export const createListingSchema = z
     }
   );
 
-export const updateListingSchema = createListingSchema.partial();
+// updateListingSchema is a partial of the base object (without refinements)
+// Refinements are re-applied at the API route level when needed
+export const updateListingSchema = z.object({
+  streetAddress: z.string().min(1).optional(),
+  suburb: z.string().min(1).optional(),
+  state: AustralianStateSchema.optional(),
+  postcode: z.string().regex(/^\d{4}$/, "Postcode must be 4 digits").optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  propertyType: PropertyTypeSchema.optional(),
+  bedrooms: z.number().int().min(0).max(20).optional(),
+  bathrooms: z.number().int().min(0).max(10).optional(),
+  carSpaces: z.number().int().min(0).max(10).optional(),
+  landSizeM2: z.number().int().positive().optional(),
+  buildingSizeM2: z.number().int().positive().optional(),
+  yearBuilt: z.number().int().min(1800).max(new Date().getFullYear()).optional(),
+  title: z.string().max(100).optional(),
+  description: z.string().min(50).max(5000).optional(),
+  guidePriceCents: z.number().int().positive().optional(),
+  guideRangeMaxCents: z.number().int().positive().optional(),
+  saleMethod: SaleMethodSchema.optional(),
+  closingDate: z.string().datetime().optional(),
+  minOfferCents: z.number().int().positive().optional(),
+  requireDeposit: z.boolean().optional(),
+  depositAmountCents: z.number().int().positive().optional(),
+  features: z.array(z.string()).optional(),
+});
 
 // ── Offer schemas ─────────────────────────────────────────────────────────────
 

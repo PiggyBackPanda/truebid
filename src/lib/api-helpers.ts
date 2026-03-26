@@ -43,7 +43,7 @@ export function errorResponse(error: unknown): Response {
       {
         error: "Validation failed",
         code: "VALIDATION_ERROR",
-        details: (error as unknown as { errors: unknown }).errors,
+        details: (error as unknown as { issues: unknown }).issues,
       },
       { status: 400 }
     );
