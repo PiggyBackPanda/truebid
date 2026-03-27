@@ -1,4 +1,10 @@
+"use client";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import SavingsCalculator from "@/components/SavingsCalculator";
+
 export default function HomePage() {
+  const { status } = useSession();
   return (
     <main className="flex-1">
       <div className="max-w-4xl mx-auto px-6 py-20 text-center">
@@ -36,7 +42,7 @@ export default function HomePage() {
         <h1
           style={{
             fontFamily: "DM Serif Display, Georgia, serif",
-            fontSize: 56,
+            fontSize: "clamp(36px, 6vw, 56px)",
             lineHeight: 1.1,
             letterSpacing: "-0.03em",
             fontWeight: 400,
@@ -54,8 +60,8 @@ export default function HomePage() {
           No middleman. Just honest property sales.
         </p>
 
-        <div className="flex gap-4 justify-center">
-          <a
+        <div className="flex flex-wrap gap-4 justify-center">
+          <Link
             href="/listings"
             style={{
               background: "#e8a838",
@@ -68,20 +74,39 @@ export default function HomePage() {
             }}
           >
             Browse Listings
-          </a>
-          <a
-            href="/register"
+          </Link>
+          {status !== "loading" && (
+            <Link
+              href={status === "authenticated" ? "/listings/create" : "/register"}
+              style={{
+                background: "#0f1a2e",
+                color: "#ffffff",
+                fontWeight: 500,
+                padding: "12px 24px",
+                borderRadius: 10,
+                textDecoration: "none",
+              }}
+            >
+              List Your Property
+            </Link>
+          )}
+        </div>
+
+        {/* Savings Calculator */}
+        <div className="mt-20 w-full">
+          <h2
             style={{
-              background: "#0f1a2e",
-              color: "#ffffff",
-              fontWeight: 500,
-              padding: "12px 24px",
-              borderRadius: 10,
-              textDecoration: "none",
+              fontFamily: "DM Serif Display, Georgia, serif",
+              fontSize: "clamp(24px, 4vw, 36px)",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "#0f1a2e",
             }}
+            className="mb-8"
           >
-            List Your Property
-          </a>
+            How much will you save?
+          </h2>
+          <SavingsCalculator />
         </div>
       </div>
     </main>

@@ -1,15 +1,29 @@
 import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-export default withAuth({
-  pages: {
-    signIn: "/login",
+export default withAuth(
+  function middleware() {
+    return NextResponse.next();
   },
-});
+  {
+    callbacks: {
+      authorized({ token }) {
+        return !!token?.id;
+      },
+    },
+    pages: {
+      signIn: "/login",
+    },
+  }
+);
 
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/account",
+    "/account/:path*",
     "/listings/create/:path*",
     "/verify-identity/:path*",
+    "/favourites",
   ],
 };

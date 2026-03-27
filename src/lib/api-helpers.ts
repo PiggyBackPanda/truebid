@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { paginationSchema } from "@/lib/validation";
+import { logger } from "@/lib/logger";
 
 type AuthUser = {
   id: string;
@@ -49,7 +50,7 @@ export function errorResponse(error: unknown): Response {
     );
   }
 
-  console.error("Unhandled API error:", error);
+  logger.error("Unhandled API error", error);
   return Response.json(
     { error: "Internal server error", code: "SERVER_ERROR" },
     { status: 500 }

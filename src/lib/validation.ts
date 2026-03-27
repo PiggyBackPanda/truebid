@@ -169,7 +169,7 @@ export const updateListingSchema = z.object({
   guidePriceCents: z.number().int().positive().optional(),
   guideRangeMaxCents: z.number().int().positive().optional(),
   saleMethod: SaleMethodSchema.optional(),
-  closingDate: z.string().datetime().optional(),
+  closingDate: z.union([z.string().datetime(), z.null()]).optional(),
   minOfferCents: z.number().int().positive().optional(),
   requireDeposit: z.boolean().optional(),
   depositAmountCents: z.number().int().positive().optional(),
@@ -209,7 +209,7 @@ export const createOfferSchema = z
 
 export const increaseOfferSchema = z
   .object({
-    amountCents: z.number().int().positive(),
+    amountCents: z.number().int().positive().max(10_000_000_000, "Amount exceeds $100 million limit"),
     conditionType: ConditionTypeSchema.optional(),
     conditionText: z.string().min(1).max(500).optional(),
     settlementDays: z
@@ -231,6 +231,53 @@ export const createMessageSchema = z.object({
 
 export const reorderImagesSchema = z.object({
   imageIds: z.array(z.string().cuid()).min(1),
+});
+
+// ── Checklist schema ──────────────────────────────────────────────────────────
+
+export const updateChecklistSchema = z.object({
+  itemKey: z.string().min(1),
+  status: z.enum(["NOT_STARTED", "IN_PROGRESS", "COMPLETED"]),
+});
+
+// ── Account schemas ───────────────────────────────────────────────────────────
+
+export const updateProfileSchema = z.object({
+  firstName: z.string().min(1, "First name is required").max(50).trim(),
+  lastName: z.string().min(1, "Last name is required").max(50).trim(),
+  phone: z
+    .string()
+    .regex(/^04\d{2}\s?\d{3}\s?\d{3}$/, "Invalid Australian phone number (e.g. 0412 345 678)")
+    .optional()
+    .or(z.literal("")),
+});
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Must contain at least one number"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export const notificationPrefsSchema = z.object({
+  newOffers: z.boolean(),
+  offerUpdates: z.boolean(),
+  messages: z.boolean(),
+  listingActivity: z.boolean(),
+});
+
+export const deleteAccountSchema = z.object({
+  confirmation: z.literal("DELETE", {
+    error: "You must type DELETE to confirm",
+  }),
 });
 
 // ── Pagination schema ─────────────────────────────────────────────────────────

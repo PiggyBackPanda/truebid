@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -22,6 +23,10 @@ export const authOptions: NextAuthOptions = {
         if (!parsed.success) return null;
 
         const { email, password } = parsed.data;
+
+        // Rate limit login attempts per email address (20 per 15 minutes)
+        const { success } = await rateLimit(`login:${email.toLowerCase()}`, 20, 900);
+        if (!success) return null; // NextAuth maps null to CredentialsSignin error
 
         const user = await prisma.user.findUnique({
           where: { email },
@@ -73,9 +78,29 @@ export const authOptions: NextAuthOptions = {
         token.verificationStatus = u.verificationStatus as string;
         token.publicAlias = u.publicAlias as string;
       }
+      // If user data is not being set for the first time, check if password was changed
+      if (!user) {
+        // Re-fetch passwordChangedAt on every token refresh to detect password changes
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { passwordChangedAt: true },
+        });
+        if (dbUser?.passwordChangedAt) {
+          const changedAt = dbUser.passwordChangedAt.getTime() / 1000;
+          const issuedAt = token.iat as number | undefined;
+          if (issuedAt && changedAt > issuedAt) {
+            // Password was changed after this token was issued — invalidate it
+            return {} as typeof token;
+          }
+        }
+      }
       return token;
     },
     async session({ session, token }) {
+      // Token was invalidated (empty) — return null-like session
+      if (!token.id) {
+        return { ...session, user: undefined as unknown as typeof session.user };
+      }
       if (token && session.user) {
         const u = session.user as unknown as Record<string, unknown>;
         u.id = token.id as string;
@@ -95,5 +120,5 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
 };

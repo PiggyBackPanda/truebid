@@ -17,6 +17,7 @@ enum VerificationStatus {
   UNVERIFIED
   PENDING
   VERIFIED
+  REQUIRES_REVIEW
   FAILED
 }
 
@@ -95,21 +96,32 @@ model User {
   phone              String?
   role               UserRole           @default(BUYER)
   verificationStatus VerificationStatus @default(UNVERIFIED)
-  verificationDate   DateTime?
-  verificationRef    String?
-  avatarUrl          String?
+  verificationDate     DateTime?
+  verificationRef      String?
+  verificationProvider String?
+  verificationRefId    String?
+  verifiedAt           DateTime?
+  verifiedName         String?   // AES-256-GCM encrypted
+  avatarUrl            String?
   bio                String?
   publicAlias        String             @unique @default(cuid())
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
-  lastLoginAt        DateTime?
+  lastLoginAt             DateTime?
+  passwordChangedAt  DateTime?
+  notificationPreferences Json?
 
-  listings          Listing[]
-  offers            Offer[]
-  sentMessages      Message[]           @relation("SentMessages")
-  receivedMessages  Message[]           @relation("ReceivedMessages")
-  checklistProgress ChecklistProgress[]
-  sessions          Session[]
+  listings            Listing[]
+  offers              Offer[]
+  sentMessages        Message[]             @relation("SentMessages")
+  receivedMessages    Message[]             @relation("ReceivedMessages")
+  checklistProgress   ChecklistProgress[]
+  sessions            Session[]
+  buyerConversations  Conversation[]        @relation("BuyerConversations")
+  sellerConversations Conversation[]        @relation("SellerConversations")
+  sentConvMessages    ConversationMessage[] @relation("SentConversationMessages")
+  favourites          Favourite[]
+  verificationEvents  VerificationEvent[]
 
   @@index([email])
   @@index([verificationStatus])
@@ -166,9 +178,11 @@ model Listing {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
-  images   ListingImage[]
-  offers   Offer[]
-  messages Message[]
+  images        ListingImage[]
+  offers        Offer[]
+  messages      Message[]
+  conversations Conversation[]
+  favourites    Favourite[]
 
   @@index([sellerId])
   @@index([status])
@@ -221,7 +235,8 @@ model Offer {
   acceptedAt      DateTime?
   rejectedAt      DateTime?
 
-  history OfferHistory[]
+  history      OfferHistory[]
+  conversation Conversation?
 
   @@unique([listingId, buyerId])
   @@index([listingId])
@@ -282,15 +297,32 @@ model ChecklistProgress {
   @@index([userId, state])
 }
 
-model ListingSave {
+
+model Favourite {
   id        String   @id @default(cuid())
   userId    String
   listingId String
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@unique([userId, listingId])
   @@index([userId])
   @@index([listingId])
+}
+
+
+model VerificationEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  eventType String
+  provider  String
+  refId     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([userId, createdAt])
 }
 
 model ListingView {
@@ -337,4 +369,43 @@ model Referral {
 
   @@index([partnerId])
   @@index([userId])
+}
+
+// ── Post-acceptance messaging ──────────────────────────────────────────────────
+
+model Conversation {
+  id        String   @id @default(cuid())
+  listingId String
+  offerId   String   @unique
+  buyerId   String
+  sellerId  String
+  createdAt DateTime @default(now())
+
+  listing  Listing               @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  offer    Offer                 @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  buyer    User                  @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller   User                  @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  messages ConversationMessage[]
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([listingId])
+}
+
+model ConversationMessage {
+  id             String    @id @default(cuid())
+  conversationId String
+  senderId       String
+  body           String    @db.Text
+  sentAt         DateTime  @default(now())
+  readAt         DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("SentConversationMessages", fields: [senderId], references: [id])
+
+  @@index([conversationId])
+  @@index([conversationId, sentAt])
+  @@index([senderId])
+  @@index([conversationId, readAt])
+  @@index([readAt])
 }

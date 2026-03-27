@@ -2,11 +2,41 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export function Nav() {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dropdownOpen]);
+
+  // Fetch unread conversation message count when signed in
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    fetch("/api/conversations")
+      .then((r) => r.json())
+      .then((data: { totalUnread?: number }) => {
+        if (typeof data.totalUnread === "number") {
+          setUnreadCount(data.totalUnread);
+        }
+      })
+      .catch(() => {});
+  }, [status]);
+
+  const user = session?.user as { firstName?: string; role?: string } | undefined;
 
   return (
     <nav
@@ -72,27 +102,171 @@ export function Nav() {
 
           {status === "loading" ? null : session ? (
             <>
-              <NavLink href="/dashboard">Dashboard</NavLink>
-              <div style={{ width: 1, height: 20, background: "#243656", margin: "0 8px" }} />
-              <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 14 }}>
-                {(session.user as { firstName?: string }).firstName ?? session.user?.name}
-              </span>
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
+              <div style={{ width: 1, height: 20, background: "#243656", margin: "0 4px" }} />
+              {/* Favourites link */}
+              <Link
+                href="/favourites"
                 style={{
-                  background: "transparent",
-                  border: "1px solid #334766",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
                   color: "rgba(255,255,255,0.65)",
-                  borderRadius: 8,
-                  padding: "6px 14px",
-                  fontSize: 13,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  textDecoration: "none",
+                  padding: "6px 12px",
+                  borderRadius: 6,
                   fontFamily: "Outfit, sans-serif",
-                  cursor: "pointer",
-                  marginLeft: 4,
                 }}
               >
-                Sign out
-              </button>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                Favourites
+              </Link>
+              {/* User dropdown */}
+              <div ref={dropdownRef} style={{ position: "relative" }}>
+                <button
+                  onClick={() => setDropdownOpen((o) => !o)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    background: dropdownOpen ? "#1a2a45" : "transparent",
+                    border: "1px solid",
+                    borderColor: dropdownOpen ? "#334766" : "transparent",
+                    color: "rgba(255,255,255,0.85)",
+                    borderRadius: 8,
+                    padding: "6px 12px",
+                    fontSize: 14,
+                    fontFamily: "Outfit, sans-serif",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "background 0.15s, border-color 0.15s",
+                  }}
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
+                >
+                  {user?.firstName ?? session.user?.name ?? "Account"}
+                  {unreadCount > 0 && (
+                    <span
+                      style={{
+                        background: "#2563eb",
+                        color: "#ffffff",
+                        borderRadius: 10,
+                        padding: "1px 6px",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        minWidth: 16,
+                        textAlign: "center",
+                      }}
+                    >
+                      {unreadCount}
+                    </span>
+                  )}
+                  <svg
+                    width="12"
+                    height="12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    style={{
+                      transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.15s",
+                      opacity: 0.6,
+                    }}
+                  >
+                    <polyline points="2,4 6,8 10,4" />
+                  </svg>
+                </button>
+
+                {dropdownOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "calc(100% + 8px)",
+                      right: 0,
+                      background: "#ffffff",
+                      border: "1px solid #e5e2db",
+                      borderRadius: 12,
+                      boxShadow: "0 4px 6px rgba(15,26,46,0.04), 0 12px 32px rgba(15,26,46,0.10)",
+                      minWidth: 200,
+                      overflow: "hidden",
+                      zIndex: 200,
+                    }}
+                  >
+                    <DropdownLink href="/account" onClick={() => setDropdownOpen(false)}>
+                      My Account
+                    </DropdownLink>
+                    <DropdownLink href="/dashboard/verify" onClick={() => setDropdownOpen(false)}>
+                      Verify Identity
+                    </DropdownLink>
+                    <DropdownLink href="/dashboard/buyer" onClick={() => setDropdownOpen(false)}>
+                      My Offers
+                    </DropdownLink>
+                    {(user?.role === "SELLER" || user?.role === "BOTH") && (
+                      <DropdownLink href="/dashboard/seller" onClick={() => setDropdownOpen(false)}>
+                        Seller Dashboard
+                      </DropdownLink>
+                    )}
+                    <DropdownLink
+                      href="/favourites"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Favourites
+                    </DropdownLink>
+                    <div style={{ position: "relative" }}>
+                      <DropdownLink
+                        href="/dashboard/messages"
+                        onClick={() => { setDropdownOpen(false); setUnreadCount(0); }}
+                      >
+                        Messages
+                      </DropdownLink>
+                      {unreadCount > 0 && (
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            right: 16,
+                            transform: "translateY(-50%)",
+                            background: "#2563eb",
+                            color: "#ffffff",
+                            borderRadius: 10,
+                            padding: "1px 6px",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            pointerEvents: "none",
+                          }}
+                        >
+                          {unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ height: 1, background: "#e5e2db", margin: "4px 0" }} />
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        padding: "10px 16px",
+                        textAlign: "left",
+                        background: "transparent",
+                        border: "none",
+                        fontSize: 14,
+                        fontFamily: "Outfit, sans-serif",
+                        color: "#e05252",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <>
@@ -138,7 +312,11 @@ export function Nav() {
             border: "none",
             color: "rgba(255,255,255,0.65)",
             cursor: "pointer",
-            padding: 8,
+            padding: 11,
+            minWidth: 44,
+            minHeight: 44,
+            alignItems: "center",
+            justifyContent: "center",
           }}
           aria-label="Toggle menu"
         >
@@ -171,20 +349,33 @@ export function Nav() {
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <MobileNavLink href="/listings" onClick={() => setMenuOpen(false)}>Browse</MobileNavLink>
             <MobileNavLink href="/how-it-works" onClick={() => setMenuOpen(false)}>How it works</MobileNavLink>
-            {session ? (
+            {status === "loading" ? null : session ? (
               <>
-                <MobileNavLink href="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</MobileNavLink>
+                <MobileNavLink href="/account" onClick={() => setMenuOpen(false)}>My Account</MobileNavLink>
+                <MobileNavLink href="/dashboard/buyer" onClick={() => setMenuOpen(false)}>My Offers</MobileNavLink>
+                {(user?.role === "SELLER" || user?.role === "BOTH") && (
+                  <MobileNavLink href="/dashboard/seller" onClick={() => setMenuOpen(false)}>
+                    Seller Dashboard
+                  </MobileNavLink>
+                )}
+                <MobileNavLink href="/favourites" onClick={() => setMenuOpen(false)}>
+                  Favourites
+                </MobileNavLink>
+                <MobileNavLink href="/dashboard/messages" onClick={() => { setMenuOpen(false); setUnreadCount(0); }}>
+                  Messages{unreadCount > 0 ? ` (${unreadCount})` : ""}
+                </MobileNavLink>
                 <button
                   onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/" }); }}
                   style={{
                     background: "transparent",
                     border: "none",
-                    color: "rgba(255,255,255,0.65)",
+                    color: "#e05252",
                     fontSize: 15,
                     fontFamily: "Outfit, sans-serif",
                     textAlign: "left",
                     padding: "10px 0",
                     cursor: "pointer",
+                    minHeight: 44,
                   }}
                 >
                   Sign out
@@ -241,11 +432,44 @@ function MobileNavLink({
         fontSize: 15,
         fontWeight: 500,
         textDecoration: "none",
-        padding: "10px 0",
+        padding: "12px 0",
+        minHeight: 44,
         fontFamily: "Outfit, sans-serif",
-        display: "block",
+        display: "flex",
+        alignItems: "center",
         borderBottom: "1px solid #1a2a45",
       }}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function DropdownLink({
+  href,
+  children,
+  onClick,
+}: {
+  href: string;
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      style={{
+        display: "block",
+        padding: "10px 16px",
+        fontSize: 14,
+        fontFamily: "Outfit, sans-serif",
+        fontWeight: 500,
+        color: "#0f1a2e",
+        textDecoration: "none",
+        transition: "background 0.1s",
+      }}
+      onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.background = "#f7f5f0")}
+      onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.background = "transparent")}
     >
       {children}
     </Link>

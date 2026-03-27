@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { registerApiSchema } from "@/lib/validation";
 import { errorResponse } from "@/lib/api-helpers";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { ZodError } from "zod";
 import bcrypt from "bcryptjs";
 
@@ -22,6 +23,15 @@ async function generateUniqueAlias(): Promise<string> {
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    const { success } = await rateLimit(`register:${ip}`, 10, 60);
+    if (!success) {
+      return Response.json(
+        { error: "Too many requests. Please try again later.", code: "RATE_LIMITED" },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const data = registerApiSchema.parse(body);
 
