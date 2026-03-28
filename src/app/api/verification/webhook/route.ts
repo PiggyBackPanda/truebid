@@ -6,8 +6,6 @@ import { logger } from "@/lib/logger";
 // Disable body parsing — Stripe signature validation requires the raw body
 export const dynamic = "force-dynamic";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
-
 // POST /api/verification/webhook
 // Receives Stripe Identity webhook events. Validates signature on every request.
 export async function POST(request: Request) {
@@ -25,6 +23,13 @@ export async function POST(request: Request) {
     return Response.json({ error: "Webhook not configured" }, { status: 400 });
   }
 
+  if (!process.env.STRIPE_SECRET_KEY) {
+    logger.warn("STRIPE_SECRET_KEY not configured");
+    return Response.json({ error: "Webhook not configured" }, { status: 400 });
+  }
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
@@ -37,7 +42,7 @@ export async function POST(request: Request) {
   const response = Response.json({ received: true });
 
   try {
-    await handleEvent(event);
+    await handleEvent(event, stripe);
   } catch (err) {
     logger.error("Webhook handler error", { eventType: event.type, err });
   }
@@ -45,7 +50,7 @@ export async function POST(request: Request) {
   return response;
 }
 
-async function handleEvent(event: Stripe.Event) {
+async function handleEvent(event: Stripe.Event, stripe: Stripe) {
   const session = event.data.object as Stripe.Identity.VerificationSession;
   const userId = session.metadata?.userId;
 

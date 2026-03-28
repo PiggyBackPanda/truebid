@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -16,8 +16,10 @@ const ROLES: { value: Role; label: string; description: string }[] = [
   { value: "BOTH", label: "Buy & Sell", description: "Do both — most popular" },
 ];
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const watchListingId = searchParams.get("watch");
 
   const [fields, setFields] = useState({
     firstName: "",
@@ -91,9 +93,24 @@ export default function RegisterPage() {
         redirect: false,
       });
 
+      // Auto-favourite if user came from a listing's Watch modal
+      if (watchListingId) {
+        try {
+          await fetch("/api/favourites", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ listingId: watchListingId }),
+          });
+        } catch {
+          // Non-fatal — continue with redirect
+        }
+      }
+
       // Sellers/both need to verify identity first
       if (role === "SELLER" || role === "BOTH") {
         router.push("/verify-identity");
+      } else if (watchListingId) {
+        router.push(`/listings/${watchListingId}`);
       } else {
         router.push("/dashboard");
       }
@@ -344,5 +361,13 @@ export default function RegisterPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   );
 }

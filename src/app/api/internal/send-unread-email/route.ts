@@ -23,21 +23,19 @@ const schema = z.object({
  * In development, this is called directly via setTimeout.
  * In production, configure Upstash QStash to POST to this endpoint after 15 minutes.
  *
- * Authentication: requires the INTERNAL_API_SECRET header to match
- * the INTERNAL_API_SECRET environment variable, OR an Upstash QStash
- * signature header (Upstash-Signature) when running in production.
+ * Authentication: requires the x-internal-secret header to exactly match
+ * the INTERNAL_API_SECRET environment variable. Configure QStash to include
+ * this header when calling the endpoint in production.
  */
 export async function POST(req: NextRequest) {
-  // Verify internal secret
+  // Verify internal secret — must match INTERNAL_API_SECRET env var.
+  // When using Upstash QStash in production, configure QStash to include
+  // the secret as the x-internal-secret header value.
   const secret = process.env.INTERNAL_API_SECRET;
   const provided = req.headers.get("x-internal-secret");
 
-  // In production, also accept Upstash QStash signature (set QSTASH_CURRENT_SIGNING_KEY)
-  const upstashSig = req.headers.get("upstash-signature");
-  const isQStash = !!upstashSig; // Full signature verification requires @upstash/qstash SDK
-
-  if (!isQStash && (!secret || provided !== secret)) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  if (!secret || provided !== secret) {
+    return Response.json({ error: "Unauthorized", code: "UNAUTHORIZED" }, { status: 401 });
   }
 
   try {

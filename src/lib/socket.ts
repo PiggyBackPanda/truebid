@@ -2,6 +2,8 @@ import { Server as SocketServer } from "socket.io";
 import type { Server as HTTPServer } from "http";
 import { decode } from "next-auth/jwt";
 import { prisma } from "./db";
+import { createAdapter } from "@socket.io/redis-adapter";
+import Redis from "ioredis";
 
 let io: SocketServer | null = null;
 
@@ -29,6 +31,26 @@ export function initSocketServer(httpServer: HTTPServer): SocketServer {
     },
     path: "/socket.io",
   });
+
+  // ── Redis adapter (multi-instance support) ───────────────────────────────
+  // Attach when REDIS_URL is set (production / staging).
+  // Falls back to the default in-memory adapter in local dev.
+  if (process.env.REDIS_URL) {
+    try {
+      const pubClient = new Redis(process.env.REDIS_URL);
+      const subClient = pubClient.duplicate();
+      socketIo.adapter(createAdapter(pubClient, subClient));
+      console.log("[socket.io] Redis adapter attached");
+    } catch (err) {
+      console.error("[socket.io] Failed to attach Redis adapter — falling back to in-memory", err);
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    console.warn(
+      "[socket.io] REDIS_URL not set in production — Socket.io running with in-memory adapter. " +
+        "Real-time events will not propagate across multiple server instances."
+    );
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   (global as unknown as Record<string, unknown>).__socketIO = socketIo;
   io = socketIo;

@@ -466,7 +466,7 @@ export default async function ListingsPage({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {listings.map((listing) => (
+            {listings.map((listing, index) => (
               <ListingCard
                 key={listing.id}
                 id={listing.id}
@@ -484,6 +484,7 @@ export default async function ListingsPage({
                 closingDate={listing.closingDate}
                 activeOfferCount={listing._count.offers}
                 coverImage={listing.images[0] ?? null}
+                priority={index === 0}
               />
             ))}
           </div>

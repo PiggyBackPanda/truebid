@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
+import { requireAuth, errorResponse } from "@/lib/api-helpers";
 
 // POST /api/verify-identity/dev-bypass
 // Development-only: immediately marks the authenticated user as VERIFIED.
@@ -10,7 +10,7 @@ export async function POST() {
     process.env.NODE_ENV === "production" ||
     process.env.ENABLE_DEV_BYPASS !== "true"
   ) {
-    throw new ApiError(404, "NOT_FOUND", "Not found");
+    return Response.json({ error: "Not found", code: "NOT_FOUND" }, { status: 404 });
   }
 
   try {

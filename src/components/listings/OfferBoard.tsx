@@ -179,17 +179,21 @@ export function OfferBoard({
   );
 
   const [expired, setExpired] = useState(isClosed);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const activeOffers = offers.filter((o) => o.status === "ACTIVE");
-  const highestOffer = activeOffers[0];
   const effectiveClosed = expired || isClosed;
 
   const board = (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       {/* Header */}
-      <div className="bg-navy px-4 py-3 flex items-center justify-between">
-        <div>
+      <button
+        onClick={() => setIsOpen((v) => !v)}
+        className="w-full bg-navy px-4 py-3 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-inset focus:ring-amber"
+        aria-expanded={isOpen}
+        aria-controls="offer-board-body"
+      >
+        <div className="text-left">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green animate-pulse-dot" />
             <span className="text-white text-xs font-semibold uppercase tracking-wide">
@@ -202,133 +206,100 @@ export function OfferBoard({
             </p>
           )}
         </div>
-        {guidePriceCents && (
-          <div className="text-right">
-            <p className="text-[10px] text-text-light uppercase tracking-wide">Guide</p>
-            <p className="text-white text-xs font-semibold">
-              {formatCurrency(guidePriceCents)}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Countdown */}
-      {closingDate && (
-        <div className="bg-navy-mid px-4 py-3">
-          {effectiveClosed ? (
-            <div className="text-center">
-              <p className="text-red font-bold text-sm uppercase tracking-wider">
-                CLOSED
-              </p>
-              <p className="text-text-muted text-[11px] mt-1">
-                Closing period ended — awaiting seller decision
+        <div className="flex items-center gap-3">
+          {guidePriceCents && (
+            <div className="text-right">
+              <p className="text-[10px] text-text-light uppercase tracking-wide">Guide</p>
+              <p className="text-white text-xs font-semibold">
+                {formatCurrency(guidePriceCents)}
               </p>
             </div>
-          ) : (
-            <CountdownTimer
-              closingDate={closingDate}
-              onExpired={() => setExpired(true)}
-            />
           )}
+          <span
+            className="text-text-light text-xs transition-transform duration-200"
+            style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+            aria-hidden="true"
+          >
+            ▲
+          </span>
         </div>
-      )}
-
-      {/* Offer list */}
-      <div>
-        {offers.length === 0 ? (
-          <div className="px-4 py-8 text-center">
-            <p className="text-text-muted text-sm">No offers yet.</p>
-            <p className="text-text-light text-xs mt-1">Be the first to place an offer.</p>
-          </div>
-        ) : (
-          <ol>
-            {offers.map((offer, idx) => {
-              const rank =
-                offer.status === "ACTIVE"
-                  ? activeOffers.indexOf(offer) + 1
-                  : null;
-              return (
-                <OfferRow
-                  key={offer.id}
-                  offer={offer}
-                  rank={rank}
-                  isNew={idx === 0 && offers.length > initialOffers.length}
-                />
-              );
-            })}
-          </ol>
-        )}
-      </div>
-
-      {/* CTA */}
-      {!isOwner && (
-        <div className="px-4 py-3 border-t border-border">
-          {effectiveClosed ? (
-            <button
-              disabled
-              className="w-full bg-border text-text-muted font-semibold text-sm py-3 rounded-[10px] cursor-not-allowed"
-            >
-              Offer period closed
-            </button>
-          ) : (
-            <a
-              href={`/listings/${listingId}/offer`}
-              className="block w-full text-center bg-amber text-navy font-semibold text-sm py-3 rounded-[10px] hover:bg-amber-light transition-colors focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
-            >
-              Place an Offer
-            </a>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  const mobileSummary = (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-navy border-t border-navy-light shadow-lg">
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="w-full flex items-center justify-between px-4 py-3"
-        aria-label="View offer board"
-      >
-        <span className="text-white text-sm font-medium">
-          {activeOffers.length} offer{activeOffers.length !== 1 ? "s" : ""}
-          {highestOffer
-            ? ` · Highest: ${formatCurrency(highestOffer.amountCents)}`
-            : ""}
-        </span>
-        <span className="text-amber text-sm font-semibold">View Board ↑</span>
       </button>
+
+      {/* Collapsible body */}
+      {isOpen && (
+        <div id="offer-board-body">
+          {/* Countdown */}
+          {closingDate && (
+            <div className="bg-navy-mid px-4 py-3">
+              {effectiveClosed ? (
+                <div className="text-center">
+                  <p className="text-red font-bold text-sm uppercase tracking-wider">
+                    CLOSED
+                  </p>
+                  <p className="text-text-muted text-[11px] mt-1">
+                    Closing period ended — awaiting seller decision
+                  </p>
+                </div>
+              ) : (
+                <CountdownTimer
+                  closingDate={closingDate}
+                  onExpired={() => setExpired(true)}
+                />
+              )}
+            </div>
+          )}
+
+          {/* Offer list */}
+          <div>
+            {offers.length === 0 ? (
+              <div className="px-4 py-8 text-center">
+                <p className="text-text-muted text-sm">No offers yet.</p>
+                <p className="text-text-light text-xs mt-1">Be the first to place an offer.</p>
+              </div>
+            ) : (
+              <ol>
+                {offers.map((offer, idx) => {
+                  const rank =
+                    offer.status === "ACTIVE"
+                      ? activeOffers.indexOf(offer) + 1
+                      : null;
+                  return (
+                    <OfferRow
+                      key={offer.id}
+                      offer={offer}
+                      rank={rank}
+                      isNew={idx === 0 && offers.length > initialOffers.length}
+                    />
+                  );
+                })}
+              </ol>
+            )}
+          </div>
+
+          {/* CTA */}
+          {!isOwner && (
+            <div className="px-4 py-3 border-t border-border">
+              {effectiveClosed ? (
+                <button
+                  disabled
+                  className="w-full bg-border text-text-muted font-semibold text-sm py-3 rounded-[10px] cursor-not-allowed"
+                >
+                  Offer period closed
+                </button>
+              ) : (
+                <a
+                  href={`/listings/${listingId}/offer`}
+                  className="block w-full text-center bg-amber text-navy font-semibold text-sm py-3 rounded-[10px] hover:bg-amber-light transition-colors focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
+                >
+                  Place an Offer
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 
-  const mobileModal = mobileOpen && (
-    <div
-      className="lg:hidden fixed inset-0 z-50 flex flex-col bg-bg"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-border">
-        <span className="text-navy font-semibold text-sm">Open Offers</span>
-        <button
-          onClick={() => setMobileOpen(false)}
-          className="text-text-muted text-sm p-1"
-          aria-label="Close offer board"
-        >
-          ✕
-        </button>
-      </div>
-      <div className="flex-1 overflow-y-auto p-4">{board}</div>
-    </div>
-  );
-
-  return (
-    <>
-      {/* Desktop — rendered inline in sidebar */}
-      <div className="hidden lg:block">{board}</div>
-
-      {/* Mobile — sticky bar + modal */}
-      {mobileSummary}
-      {mobileModal}
-    </>
-  );
+  return board;
 }

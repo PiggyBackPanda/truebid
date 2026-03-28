@@ -1,17 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { FavouriteButton } from "@/components/FavouriteButton";
-
-const PROPERTY_TYPE_EMOJI: Record<string, string> = {
-  HOUSE: "🏠",
-  APARTMENT: "🏢",
-  TOWNHOUSE: "🏘",
-  VILLA: "🏡",
-  LAND: "🌿",
-  RURAL: "🌾",
-  OTHER: "🏗",
-};
+import { PropertyImage } from "@/components/listings/PropertyImage";
+import { getListingFallbackImage } from "@/lib/listing-images";
 
 const SALE_METHOD_LABELS: Record<string, string> = {
   OPEN_OFFERS: "Open Offers",
@@ -36,6 +27,7 @@ interface ListingCardProps {
   activeOfferCount?: number;
   coverImage?: { url: string; thumbnailUrl: string } | null;
   initialFavourited?: boolean;
+  priority?: boolean;
 }
 
 export function ListingCard({
@@ -55,6 +47,7 @@ export function ListingCard({
   activeOfferCount = 0,
   coverImage,
   initialFavourited = false,
+  priority = false,
 }: ListingCardProps) {
   const isOpenOffers = saleMethod === "OPEN_OFFERS";
 
@@ -65,20 +58,12 @@ export function ListingCard({
     >
       {/* Photo */}
       <div className="relative" style={{ aspectRatio: "16/10" }}>
-        {coverImage ? (
-          <Image
-            src={coverImage.thumbnailUrl || coverImage.url}
-            alt={`${streetAddress}, ${suburb}`}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-navy flex items-center justify-center">
-            <span className="text-4xl">
-              {PROPERTY_TYPE_EMOJI[propertyType] ?? "🏠"}
-            </span>
-          </div>
-        )}
+        <PropertyImage
+          src={coverImage?.thumbnailUrl || coverImage?.url || getListingFallbackImage(id)}
+          alt={`${streetAddress}, ${suburb}`}
+          className="object-cover"
+          priority={priority}
+        />
 
         {/* Open Offers live badge */}
         {isOpenOffers && (

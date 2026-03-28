@@ -4,8 +4,6 @@ import { requireAuth, ApiError, errorResponse } from "@/lib/api-helpers";
 import { rateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
-
 // POST /api/verification/start
 // Creates a Stripe Identity verification session and returns the client_secret.
 // Rate limited to 5 attempts per user per 24 hours.
@@ -26,6 +24,8 @@ export async function POST() {
     if (!process.env.STRIPE_SECRET_KEY) {
       throw new ApiError(500, "CONFIG_ERROR", "Verification service is not configured");
     }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     // Create Stripe Identity VerificationSession
     const session = await stripe.identity.verificationSessions.create({

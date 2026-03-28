@@ -1,4 +1,5 @@
-import Image from "next/image";
+import { PropertyImage } from "@/components/listings/PropertyImage";
+import { getListingFallbackImage } from "@/lib/listing-images";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -7,6 +8,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { rankOffers } from "@/lib/offer-utils";
 import { OfferBoard } from "@/components/listings/OfferBoard";
 import { FavouriteButton } from "@/components/FavouriteButton";
+import { WatchButton } from "@/components/listings/WatchButton";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -97,6 +99,111 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+// ── Mapbox suburb centroid geocoding ─────────────────────────────────────────
+// Always geocodes at suburb level — never uses the street address — to protect
+// seller privacy on the public listing page.
+async function getSuburbCentroid(
+  suburb: string,
+  state: string,
+  postcode: string
+): Promise<{ lat: number; lng: number } | null> {
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  if (!token) return null;
+  const query = encodeURIComponent(`${suburb} ${state} ${postcode} Australia`);
+  try {
+    const res = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?types=place,postcode&limit=1&country=AU&access_token=${token}`,
+      { next: { revalidate: 86400 } } // cache suburb centroid for 24 h
+    );
+    if (!res.ok) return null;
+    const data = await res.json() as { features?: Array<{ center: [number, number] }> };
+    const center = data.features?.[0]?.center;
+    if (!center) return null;
+    return { lng: center[0], lat: center[1] };
+  } catch {
+    return null;
+  }
+}
+
+// ── Nearby amenities ─────────────────────────────────────────────────────────
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function formatDistance(km: number): string {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+}
+
+interface AmenityItem { name: string; distanceKm: number }
+interface NearbyAmenities {
+  schools: AmenityItem[];
+  shops: AmenityItem[];
+  transport: AmenityItem[];
+}
+
+async function searchNearbyPOI(
+  query: string,
+  lat: number,
+  lng: number,
+  token: string,
+  limit = 3,
+): Promise<AmenityItem[]> {
+  try {
+    const res = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json` +
+        `?proximity=${lng},${lat}&types=poi&limit=${limit}&country=AU&language=en&access_token=${token}`,
+      { next: { revalidate: 86400 } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json() as {
+      features?: Array<{ text: string; center: [number, number] }>;
+    };
+    return (data.features ?? []).map((f) => ({
+      name: f.text,
+      distanceKm: haversineKm(lat, lng, f.center[1], f.center[0]),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function getNearbyAmenities(
+  lat: number,
+  lng: number,
+  token: string,
+): Promise<NearbyAmenities> {
+  const [schools, shops, trainStations, busStops] = await Promise.all([
+    searchNearbyPOI("school", lat, lng, token),
+    searchNearbyPOI("supermarket", lat, lng, token),
+    searchNearbyPOI("train station", lat, lng, token),
+    searchNearbyPOI("bus stop", lat, lng, token),
+  ]);
+
+  // Merge train + bus, deduplicate by name, sort by distance, take 3
+  const seen = new Set<string>();
+  const transport = [...trainStations, ...busStops]
+    .sort((a, b) => a.distanceKm - b.distanceKm)
+    .filter((item) => {
+      if (seen.has(item.name)) return false;
+      seen.add(item.name);
+      return true;
+    })
+    .slice(0, 3);
+
+  return { schools, shops, transport };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   HOUSE: "House", APARTMENT: "Apartment", TOWNHOUSE: "Townhouse",
   VILLA: "Villa", LAND: "Land", RURAL: "Rural", OTHER: "Other",
@@ -186,6 +293,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
 
   const features = (listing.features as string[] | null) ?? [];
   const photos = listing.images.filter((img) => img.mediaType === "photo");
+  const floorplan = listing.images.find((img) => img.mediaType === "floorplan") ?? null;
 
   // Shape offers into PublicOffer format for the board
   const publicOffers = listing.saleMethod === "OPEN_OFFERS"
@@ -207,6 +315,17 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
   const isClosed =
     listing.status !== "ACTIVE" ||
     (listing.closingDate !== null && listing.closingDate < new Date());
+
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? null;
+  const mapCentroid = await getSuburbCentroid(listing.suburb, listing.state, listing.postcode);
+  const staticMapUrl =
+    mapCentroid && mapboxToken
+      ? `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+e8a838(${mapCentroid.lng},${mapCentroid.lat})/${mapCentroid.lng},${mapCentroid.lat},13,0/800x360@2x?access_token=${mapboxToken}`
+      : null;
+  const nearbyAmenities =
+    mapCentroid && mapboxToken
+      ? await getNearbyAmenities(mapCentroid.lat, mapCentroid.lng, mapboxToken)
+      : null;
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
   const canonicalUrl = `${baseUrl}/listings/${id}`;
@@ -290,14 +409,14 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
           <>
             {/* Mobile: single hero image */}
             <div
-              className="block md:hidden mt-4 rounded-lg overflow-hidden"
+              className="relative block md:hidden mt-4 rounded-lg overflow-hidden"
               style={{ height: 240 }}
             >
-              <Image
+              <PropertyImage
                 src={photos[0].url}
                 alt={`${listing.streetAddress} — cover photo`}
-                fill
                 className="object-cover"
+                priority
               />
             </div>
 
@@ -306,20 +425,19 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               className="hidden md:grid grid-cols-4 gap-2 mt-6 rounded-[16px] overflow-hidden"
               style={{ height: 420 }}
             >
-              <div className="col-span-2 row-span-2">
-                <Image
+              <div className="relative col-span-2 row-span-2">
+                <PropertyImage
                   src={photos[0].url}
                   alt={`${listing.streetAddress} — cover photo`}
-                  fill
                   className="object-cover"
+                  priority
                 />
               </div>
               {photos.slice(1, 5).map((img, i) => (
-                <div key={img.id} className="overflow-hidden">
-                  <Image
-                    src={img.thumbnailUrl}
+                <div key={img.id} className="relative overflow-hidden">
+                  <PropertyImage
+                    src={img.thumbnailUrl || img.url}
                     alt={`${listing.streetAddress} — photo ${i + 2}`}
-                    fill
                     className="object-cover"
                   />
                 </div>
@@ -327,10 +445,84 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
             </div>
           </>
         ) : (
-          <div className="mt-4 md:mt-6 rounded-lg md:rounded-[16px] bg-border h-48 md:h-64 flex items-center justify-center">
-            <span className="text-text-muted text-sm">No photos</span>
+          <div
+            className="relative mt-4 md:mt-6 rounded-lg md:rounded-[16px] overflow-hidden"
+            style={{ height: 240 }}
+          >
+            <PropertyImage
+              src={getListingFallbackImage(id)}
+              alt={`${listing.streetAddress} — cover photo`}
+              className="object-cover"
+              priority
+            />
           </div>
         )}
+
+        {/* Floor Plan */}
+        <div className="mt-6 mb-2">
+          <div className="flex items-center gap-2 mb-3">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#334766", flexShrink: 0 }}>
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="M3 9h18M9 21V9" />
+            </svg>
+            <h2 className="text-base font-semibold text-navy">Floor Plan</h2>
+          </div>
+
+          {floorplan ? (
+            floorplan.url.endsWith(".pdf") ? (
+              <a
+                href={floorplan.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-white border border-border rounded-[12px] px-5 py-4 hover:border-slate transition-colors"
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 8,
+                    background: "#fef2f2",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "#e05252" }}>
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-navy">View floor plan</p>
+                  <p className="text-xs text-text-muted">PDF — opens in new tab</p>
+                </div>
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#9ca3af", marginLeft: 4 }}>
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                </svg>
+              </a>
+            ) : (
+              <div className="rounded-[12px] overflow-hidden border border-border bg-white">
+                <img
+                  src={floorplan.url}
+                  alt={`Floor plan — ${listing.streetAddress}`}
+                  style={{ width: "100%", display: "block", maxHeight: 480, objectFit: "contain", background: "#f7f5f0" }}
+                />
+              </div>
+            )
+          ) : (
+            <div
+              className="bg-white border border-border rounded-[12px] flex items-center justify-center gap-3"
+              style={{ height: 100 }}
+            >
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" style={{ color: "#9ca3af" }}>
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M9 21V9" />
+              </svg>
+              <p className="text-sm text-text-muted">Floor plan not provided</p>
+            </div>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
           {/* Main content */}
@@ -385,11 +577,112 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               </div>
             </div>
 
+            {/* Primary CTA — inline, visible without scrolling */}
+            {!isOwner && (
+              <div className="mb-8 flex gap-3">
+                {listing.status === "ACTIVE" && !isClosed && (
+                  <a
+                    href={`/listings/${id}/offer`}
+                    className="flex-1 block text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors shadow-sm"
+                  >
+                    Place an Offer — Free
+                  </a>
+                )}
+                <WatchButton
+                  listingId={id}
+                  isLoggedIn={!!currentUser}
+                  initialWatched={initialFavourited}
+                />
+              </div>
+            )}
+
             {/* Description */}
             <div className="mb-8">
               <h2 className="text-base font-semibold text-navy mb-3">About this property</h2>
               <p className="text-sm text-text leading-relaxed whitespace-pre-line">{listing.description}</p>
             </div>
+
+            {/* Location map */}
+            {staticMapUrl && (
+              <div className="mb-8">
+                <h2 className="text-base font-semibold text-navy mb-3">Location</h2>
+                <div
+                  className="rounded-[12px] overflow-hidden border border-border"
+                  style={{ height: 240 }}
+                >
+                  <img
+                    src={staticMapUrl}
+                    alt={`Map showing the approximate location of ${listing.suburb} ${listing.state}`}
+                    className="w-full h-full object-cover block"
+                  />
+                </div>
+                <p className="text-sm text-text-muted mt-2">
+                  {listing.suburb} {listing.state} {listing.postcode}
+                  <span className="text-text-light"> · Approximate location shown</span>
+                </p>
+              </div>
+            )}
+
+            {/* Nearby Amenities */}
+            {nearbyAmenities &&
+              (nearbyAmenities.schools.length > 0 ||
+                nearbyAmenities.shops.length > 0 ||
+                nearbyAmenities.transport.length > 0) && (
+              <div className="mb-8">
+                <h2 className="text-base font-semibold text-navy mb-3">Nearby Amenities</h2>
+                <div className="bg-white border border-border rounded-[12px] overflow-hidden divide-y divide-border">
+
+                  {nearbyAmenities.schools.length > 0 && (
+                    <div className="px-5 py-4">
+                      <p className="text-xs font-semibold text-text-muted uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <span>🎓</span> Schools
+                      </p>
+                      <ul className="space-y-2">
+                        {nearbyAmenities.schools.map((item) => (
+                          <li key={item.name} className="flex items-center justify-between gap-4">
+                            <span className="text-sm text-text truncate">{item.name}</span>
+                            <span className="text-xs text-text-muted shrink-0">{formatDistance(item.distanceKm)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {nearbyAmenities.shops.length > 0 && (
+                    <div className="px-5 py-4">
+                      <p className="text-xs font-semibold text-text-muted uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <span>🛒</span> Shops & Supermarkets
+                      </p>
+                      <ul className="space-y-2">
+                        {nearbyAmenities.shops.map((item) => (
+                          <li key={item.name} className="flex items-center justify-between gap-4">
+                            <span className="text-sm text-text truncate">{item.name}</span>
+                            <span className="text-xs text-text-muted shrink-0">{formatDistance(item.distanceKm)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {nearbyAmenities.transport.length > 0 && (
+                    <div className="px-5 py-4">
+                      <p className="text-xs font-semibold text-text-muted uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <span>🚆</span> Transport
+                      </p>
+                      <ul className="space-y-2">
+                        {nearbyAmenities.transport.map((item) => (
+                          <li key={item.name} className="flex items-center justify-between gap-4">
+                            <span className="text-sm text-text truncate">{item.name}</span>
+                            <span className="text-xs text-text-muted shrink-0">{formatDistance(item.distanceKm)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                </div>
+              </div>
+            )}
 
             {/* Features */}
             {features.length > 0 && (
@@ -558,6 +851,20 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
           </div>
         </div>
       </div>
+
+      {/* Sticky CTA bar */}
+      {!isOwner && listing.status === "ACTIVE" && !isClosed && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-lg">
+          <div style={{ maxWidth: 1100, margin: "0 auto", padding: "12px 24px" }}>
+            <a
+              href={`/listings/${id}/offer`}
+              className="block w-full text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors"
+            >
+              Place an Offer — Free
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,11 +4,16 @@ import { requireAuth, requireOwner, errorResponse, ApiError } from "@/lib/api-he
 import { getPresignedUploadUrl } from "@/lib/s3";
 import { z } from "zod";
 
-const uploadUrlSchema = z.object({
-  fileName: z.string().min(1).max(200),
-  contentType: z.enum(["image/jpeg", "image/png", "image/webp"]),
-  mediaType: z.enum(["photo", "floorplan"]).default("photo"),
-});
+const uploadUrlSchema = z
+  .object({
+    fileName: z.string().min(1).max(200),
+    contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]),
+    mediaType: z.enum(["photo", "floorplan"]).default("photo"),
+  })
+  .refine(
+    (data) => !(data.contentType === "application/pdf" && data.mediaType !== "floorplan"),
+    { message: "PDF uploads are only allowed for floor plans" }
+  );
 
 // POST /api/listings/[id]/images/upload-url
 export async function POST(

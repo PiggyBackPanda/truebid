@@ -11,6 +11,53 @@ import { checkAntiSnipe } from "@/lib/offers";
 import { emitToListing } from "@/lib/socket";
 import { sendNewOfferEmail } from "@/lib/email";
 
+// GET /api/offers — list the authenticated buyer's own offers
+export async function GET() {
+  try {
+    const user = await requireAuth();
+
+    const offers = await prisma.offer.findMany({
+      where: { buyerId: user.id },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        amountCents: true,
+        conditionType: true,
+        conditionText: true,
+        settlementDays: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        listing: {
+          select: {
+            id: true,
+            streetAddress: true,
+            suburb: true,
+            state: true,
+            postcode: true,
+            status: true,
+            closingDate: true,
+          },
+        },
+      },
+    });
+
+    return Response.json({
+      offers: offers.map((o) => ({
+        ...o,
+        createdAt: o.createdAt.toISOString(),
+        updatedAt: o.updatedAt.toISOString(),
+        listing: {
+          ...o.listing,
+          closingDate: o.listing.closingDate?.toISOString() ?? null,
+        },
+      })),
+    });
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
 // POST /api/offers — place a new offer
 export async function POST(req: NextRequest) {
   try {

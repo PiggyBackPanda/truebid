@@ -41,8 +41,12 @@ export async function GET() {
       prisma.favourite.count({
         where: { listingId: { in: listingIds }, createdAt: { gte: today } },
       }),
-      prisma.message.count({
-        where: { recipientId: user.id, status: { not: "READ" } },
+      prisma.conversationMessage.count({
+        where: {
+          senderId: { not: user.id },
+          readAt: null,
+          conversation: { sellerId: user.id },
+        },
       }),
     ]);
 

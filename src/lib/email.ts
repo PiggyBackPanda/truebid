@@ -1,8 +1,6 @@
 import { Resend } from "resend";
 import { logger } from "@/lib/logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM = process.env.EMAIL_FROM ?? "TrueBid <noreply@truebid.com.au>";
 
 export async function sendEmail({
@@ -19,6 +17,7 @@ export async function sendEmail({
     return;
   }
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     await resend.emails.send({ from: FROM, to, subject, html });
   } catch (error) {

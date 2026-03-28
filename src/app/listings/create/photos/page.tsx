@@ -28,16 +28,68 @@ function PhotosForm() {
 
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState<UploadingImage[]>([]);
+  const [floorplanImage, setFloorplanImage] = useState<UploadedImage | null>(null);
+  const [floorplanUploading, setFloorplanUploading] = useState<UploadingImage | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const floorplanInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!listingId) router.replace("/listings/create/details");
   }, [listingId, router]);
+
+  const uploadFloorplan = useCallback(async (file: File) => {
+    const allowed = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    if (!allowed.includes(file.type)) return;
+    if (file.size > 20 * 1024 * 1024) return;
+
+    const localId = `${Date.now()}-${Math.random()}`;
+    setFloorplanUploading({ localId, file, progress: 0 });
+
+    try {
+      const urlRes = await fetch(`/api/listings/${listingId}/images/upload-url`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, contentType: file.type, mediaType: "floorplan" }),
+      });
+      if (!urlRes.ok) throw new Error("Failed to get upload URL");
+      const { uploadUrl, s3Key } = await urlRes.json();
+
+      const xhr = new XMLHttpRequest();
+      await new Promise<void>((resolve, reject) => {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 90);
+            setFloorplanUploading((prev) => prev ? { ...prev, progress: pct } : prev);
+          }
+        };
+        xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject());
+        xhr.onerror = reject;
+        xhr.open("PUT", uploadUrl);
+        xhr.setRequestHeader("Content-Type", file.type);
+        xhr.send(file);
+      });
+
+      setFloorplanUploading((prev) => prev ? { ...prev, progress: 95 } : prev);
+
+      const confirmRes = await fetch(`/api/listings/${listingId}/images/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ s3Key, mediaType: "floorplan" }),
+      });
+      if (!confirmRes.ok) throw new Error("Failed to confirm upload");
+      const { image } = await confirmRes.json();
+
+      setFloorplanImage(image);
+      setFloorplanUploading(null);
+    } catch {
+      setFloorplanUploading((prev) => prev ? { ...prev, error: "Upload failed", progress: 0 } : prev);
+    }
+  }, [listingId]);
 
   const uploadFile = useCallback(async (file: File, mediaType: "photo" | "floorplan" = "photo") => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
@@ -110,6 +162,12 @@ function PhotosForm() {
   async function handleDeleteImage(imageId: string) {
     await fetch(`/api/listings/${listingId}/images/${imageId}`, { method: "DELETE" });
     setImages((prev) => prev.filter((img) => img.id !== imageId));
+  }
+
+  async function handleDeleteFloorplan() {
+    if (!floorplanImage) return;
+    await fetch(`/api/listings/${listingId}/images/${floorplanImage.id}`, { method: "DELETE" });
+    setFloorplanImage(null);
   }
 
   async function handleReorder(fromIndex: number, toIndex: number) {
@@ -275,21 +333,95 @@ function PhotosForm() {
         )}
 
         {/* Floor plan section */}
-        <div className="border border-border rounded-[12px] p-4 mb-8">
-          <h3 className="text-sm font-semibold text-navy mb-2">Floor plan (optional)</h3>
-          <p className="text-xs text-text-muted mb-3">Upload a floor plan image to give buyers a better sense of the layout.</p>
-          <label className="inline-flex items-center gap-2 cursor-pointer bg-bg border border-border rounded-[10px] px-4 py-2 text-sm text-text hover:border-slate transition-colors">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+        <div className="border border-border rounded-[12px] p-5 mb-8">
+          <div className="flex items-center gap-2 mb-1">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-navy flex-shrink-0">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="M3 9h18M9 21V9" />
             </svg>
-            Upload floor plan
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="hidden"
-              onChange={(e) => { if (e.target.files?.[0]) uploadFile(e.target.files[0], "floorplan"); }}
-            />
-          </label>
+            <h3 className="text-sm font-semibold text-navy">Floor Plan <span className="text-text-muted font-normal">(optional)</span></h3>
+          </div>
+          <p className="text-xs text-text-muted mb-4 ml-6">
+            Upload a single floor plan — JPG, PNG, or PDF, max 20 MB.
+          </p>
+
+          {/* Uploaded floor plan preview */}
+          {floorplanImage && !floorplanUploading && (
+            <div className="flex items-center gap-3 bg-bg border border-border rounded-[10px] p-3 mb-3">
+              {floorplanImage.url.endsWith(".pdf") ? (
+                <div className="w-12 h-12 rounded-[8px] bg-red/10 flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+              ) : (
+                <div className="relative w-12 h-12 rounded-[8px] overflow-hidden flex-shrink-0 bg-border">
+                  <Image src={floorplanImage.thumbnailUrl} alt="Floor plan" fill className="object-cover" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-navy truncate">
+                  {floorplanImage.url.endsWith(".pdf") ? "Floor plan (PDF)" : "Floor plan uploaded"}
+                </p>
+                <p className="text-xs text-text-muted">
+                  {floorplanImage.url.endsWith(".pdf") ? "PDF file" : "Image file"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleDeleteFloorplan}
+                className="text-xs text-red hover:underline flex-shrink-0"
+              >
+                Remove
+              </button>
+            </div>
+          )}
+
+          {/* Upload progress */}
+          {floorplanUploading && (
+            <div className="flex items-center gap-3 bg-white border border-border rounded-[10px] p-3 mb-3">
+              <div className="flex-1">
+                <p className="text-xs font-medium text-text mb-1">{floorplanUploading.file.name}</p>
+                {floorplanUploading.error ? (
+                  <p className="text-xs text-red">{floorplanUploading.error}</p>
+                ) : (
+                  <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-amber transition-all duration-300 rounded-full"
+                      style={{ width: `${floorplanUploading.progress}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+              {floorplanUploading.error && (
+                <button
+                  type="button"
+                  onClick={() => setFloorplanUploading(null)}
+                  className="text-xs text-text-muted hover:text-text"
+                >
+                  Dismiss
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Upload button — only show when no floor plan is set */}
+          {!floorplanImage && !floorplanUploading && (
+            <label className="inline-flex items-center gap-2 cursor-pointer bg-white border border-border rounded-[10px] px-4 py-2 text-sm text-text hover:border-slate transition-colors">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+              </svg>
+              Upload floor plan
+              <input
+                ref={floorplanInputRef}
+                type="file"
+                accept="image/jpeg,image/png,application/pdf"
+                className="hidden"
+                onChange={(e) => { if (e.target.files?.[0]) uploadFloorplan(e.target.files[0]); }}
+              />
+            </label>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
