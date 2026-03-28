@@ -13,6 +13,33 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = createListingSchema.parse(body);
 
+    // Geocode the suburb to populate lat/lng for proximity search
+    let geocodedLat: number | null = data.latitude ?? null;
+    let geocodedLng: number | null = data.longitude ?? null;
+    if (geocodedLat == null || geocodedLng == null) {
+      const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+      if (mapboxToken) {
+        try {
+          const query = encodeURIComponent(`${data.suburb} ${data.state} Australia`);
+          const geoRes = await fetch(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?types=place,postcode&limit=1&country=AU&access_token=${mapboxToken}`
+          );
+          if (geoRes.ok) {
+            const geoData = await geoRes.json() as {
+              features?: Array<{ center: [number, number] }>;
+            };
+            const feature = geoData.features?.[0];
+            if (feature) {
+              geocodedLng = feature.center[0];
+              geocodedLat = feature.center[1];
+            }
+          }
+        } catch {
+          // Non-fatal — listing is created without coordinates
+        }
+      }
+    }
+
     const listing = await prisma.$transaction(async (tx) => {
       if (user.role === "BUYER") {
         await tx.user.update({
@@ -28,8 +55,8 @@ export async function POST(req: NextRequest) {
           suburb: data.suburb,
           state: data.state,
           postcode: data.postcode,
-          latitude: data.latitude ?? null,
-          longitude: data.longitude ?? null,
+          latitude: geocodedLat,
+          longitude: geocodedLng,
           propertyType: data.propertyType,
           bedrooms: data.bedrooms,
           bathrooms: data.bathrooms,

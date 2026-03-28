@@ -14,6 +14,12 @@ const FEATURE_SUGGESTIONS = [
   "Views", "Quiet street", "Corner block", "Granny flat", "Home office",
 ];
 
+interface InspectionTime {
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
 function NumberPicker({
   label,
   value,
@@ -53,13 +59,41 @@ function NumberPicker({
   );
 }
 
+async function uploadDocument(
+  listingId: string,
+  file: File,
+  documentType: "buildingPestReport" | "floorplan"
+): Promise<string> {
+  const urlRes = await fetch(`/api/listings/${listingId}/documents/upload-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fileName: file.name,
+      contentType: file.type,
+      documentType,
+    }),
+  });
+  if (!urlRes.ok) throw new Error("Failed to get upload URL");
+  const { uploadUrl, publicUrl } = await urlRes.json();
+
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject());
+    xhr.onerror = reject;
+    xhr.open("PUT", uploadUrl);
+    xhr.setRequestHeader("Content-Type", file.type);
+    xhr.send(file);
+  });
+
+  return publicUrl as string;
+}
+
 function DetailsForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const existingId = searchParams.get("id");
 
   const [submitting, setSubmitting] = useState(false);
-  const [generating, setGenerating] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [features, setFeatures] = useState<string[]>([]);
   const [featureInput, setFeatureInput] = useState("");
@@ -83,6 +117,20 @@ function DetailsForm() {
   const [description, setDescription] = useState("");
   const descRef = useRef<HTMLTextAreaElement>(null);
 
+  // Additional property details
+  const [councilRates, setCouncilRates] = useState("");
+  const [waterRates, setWaterRates] = useState("");
+  const [occupancyType, setOccupancyType] = useState<"" | "owner_occupier" | "investment">("");
+  const [reasonForSelling, setReasonForSelling] = useState("");
+  const [currentRentalAmount, setCurrentRentalAmount] = useState("");
+  const [titleType, setTitleType] = useState<"" | "own_title" | "survey_strata">("");
+  const [bodyCorporateFees, setBodyCorporateFees] = useState("");
+  const [inspectionTimes, setInspectionTimes] = useState<InspectionTime[]>([]);
+  const [pestReportFile, setPestReportFile] = useState<File | null>(null);
+  const [floorplanFile, setFloorplanFile] = useState<File | null>(null);
+  const pestReportInputRef = useRef<HTMLInputElement>(null);
+  const floorplanInputRef = useRef<HTMLInputElement>(null);
+
   function addFeature(f: string) {
     const trimmed = f.trim();
     if (trimmed && !features.includes(trimmed) && features.length < 20) {
@@ -94,49 +142,20 @@ function DetailsForm() {
     setFeatures((prev) => prev.filter((x) => x !== f));
   }
 
-  async function handleGenerateDescription() {
-    setGenerating(true);
-    setDescription("");
-
-    try {
-      const res = await fetch("/api/listings/generate-description", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          streetAddress,
-          suburb,
-          state,
-          propertyType,
-          bedrooms,
-          bathrooms,
-          carSpaces,
-          landSizeM2: landSizeM2 ? parseInt(landSizeM2) : undefined,
-          buildingSizeM2: buildingSizeM2 ? parseInt(buildingSizeM2) : undefined,
-          yearBuilt: yearBuilt ? parseInt(yearBuilt) : undefined,
-          features,
-        }),
-      });
-
-      if (!res.ok || !res.body) {
-        throw new Error("Failed to generate description");
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let text = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        text += decoder.decode(value, { stream: true });
-        setDescription(text);
-      }
-    } catch {
-      // Silently fail — user can type manually
-    } finally {
-      setGenerating(false);
-    }
+  function addInspectionTime() {
+    setInspectionTimes((prev) => [...prev, { date: "", startTime: "", endTime: "" }]);
   }
+
+  function updateInspectionTime(index: number, field: keyof InspectionTime, value: string) {
+    setInspectionTimes((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  }
+
+  function removeInspectionTime(index: number) {
+    setInspectionTimes((prev) => prev.filter((_, i) => i !== index));
+  }
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -160,7 +179,12 @@ function DetailsForm() {
     setSubmitting(true);
 
     try {
-      const body = {
+      // Collect valid inspection times (skip incomplete entries)
+      const validInspectionTimes = inspectionTimes.filter(
+        (t) => t.date && t.startTime && t.endTime
+      );
+
+      const baseBody = {
         streetAddress: streetAddress.trim(),
         suburb: suburb.trim(),
         state,
@@ -174,6 +198,21 @@ function DetailsForm() {
         yearBuilt: yearBuilt ? parseInt(yearBuilt) : undefined,
         description: description.trim(),
         features: features.length > 0 ? features : undefined,
+        // Additional property details
+        councilRates: councilRates ? parseFloat(councilRates) : undefined,
+        waterRates: waterRates ? parseFloat(waterRates) : undefined,
+        occupancyType: occupancyType || undefined,
+        reasonForSelling: reasonForSelling.trim() || undefined,
+        currentRentalAmount:
+          occupancyType === "investment" && currentRentalAmount
+            ? parseFloat(currentRentalAmount)
+            : undefined,
+        titleType: titleType || undefined,
+        bodyCorporateFees:
+          titleType === "survey_strata" && bodyCorporateFees
+            ? parseFloat(bodyCorporateFees)
+            : undefined,
+        inspectionTimes: validInspectionTimes.length > 0 ? validInspectionTimes : undefined,
         // Temporary defaults for required fields — overridden in Step 3
         saleMethod: "OPEN_OFFERS",
       };
@@ -182,17 +221,22 @@ function DetailsForm() {
 
       if (listingId) {
         // Update existing draft
-        await fetch(`/api/listings/${listingId}`, {
+        const res = await fetch(`/api/listings/${listingId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: JSON.stringify(baseBody),
         });
+        if (!res.ok) {
+          const data = await res.json();
+          setErrors({ form: data.error ?? "Failed to save listing" });
+          return;
+        }
       } else {
         // Create new draft
         const res = await fetch("/api/listings", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: JSON.stringify(baseBody),
         });
 
         if (!res.ok) {
@@ -203,6 +247,41 @@ function DetailsForm() {
 
         const data = await res.json();
         listingId = data.listing.id;
+      }
+
+      // Upload documents if selected, then PATCH listing with URLs
+      const documentPatches: Record<string, string> = {};
+      const uploadErrors: string[] = [];
+
+      if (pestReportFile) {
+        try {
+          const url = await uploadDocument(listingId!, pestReportFile, "buildingPestReport");
+          documentPatches.buildingPestReportUrl = url;
+        } catch {
+          uploadErrors.push("Building & Pest Report failed to upload");
+        }
+      }
+
+      if (floorplanFile) {
+        try {
+          const url = await uploadDocument(listingId!, floorplanFile, "floorplan");
+          documentPatches.floorplanUrl = url;
+        } catch {
+          uploadErrors.push("Floorplan failed to upload");
+        }
+      }
+
+      if (Object.keys(documentPatches).length > 0) {
+        await fetch(`/api/listings/${listingId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(documentPatches),
+        });
+      }
+
+      if (uploadErrors.length > 0) {
+        setErrors({ form: uploadErrors.join(". ") + ". Other details saved — you can re-upload on the next visit." });
+        // Still navigate forward
       }
 
       router.push(`/listings/create/photos?id=${listingId}`);
@@ -339,18 +418,8 @@ function DetailsForm() {
 
           {/* Description */}
           <section>
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4">
               <h2 className="text-base font-semibold text-navy">Description</h2>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleGenerateDescription}
-                loading={generating}
-                disabled={!streetAddress || !suburb || generating}
-              >
-                ✨ Generate with AI
-              </Button>
             </div>
             <div className="flex flex-col gap-1.5">
               <textarea
@@ -441,6 +510,233 @@ function DetailsForm() {
                 >
                   Add
                 </Button>
+              </div>
+            </div>
+          </section>
+
+          {/* Additional Property Details */}
+          <section>
+            <h2 className="text-base font-semibold text-navy mb-1">Additional Property Details</h2>
+            <p className="text-sm text-text-muted mb-4">All fields in this section are optional.</p>
+
+            <div className="flex flex-col gap-5">
+              {/* Council & Water Rates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Annual Council Rates ($)"
+                  value={councilRates}
+                  onChange={(e) => setCouncilRates(e.target.value.replace(/[^\d.]/g, ""))}
+                  placeholder="e.g. 1800"
+                  inputMode="decimal"
+                />
+                <Input
+                  label="Annual Water Rates ($)"
+                  value={waterRates}
+                  onChange={(e) => setWaterRates(e.target.value.replace(/[^\d.]/g, ""))}
+                  placeholder="e.g. 1200"
+                  inputMode="decimal"
+                />
+              </div>
+
+              {/* Occupancy Type */}
+              <div>
+                <label className="text-sm font-medium text-text block mb-1.5">Occupancy Type</label>
+                <select
+                  value={occupancyType}
+                  onChange={(e) => {
+                    setOccupancyType(e.target.value as "" | "owner_occupier" | "investment");
+                    if (e.target.value !== "investment") setCurrentRentalAmount("");
+                  }}
+                  className="w-full bg-white border border-border rounded-[10px] px-4 py-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-sky/20 focus:border-sky transition-colors"
+                >
+                  <option value="">Select occupancy type</option>
+                  <option value="owner_occupier">Owner Occupied</option>
+                  <option value="investment">Investment Property</option>
+                </select>
+              </div>
+
+              {/* Current Rental Amount — only shown for Investment */}
+              {occupancyType === "investment" && (
+                <Input
+                  label="Current Weekly Rent ($)"
+                  value={currentRentalAmount}
+                  onChange={(e) => setCurrentRentalAmount(e.target.value.replace(/[^\d.]/g, ""))}
+                  placeholder="e.g. 500"
+                  inputMode="decimal"
+                />
+              )}
+
+              {/* Reason for Selling */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-text">Reason for Selling</label>
+                <textarea
+                  value={reasonForSelling}
+                  onChange={(e) => setReasonForSelling(e.target.value)}
+                  placeholder="e.g. Upsizing to accommodate a growing family"
+                  rows={3}
+                  maxLength={1000}
+                  className="w-full bg-white border border-border rounded-[10px] px-4 py-3 text-sm text-text placeholder:text-text-light transition-colors focus:outline-none focus:ring-2 focus:ring-sky/20 focus:border-sky resize-y"
+                />
+              </div>
+
+              {/* Title Type */}
+              <div>
+                <label className="text-sm font-medium text-text block mb-1.5">Title Type</label>
+                <select
+                  value={titleType}
+                  onChange={(e) => {
+                    setTitleType(e.target.value as "" | "own_title" | "survey_strata");
+                    if (e.target.value !== "survey_strata") setBodyCorporateFees("");
+                  }}
+                  className="w-full bg-white border border-border rounded-[10px] px-4 py-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-sky/20 focus:border-sky transition-colors"
+                >
+                  <option value="">Select title type</option>
+                  <option value="own_title">Green Title</option>
+                  <option value="survey_strata">Survey Strata / Strata Title</option>
+                </select>
+              </div>
+
+              {/* Body Corporate Fees — only shown for Survey Strata */}
+              {titleType === "survey_strata" && (
+                <Input
+                  label="Quarterly Body Corporate Fees ($)"
+                  value={bodyCorporateFees}
+                  onChange={(e) => setBodyCorporateFees(e.target.value.replace(/[^\d.]/g, ""))}
+                  placeholder="e.g. 800"
+                  inputMode="decimal"
+                />
+              )}
+
+              {/* Open for Inspection Times */}
+              <div>
+                <label className="text-sm font-medium text-text block mb-2">Open for Inspection Times</label>
+                {inspectionTimes.length > 0 && (
+                  <div className="flex flex-col gap-3 mb-3">
+                    {inspectionTimes.map((slot, index) => (
+                      <div
+                        key={index}
+                        className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end bg-bg border border-border rounded-[10px] p-3"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-medium text-text-muted">Date</label>
+                          <input
+                            type="date"
+                            value={slot.date}
+                            onChange={(e) => updateInspectionTime(index, "date", e.target.value)}
+                            className="bg-white border border-border rounded-[8px] px-3 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-sky/20 focus:border-sky transition-colors"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-medium text-text-muted">Start Time</label>
+                          <input
+                            type="time"
+                            value={slot.startTime}
+                            onChange={(e) => updateInspectionTime(index, "startTime", e.target.value)}
+                            className="bg-white border border-border rounded-[8px] px-3 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-sky/20 focus:border-sky transition-colors"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="text-xs font-medium text-text-muted">End Time</label>
+                          <input
+                            type="time"
+                            value={slot.endTime}
+                            onChange={(e) => updateInspectionTime(index, "endTime", e.target.value)}
+                            className="bg-white border border-border rounded-[8px] px-3 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-sky/20 focus:border-sky transition-colors"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeInspectionTime(index)}
+                          className="text-xs text-red hover:underline whitespace-nowrap pb-2 md:pb-0"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={addInspectionTime}
+                  className="inline-flex items-center gap-2 text-sm text-slate hover:text-navy transition-colors border border-border rounded-[10px] px-4 py-2 bg-white hover:border-slate"
+                >
+                  <span className="text-base leading-none">+</span>
+                  Add{inspectionTimes.length > 0 ? " Another" : ""} Time
+                </button>
+              </div>
+
+              {/* Building & Pest Report */}
+              <div>
+                <label className="text-sm font-medium text-text block mb-1.5">
+                  Building &amp; Pest Inspection Report (PDF)
+                </label>
+                {pestReportFile ? (
+                  <div className="flex items-center gap-3 bg-bg border border-border rounded-[10px] p-3">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red flex-shrink-0">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <span className="text-sm text-text flex-1 truncate">{pestReportFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => { setPestReportFile(null); if (pestReportInputRef.current) pestReportInputRef.current.value = ""; }}
+                      className="text-xs text-red hover:underline flex-shrink-0"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="inline-flex items-center gap-2 cursor-pointer bg-white border border-border rounded-[10px] px-4 py-2 text-sm text-text hover:border-slate transition-colors">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                    </svg>
+                    Upload report
+                    <input
+                      ref={pestReportInputRef}
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={(e) => { if (e.target.files?.[0]) setPestReportFile(e.target.files[0]); }}
+                    />
+                  </label>
+                )}
+                <p className="text-xs text-text-muted mt-1.5">PDF only · max 20 MB</p>
+              </div>
+
+              {/* Floorplan */}
+              <div>
+                <label className="text-sm font-medium text-text block mb-1.5">Floorplan</label>
+                {floorplanFile ? (
+                  <div className="flex items-center gap-3 bg-bg border border-border rounded-[10px] p-3">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-navy flex-shrink-0">
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                      <path d="M3 9h18M9 21V9" />
+                    </svg>
+                    <span className="text-sm text-text flex-1 truncate">{floorplanFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => { setFloorplanFile(null); if (floorplanInputRef.current) floorplanInputRef.current.value = ""; }}
+                      className="text-xs text-red hover:underline flex-shrink-0"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="inline-flex items-center gap-2 cursor-pointer bg-white border border-border rounded-[10px] px-4 py-2 text-sm text-text hover:border-slate transition-colors">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                    </svg>
+                    Upload floorplan
+                    <input
+                      ref={floorplanInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,application/pdf"
+                      className="hidden"
+                      onChange={(e) => { if (e.target.files?.[0]) setFloorplanFile(e.target.files[0]); }}
+                    />
+                  </label>
+                )}
+                <p className="text-xs text-text-muted mt-1.5">JPG, PNG, WebP or PDF · max 20 MB</p>
               </div>
             </div>
           </section>

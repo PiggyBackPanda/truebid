@@ -146,7 +146,7 @@ export function SavingsCalculator() {
         href="/register"
         className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 rounded-lg transition-colors"
       >
-        List your home free during launch →
+        List Your Property →
       </Link>
 
     </div>

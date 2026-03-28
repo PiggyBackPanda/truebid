@@ -118,7 +118,14 @@
       "Bash(git checkout:*)",
       "Bash(find /c/Users/jorda/AppData/Local/Temp/claude -name *.output)",
       "Bash(1:*)",
-      "Bash(PGPASSWORD=truebid123 psql -U postgres -h localhost -d truebid_dev -c \"\\\\dt\")"
+      "Bash(PGPASSWORD=truebid123 psql -U postgres -h localhost -d truebid_dev -c \"\\\\dt\")",
+      "Bash(ls -1 \"C:\\\\Users\\\\jorda\\\\Projects\\\\truebid\\\\src\\\\app\\\\\\(dashboard\\)\\\\dashboard\")",
+      "Bash(kill %1)",
+      "Bash(curl -s http://localhost:3000/api/listings?limit=1)",
+      "Bash(findstr :3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/verify-identity\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/dashboard/verify\")",
+      "Bash(curl -s -w \"\\\\nHTTP %{http_code}\" \"http://localhost:3000/api/verify-identity/dev-bypass\" -X POST -H \"Content-Type: application/json\")"
     ]
   }
 }

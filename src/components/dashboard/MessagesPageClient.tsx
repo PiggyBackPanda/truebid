@@ -520,21 +520,23 @@ export function MessagesPageClient({
         }}
       >
         {/* Left panel */}
-        <div className="flex flex-col border-r border-border">
-          <div className="px-4 py-3 border-b border-border bg-bg shrink-0">
-            <p
-              className="text-xs font-semibold text-text-muted uppercase tracking-wider"
-              style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: "0.08em" }}
-            >
-              Conversations ({conversations.length})
-            </p>
+        {conversations.length > 0 && (
+          <div className="flex flex-col border-r border-border">
+            <div className="px-4 py-3 border-b border-border bg-bg shrink-0">
+              <p
+                className="text-xs font-semibold text-text-muted uppercase tracking-wider"
+                style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: "0.08em" }}
+              >
+                Conversations ({conversations.length})
+              </p>
+            </div>
+            <ConversationList
+              conversations={conversations}
+              selectedId={selectedId}
+              onSelect={handleSelect}
+            />
           </div>
-          <ConversationList
-            conversations={conversations}
-            selectedId={selectedId}
-            onSelect={handleSelect}
-          />
-        </div>
+        )}
 
         {/* Right panel */}
         {selectedConv ? (

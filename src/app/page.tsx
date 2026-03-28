@@ -51,9 +51,9 @@ export default function HomePage() {
             }}
             className="mb-6"
           >
-            Property sales.
+            Sell your property.
             <br />
-            Transparent.
+            Transparently.
             <br />
             On your terms.
           </h1>

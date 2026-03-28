@@ -118,6 +118,24 @@ export const createListingSchema = z
     requireDeposit: z.boolean().optional(),
     depositAmountCents: z.number().int().positive().optional(),
     features: z.array(z.string()).optional(),
+    councilRates: z.number().positive().optional(),
+    waterRates: z.number().positive().optional(),
+    occupancyType: z.enum(["owner_occupier", "investment"]).optional(),
+    reasonForSelling: z.string().max(1000).optional(),
+    currentRentalAmount: z.number().positive().optional(),
+    titleType: z.enum(["own_title", "survey_strata"]).optional(),
+    bodyCorporateFees: z.number().positive().optional(),
+    inspectionTimes: z
+      .array(
+        z.object({
+          date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
+          startTime: z.string().regex(/^\d{2}:\d{2}$/, "Time must be HH:MM"),
+          endTime: z.string().regex(/^\d{2}:\d{2}$/, "Time must be HH:MM"),
+        })
+      )
+      .optional(),
+    buildingPestReportUrl: z.string().url().optional(),
+    floorplanUrl: z.string().url().optional(),
   })
   .refine(
     (data) => {
@@ -176,6 +194,25 @@ export const updateListingSchema = z.object({
   features: z.array(z.string()).optional(),
   requireInspection: z.boolean().optional(),
   addressVisibility: z.enum(["PUBLIC", "LOGGED_IN", "BOOKED_ONLY"]).optional(),
+  councilRates: z.number().positive().optional().nullable(),
+  waterRates: z.number().positive().optional().nullable(),
+  occupancyType: z.enum(["owner_occupier", "investment"]).optional().nullable(),
+  reasonForSelling: z.string().max(1000).optional().nullable(),
+  currentRentalAmount: z.number().positive().optional().nullable(),
+  titleType: z.enum(["own_title", "survey_strata"]).optional().nullable(),
+  bodyCorporateFees: z.number().positive().optional().nullable(),
+  inspectionTimes: z
+    .array(
+      z.object({
+        date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
+        startTime: z.string().regex(/^\d{2}:\d{2}$/, "Time must be HH:MM"),
+        endTime: z.string().regex(/^\d{2}:\d{2}$/, "Time must be HH:MM"),
+      })
+    )
+    .optional()
+    .nullable(),
+  buildingPestReportUrl: z.string().url().optional().nullable(),
+  floorplanUrl: z.string().url().optional().nullable(),
 });
 
 // ── Offer schemas ─────────────────────────────────────────────────────────────

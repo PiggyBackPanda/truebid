@@ -27,8 +27,31 @@ vi.mock("@/lib/api-helpers", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/api-helpers")>();
   return { ...actual, requireAuth: mockRequireAuth };
 });
+vi.mock("@/lib/email", () => ({ sendUnreadMessageEmail: vi.fn() }));
+vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() } }));
 
 import { POST } from "./route";
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function mockActiveListing() {
+  mockPrisma.listing.findUnique.mockResolvedValue({
+    id: "listing_1",
+    status: "ACTIVE",
+    streetAddress: "10 Marine Pde",
+    suburb: "Cottesloe",
+    state: "WA",
+  });
+}
+
+function mockRecipient() {
+  mockPrisma.user.findUnique.mockResolvedValue({
+    id: "user_buyer_1",
+    email: "buyer@example.com",
+    firstName: "John",
+    notificationPreferences: null,
+  });
+}
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
@@ -38,9 +61,8 @@ describe("POST /api/messages", () => {
   it("sends a message and returns 201", async () => {
     const user = mockUser();
     mockRequireAuth.mockResolvedValue(user);
-
-    mockPrisma.listing.findUnique.mockResolvedValue({ id: "listing_1", status: "ACTIVE" });
-    mockPrisma.user.findUnique.mockResolvedValue({ id: "user_buyer_1" });
+    mockActiveListing();
+    mockRecipient();
 
     const now = new Date();
     mockPrisma.message.create.mockResolvedValue({
@@ -91,6 +113,46 @@ describe("POST /api/messages", () => {
     expect(body.code).toBe("INVALID_RECIPIENT");
   });
 
+  it("returns 400 if message contains a URL", async () => {
+    mockRequireAuth.mockResolvedValue(mockUser());
+
+    const req = new Request("http://localhost/api/messages", {
+      method: "POST",
+      body: JSON.stringify({
+        recipientId: "clxxxxxxxxxxxxxxxxxxxxxxxxx",
+        listingId: "clxxxxxxxxxxxxxxxxxxxxxxxxx",
+        content: "Check out https://scam.example.com",
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const res = await POST(req as never);
+    const { status, body } = await parseResponse(res);
+
+    expect(status).toBe(400);
+    expect(body.code).toBe("LINKS_NOT_ALLOWED");
+  });
+
+  it("returns 400 if message contains www.", async () => {
+    mockRequireAuth.mockResolvedValue(mockUser());
+
+    const req = new Request("http://localhost/api/messages", {
+      method: "POST",
+      body: JSON.stringify({
+        recipientId: "clxxxxxxxxxxxxxxxxxxxxxxxxx",
+        listingId: "clxxxxxxxxxxxxxxxxxxxxxxxxx",
+        content: "Visit www.example.com for more info",
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const res = await POST(req as never);
+    const { status, body } = await parseResponse(res);
+
+    expect(status).toBe(400);
+    expect(body.code).toBe("LINKS_NOT_ALLOWED");
+  });
+
   it("returns 404 if listing not found", async () => {
     mockRequireAuth.mockResolvedValue(mockUser());
     mockPrisma.listing.findUnique.mockResolvedValue(null);
@@ -107,6 +169,33 @@ describe("POST /api/messages", () => {
 
     const res = await POST(req as never);
     expect(res.status).toBe(404);
+  });
+
+  it("returns 400 for listing that is not ACTIVE or UNDER_OFFER", async () => {
+    mockRequireAuth.mockResolvedValue(mockUser());
+    mockPrisma.listing.findUnique.mockResolvedValue({
+      id: "listing_1",
+      status: "DRAFT",
+      streetAddress: "10 Marine Pde",
+      suburb: "Cottesloe",
+      state: "WA",
+    });
+
+    const req = new Request("http://localhost/api/messages", {
+      method: "POST",
+      body: JSON.stringify({
+        recipientId: "clxxxxxxxxxxxxxxxxxxxxxxxxx",
+        listingId: "clxxxxxxxxxxxxxxxxxxxxxxxxx",
+        content: "Hello!",
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const res = await POST(req as never);
+    const { status, body } = await parseResponse(res);
+
+    expect(status).toBe(400);
+    expect(body.code).toBe("LISTING_UNAVAILABLE");
   });
 
   it("returns 400 for empty content", async () => {

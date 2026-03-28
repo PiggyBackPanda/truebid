@@ -94,7 +94,7 @@ src/
 ## Key Domain Rules
 
 - Offers can only be INCREASED or WITHDRAWN, never decreased.
-- Anti-snipe: if an offer is placed within 15 minutes of closing, closing extends by 15 minutes.
+- Anti-snipe: if an offer is placed within 10 minutes of closing, closing extends by 10 minutes.
 - Sellers see full buyer details (name, phone, email). Public board shows only pseudonymous IDs.
 - Currency amounts are in AUD. Store as cents (integer). Display as dollars with commas.
 - Identity verification is REQUIRED before publishing a listing or placing an offer.

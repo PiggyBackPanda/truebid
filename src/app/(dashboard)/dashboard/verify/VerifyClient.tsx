@@ -16,8 +16,10 @@ export function VerifyClient({ status }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [devBypassing, setDevBypassing] = useState(false);
 
   const canStart = status === "UNVERIFIED" || status === "FAILED";
+  const isDev = process.env.NODE_ENV === "development";
 
   async function handleVerify() {
     setLoading(true);
@@ -52,6 +54,24 @@ export function VerifyClient({ status }: Props) {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDevBypass() {
+    setDevBypassing(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/verify-identity/dev-bypass", { method: "POST" });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = (await res.json()) as { error?: string };
+        setError(data.error ?? "Dev bypass failed.");
+      }
+    } catch {
+      setError("Dev bypass failed.");
+    } finally {
+      setDevBypassing(false);
     }
   }
 
@@ -111,6 +131,51 @@ export function VerifyClient({ status }: Props) {
         >
           {error}
         </p>
+      )}
+
+      {isDev && (
+        <div
+          style={{
+            marginTop: 20,
+            padding: "16px",
+            background: "#1a1a2e",
+            borderRadius: 10,
+            border: "1px dashed #6366f1",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: "#a5b4fc",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: 10,
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            }}
+          >
+            Development only
+          </p>
+          <button
+            type="button"
+            onClick={handleDevBypass}
+            disabled={devBypassing}
+            style={{
+              width: "100%",
+              padding: "10px",
+              background: devBypassing ? "#374151" : "#4f46e5",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: devBypassing ? "not-allowed" : "pointer",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            }}
+          >
+            {devBypassing ? "Setting verified…" : "Dev: Mark as Verified"}
+          </button>
+        </div>
       )}
     </div>
   );

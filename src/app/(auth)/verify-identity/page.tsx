@@ -1,144 +1,141 @@
 "use client";
 
-import { Suspense, useState, useRef } from "react";
+import { Suspense, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/components/ui/Button";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ""
+);
 
-type Step = "explain" | "upload" | "submitted";
+// ── Shared styles ─────────────────────────────────────────────────────────────
 
-type FileState = {
-  file: File | null;
-  preview: string | null;
+const cardStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: 480,
+  background: "#ffffff",
+  border: "1px solid #e5e2db",
+  borderRadius: 16,
+  padding: "40px",
+  boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
+  textAlign: "center",
 };
 
-// ── Helper: file input with drag-and-drop preview ────────────────────────────
+const iconCircle = (bg: string, content: string) => (
+  <div
+    style={{
+      width: 64,
+      height: 64,
+      borderRadius: "50%",
+      background: bg,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 28,
+      margin: "0 auto 20px",
+    }}
+  >
+    {content}
+  </div>
+);
 
-function DocumentUpload({
-  label,
-  hint,
-  value,
-  onChange,
-  disabled,
+const cardHeading: React.CSSProperties = {
+  fontFamily: "Georgia, 'Times New Roman', serif",
+  fontSize: 26,
+  color: "#0f1623",
+  marginBottom: 10,
+  letterSpacing: "-0.02em",
+};
+
+const cardBody: React.CSSProperties = {
+  color: "#6b7280",
+  fontSize: 14,
+  marginBottom: 8,
+  lineHeight: 1.6,
+};
+
+const primaryLink: React.CSSProperties = {
+  display: "inline-block",
+  background: "#f59e0b",
+  color: "#1a0f00",
+  fontWeight: 600,
+  fontSize: 14,
+  padding: "12px 28px",
+  borderRadius: 10,
+  textDecoration: "none",
+};
+
+const secondaryLink: React.CSSProperties = {
+  display: "inline-block",
+  background: "#0f1623",
+  color: "#ffffff",
+  fontWeight: 500,
+  fontSize: 14,
+  padding: "12px 28px",
+  borderRadius: 10,
+  textDecoration: "none",
+};
+
+// ── Dev bypass block ──────────────────────────────────────────────────────────
+
+function DevBypassBlock({
+  onBypass,
+  busy,
+  error,
 }: {
-  label: string;
-  hint: string;
-  value: FileState;
-  onChange: (state: FileState) => void;
-  disabled?: boolean;
+  onBypass: () => void;
+  busy: boolean;
+  error: string;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  function handleFile(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      onChange({ file, preview: e.target?.result as string });
-    };
-    reader.readAsDataURL(file);
-  }
-
   return (
-    <div>
-      <p style={{ fontSize: 13, fontWeight: 600, color: "#0f1623", marginBottom: 6, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
-        {label}
-      </p>
-      <p style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>{hint}</p>
-
-      {value.preview ? (
-        <div style={{ position: "relative" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- blob preview URL, not suitable for next/image */}
-          <img
-            src={value.preview}
-            alt={label}
-            style={{
-              width: "100%",
-              height: 160,
-              objectFit: "cover",
-              borderRadius: 10,
-              border: "2px solid #16a34a",
-            }}
-          />
-          {!disabled && (
-            <button
-              type="button"
-              onClick={() => onChange({ file: null, preview: null })}
-              style={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                background: "rgba(0,0,0,0.6)",
-                color: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                width: 28,
-                height: 28,
-                cursor: "pointer",
-                fontSize: 14,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              ×
-            </button>
-          )}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 8,
-              left: 8,
-              background: "#16a34a",
-              color: "#fff",
-              fontSize: 11,
-              fontWeight: 600,
-              padding: "3px 8px",
-              borderRadius: 6,
-            }}
-          >
-            ✓ Selected
-          </div>
-        </div>
-      ) : (
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => inputRef.current?.click()}
-          style={{
-            width: "100%",
-            height: 120,
-            border: "2px dashed #d1d5db",
-            borderRadius: 10,
-            background: "#f9f8f6",
-            cursor: disabled ? "not-allowed" : "pointer",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            transition: "border-color 0.15s",
-          }}
-        >
-          <span style={{ fontSize: 28 }}>📷</span>
-          <span style={{ fontSize: 13, color: "#6b7280", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
-            Tap to choose a photo
-          </span>
-          <span style={{ fontSize: 11, color: "#9ca3af" }}>JPEG, PNG, WebP or HEIC</span>
-        </button>
-      )}
-
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
-        style={{ display: "none" }}
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) handleFile(f);
+    <div
+      style={{
+        marginTop: 24,
+        padding: "16px",
+        background: "#1a1a2e",
+        borderRadius: 10,
+        border: "1px dashed #6366f1",
+        textAlign: "left",
+      }}
+    >
+      <p
+        style={{
+          fontSize: 11,
+          fontWeight: 700,
+          color: "#a5b4fc",
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          marginBottom: 10,
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         }}
-      />
+      >
+        Development only
+      </p>
+      {error && (
+        <p style={{ fontSize: 12, color: "#f87171", marginBottom: 8 }}>{error}</p>
+      )}
+      <button
+        type="button"
+        onClick={onBypass}
+        disabled={busy}
+        style={{
+          width: "100%",
+          padding: "10px",
+          background: busy ? "#374151" : "#4f46e5",
+          color: "#ffffff",
+          border: "none",
+          borderRadius: 8,
+          fontSize: 13,
+          fontWeight: 600,
+          cursor: busy ? "not-allowed" : "pointer",
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        }}
+      >
+        {busy ? "Setting verified…" : "Dev: Mark as Verified"}
+      </button>
     </div>
   );
 }
@@ -154,28 +151,63 @@ function VerifyIdentityContent() {
   const user = session?.user as Record<string, unknown> | undefined;
   const verificationStatus = user?.verificationStatus as string | undefined;
 
-  const [step, setStep] = useState<Step>("explain");
-  const [licence, setLicence] = useState<FileState>({ file: null, preview: null });
-  const [selfie, setSelfie] = useState<FileState>({ file: null, preview: null });
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
+  const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState("");
   const [devBypassing, setDevBypassing] = useState(false);
+  const [devError, setDevError] = useState("");
 
   const isDev = process.env.NODE_ENV === "development";
 
+  async function handleStartVerification() {
+    setStarting(true);
+    setStartError("");
+    try {
+      const res = await fetch("/api/verification/start", { method: "POST" });
+      const data = await res.json() as { clientSecret?: string; error?: string };
+
+      if (!res.ok || !data.clientSecret) {
+        setStartError(data.error ?? "Could not start verification. Please try again.");
+        setStarting(false);
+        return;
+      }
+
+      const stripe = await stripePromise;
+      if (!stripe) {
+        setStartError("Stripe failed to load. Please refresh and try again.");
+        setStarting(false);
+        return;
+      }
+
+      const { error: stripeError } = await stripe.verifyIdentity(data.clientSecret);
+
+      if (stripeError) {
+        if (stripeError.code !== "session_cancelled") {
+          setStartError(stripeError.message ?? "Verification could not be completed.");
+        }
+      } else {
+        // Full reload so the session picks up the new verificationStatus
+        window.location.reload();
+      }
+    } catch {
+      setStartError("Something went wrong. Please try again.");
+    } finally {
+      setStarting(false);
+    }
+  }
+
   async function handleDevBypass() {
     setDevBypassing(true);
+    setDevError("");
     try {
       const res = await fetch("/api/verify-identity/dev-bypass", { method: "POST" });
       if (res.ok) {
-        // Reload so the session re-fetches the updated verificationStatus
         window.location.href = returnTo;
       } else {
         const data = await res.json() as { error?: string };
-        setError(data.error ?? "Dev bypass failed.");
+        setDevError(data.error ?? "Dev bypass failed.");
       }
     } catch {
-      setError("Dev bypass failed.");
+      setDevError("Dev bypass failed.");
     } finally {
       setDevBypassing(false);
     }
@@ -190,340 +222,53 @@ function VerifyIdentityContent() {
   if (status === "loading") {
     return (
       <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-        <div style={{ width: 32, height: 32, border: "3px solid #f59e0b", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            border: "3px solid #f59e0b",
+            borderTopColor: "transparent",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite",
+          }}
+        />
       </div>
     );
   }
 
-  // Already verified
+  // ── Already verified ─────────────────────────────────────────────────────────
+
   if (verificationStatus === "VERIFIED") {
     return (
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 480,
-          background: "#ffffff",
-          border: "1px solid #e5e2db",
-          borderRadius: 16,
-          padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            background: "#dcfce7",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 28,
-            margin: "0 auto 20px",
-          }}
-        >
-          ✓
-        </div>
-        <h1
-          style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: 26,
-            color: "#0f1623",
-            marginBottom: 10,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          You&apos;re already verified
-        </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
+      <div style={cardStyle}>
+        {iconCircle("#dcfce7", "✓")}
+        <h1 style={cardHeading}>You&apos;re already verified</h1>
+        <p style={{ ...cardBody, marginBottom: 28 }}>
           Your identity has been verified. You can list properties and place offers on TrueBid.
         </p>
-        <Link
-          href={returnTo}
-          style={{
-            display: "inline-block",
-            background: "#f59e0b",
-            color: "#1a0f00",
-            fontWeight: 600,
-            fontSize: 14,
-            padding: "12px 28px",
-            borderRadius: 10,
-            textDecoration: "none",
-          }}
-        >
-          Continue →
-        </Link>
+        <Link href={returnTo} style={primaryLink}>Continue →</Link>
       </div>
     );
   }
 
-  // Already pending
-  if (verificationStatus === "PENDING" && step !== "submitted") {
+  // ── Verification failed (terminal Stripe error) ───────────────────────────
+
+  if (verificationStatus === "FAILED") {
     return (
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 480,
-          background: "#ffffff",
-          border: "1px solid #e5e2db",
-          borderRadius: 16,
-          padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            background: "#fef9c3",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 28,
-            margin: "0 auto 20px",
-          }}
-        >
-          ⏳
-        </div>
-        <h1
-          style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: 26,
-            color: "#0f1623",
-            marginBottom: 10,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Under review
-        </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 8, lineHeight: 1.6 }}>
-          Your documents are being reviewed by our team. This usually takes less than 24 hours.
+      <div style={cardStyle}>
+        {iconCircle("#fee2e2", "✕")}
+        <h1 style={cardHeading}>Verification failed</h1>
+        <p style={cardBody}>
+          We weren&apos;t able to verify your identity. This may have been due to document quality, a consent issue, or an unsupported document type.
         </p>
         <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 28 }}>
-          We&apos;ll email you at <strong style={{ color: "#0f1623" }}>{user?.email as string}</strong> once approved.
+          Please try again, or contact{" "}
+          <a href="mailto:support@truebid.com.au" style={{ color: "#b45309" }}>
+            support@truebid.com.au
+          </a>{" "}
+          if you believe this is an error.
         </p>
-        <Link
-          href="/dashboard"
-          style={{
-            display: "inline-block",
-            background: "#0f1623",
-            color: "#ffffff",
-            fontWeight: 500,
-            fontSize: 14,
-            padding: "12px 28px",
-            borderRadius: 10,
-            textDecoration: "none",
-          }}
-        >
-          Go to dashboard
-        </Link>
-      </div>
-    );
-  }
-
-  // Submitted (just now)
-  if (step === "submitted") {
-    return (
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 480,
-          background: "#ffffff",
-          border: "1px solid #e5e2db",
-          borderRadius: 16,
-          padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            background: "#dcfce7",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 28,
-            margin: "0 auto 20px",
-          }}
-        >
-          ✓
-        </div>
-        <h1
-          style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: 26,
-            color: "#0f1623",
-            marginBottom: 10,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Documents submitted
-        </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 8, lineHeight: 1.6 }}>
-          Thanks! Our team will review your identity documents, usually within 24 hours.
-        </p>
-        <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 28 }}>
-          We&apos;ll email you at <strong style={{ color: "#0f1623" }}>{user?.email as string}</strong> once approved.
-        </p>
-        <Link
-          href={returnTo}
-          style={{
-            display: "inline-block",
-            background: "#f59e0b",
-            color: "#1a0f00",
-            fontWeight: 600,
-            fontSize: 14,
-            padding: "12px 28px",
-            borderRadius: 10,
-            textDecoration: "none",
-          }}
-        >
-          Continue →
-        </Link>
-      </div>
-    );
-  }
-
-  // ── Step 1: Explanation ──────────────────────────────────────────────────────
-
-  if (step === "explain") {
-    return (
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 520,
-          background: "#ffffff",
-          border: "1px solid #e5e2db",
-          borderRadius: 16,
-          padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
-        }}
-      >
-        {/* Logo */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                background: "#f59e0b",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontSize: 16,
-                fontWeight: 700,
-                color: "#0f1623",
-              }}
-            >
-              T
-            </div>
-            <span
-              style={{
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontSize: 20,
-                color: "#0f1623",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              TrueBid
-            </span>
-          </Link>
-        </div>
-
-        {/* Shield icon */}
-        <div
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: "50%",
-            background: "#fffbeb",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 24,
-            margin: "0 auto 20px",
-          }}
-        >
-          🛡️
-        </div>
-
-        <h1
-          style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: 28,
-            fontWeight: 400,
-            color: "#0f1623",
-            textAlign: "center",
-            marginBottom: 8,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Verify your identity
-        </h1>
-        <p style={{ textAlign: "center", color: "#6b7280", fontSize: 14, marginBottom: 28, lineHeight: 1.6 }}>
-          TrueBid requires identity verification before you can list a property or place an offer. This keeps our platform trustworthy for everyone.
-        </p>
-
-        {/* What you'll need */}
-        <div
-          style={{
-            background: "#f9f8f6",
-            border: "1px solid #e5e2db",
-            borderRadius: 12,
-            padding: "20px 24px",
-            marginBottom: 20,
-          }}
-        >
-          <p
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              color: "#6b7280",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              marginBottom: 14,
-            }}
-          >
-            What you&apos;ll need
-          </p>
-          {[
-            { icon: "🪪", title: "Driver's licence", desc: "Current Australian driver's licence (front side)" },
-            { icon: "🤳", title: "Selfie photo", desc: "A clear, recent photo of your face in good lighting" },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} style={{ display: "flex", gap: 14, marginBottom: 14, alignItems: "flex-start" }}>
-              <span style={{ fontSize: 22, flexShrink: 0 }}>{icon}</span>
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#0f1623", marginBottom: 2, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>{title}</p>
-                <p style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.5 }}>{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* How it works */}
-        <div
-          style={{
-            background: "#f0fdf4",
-            border: "1px solid #bbf7d0",
-            borderRadius: 12,
-            padding: "16px 20px",
-            marginBottom: 28,
-          }}
-        >
-          <p style={{ fontSize: 13, color: "#15803d", lineHeight: 1.6 }}>
-            <strong>Manual review:</strong> Our team checks your documents privately. Usually approved within 24 hours. Your documents are stored securely and never shared publicly.
-          </p>
-        </div>
-
-        {error && (
+        {startError && (
           <div
             role="alert"
             style={{
@@ -534,148 +279,46 @@ function VerifyIdentityContent() {
               marginBottom: 16,
               color: "#dc2626",
               fontSize: 13,
+              textAlign: "left",
             }}
           >
-            {error}
+            {startError}
           </div>
         )}
-
-        <Button
-          size="lg"
-          onClick={() => setStep("upload")}
-          className="w-full"
-        >
-          Continue to upload →
+        <Button size="lg" onClick={handleStartVerification} loading={starting} className="w-full">
+          Try again →
         </Button>
-
-        <p style={{ textAlign: "center", fontSize: 12, color: "#9ca3af", marginTop: 16 }}>
-          Already verified?{" "}
-          <Link href="/dashboard" style={{ color: "#b45309", textDecoration: "none" }}>
-            Go to dashboard
-          </Link>
-        </p>
-
         {isDev && (
-          <div
-            style={{
-              marginTop: 24,
-              padding: "16px",
-              background: "#1a1a2e",
-              borderRadius: 10,
-              border: "1px dashed #6366f1",
-            }}
-          >
-            <p
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: "#a5b4fc",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 10,
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              }}
-            >
-              Development only
-            </p>
-            <button
-              type="button"
-              onClick={handleDevBypass}
-              disabled={devBypassing}
-              style={{
-                width: "100%",
-                padding: "10px",
-                background: devBypassing ? "#374151" : "#4f46e5",
-                color: "#ffffff",
-                border: "none",
-                borderRadius: 8,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: devBypassing ? "not-allowed" : "pointer",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              }}
-            >
-              {devBypassing ? "Setting verified…" : "Dev: Mark as Verified"}
-            </button>
-          </div>
+          <DevBypassBlock onBypass={handleDevBypass} busy={devBypassing} error={devError} />
         )}
       </div>
     );
   }
 
-  // ── Step 2: Upload ───────────────────────────────────────────────────────────
+  // ── PENDING / REQUIRES_REVIEW — Stripe is processing ────────────────────────
 
-  const canSubmit = licence.file !== null && selfie.file !== null;
-
-  async function handleSubmit() {
-    if (!licence.file || !selfie.file) return;
-    setError("");
-    setUploading(true);
-
-    try {
-      // Step 1: get presigned upload URLs
-      const urlRes = await fetch("/api/verify-identity/upload-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          licenceContentType: licence.file.type || "image/jpeg",
-          selfieContentType: selfie.file.type || "image/jpeg",
-        }),
-      });
-
-      if (!urlRes.ok) {
-        const data = await urlRes.json() as { error?: string };
-        setError(data.error ?? "Failed to prepare upload. Please try again.");
-        return;
-      }
-
-      const { licence: licenceUpload, selfie: selfieUpload } = await urlRes.json() as {
-        licence: { uploadUrl: string; key: string };
-        selfie: { uploadUrl: string; key: string };
-      };
-
-      // Step 2: upload files directly to S3
-      const [licenceUploadRes, selfieUploadRes] = await Promise.all([
-        fetch(licenceUpload.uploadUrl, {
-          method: "PUT",
-          body: licence.file,
-          headers: { "Content-Type": licence.file.type || "image/jpeg" },
-        }),
-        fetch(selfieUpload.uploadUrl, {
-          method: "PUT",
-          body: selfie.file,
-          headers: { "Content-Type": selfie.file.type || "image/jpeg" },
-        }),
-      ]);
-
-      if (!licenceUploadRes.ok || !selfieUploadRes.ok) {
-        setError("Upload failed. Please check your connection and try again.");
-        return;
-      }
-
-      // Step 3: submit keys to mark verification as PENDING
-      const submitRes = await fetch("/api/verify-identity/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          licenceKey: licenceUpload.key,
-          selfieKey: selfieUpload.key,
-        }),
-      });
-
-      if (!submitRes.ok) {
-        const data = await submitRes.json() as { error?: string };
-        setError(data.error ?? "Submission failed. Please try again.");
-        return;
-      }
-
-      setStep("submitted");
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setUploading(false);
-    }
+  if (verificationStatus === "PENDING" || verificationStatus === "REQUIRES_REVIEW") {
+    return (
+      <div style={cardStyle}>
+        {iconCircle("#fef9c3", "⏳")}
+        <h1 style={cardHeading}>Verification in progress</h1>
+        <p style={cardBody}>
+          Stripe Identity is processing your documents. This usually takes just a few minutes.
+        </p>
+        <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 28 }}>
+          We&apos;ll email you at{" "}
+          <strong style={{ color: "#0f1623" }}>{user?.email as string}</strong>{" "}
+          once it&apos;s complete.
+        </p>
+        <Link href="/dashboard" style={secondaryLink}>Go to dashboard</Link>
+        {isDev && (
+          <DevBypassBlock onBypass={handleDevBypass} busy={devBypassing} error={devError} />
+        )}
+      </div>
+    );
   }
+
+  // ── Default: explanation screen ───────────────────────────────────────────────
 
   return (
     <div
@@ -689,75 +332,160 @@ function VerifyIdentityContent() {
         boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
       }}
     >
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
-        <button
-          type="button"
-          onClick={() => setStep("explain")}
-          disabled={uploading}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: "#6b7280",
-            fontSize: 18,
-            padding: 0,
-            lineHeight: 1,
-          }}
-        >
-          ←
-        </button>
-        <div>
-          <h1
+      {/* Logo */}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              background: "#f59e0b",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#0f1623",
+            }}
+          >
+            T
+          </div>
+          <span
             style={{
               fontFamily: "Georgia, 'Times New Roman', serif",
-              fontSize: 22,
+              fontSize: 20,
               color: "#0f1623",
-              marginBottom: 2,
               letterSpacing: "-0.02em",
             }}
           >
-            Upload your documents
-          </h1>
-          <p style={{ color: "#6b7280", fontSize: 13 }}>
-            Both photos are required for verification
+            TrueBid
+          </span>
+        </Link>
+      </div>
+
+      {/* Shield icon */}
+      <div
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "#fffbeb",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 24,
+          margin: "0 auto 20px",
+        }}
+      >
+        🛡️
+      </div>
+
+      <h1
+        style={{
+          fontFamily: "Georgia, 'Times New Roman', serif",
+          fontSize: 28,
+          fontWeight: 400,
+          color: "#0f1623",
+          textAlign: "center",
+          marginBottom: 8,
+          letterSpacing: "-0.02em",
+        }}
+      >
+        Verify your identity
+      </h1>
+      <p
+        style={{
+          textAlign: "center",
+          color: "#6b7280",
+          fontSize: 14,
+          marginBottom: 28,
+          lineHeight: 1.6,
+        }}
+      >
+        TrueBid requires identity verification before you can list a property or
+        place an offer. This keeps our platform trustworthy for everyone.
+      </p>
+
+      {/* What you'll need */}
+      <div
+        style={{
+          background: "#f9f8f6",
+          border: "1px solid #e5e2db",
+          borderRadius: 12,
+          padding: "20px 24px",
+          marginBottom: 20,
+        }}
+      >
+        <p
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            color: "#6b7280",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            marginBottom: 14,
+          }}
+        >
+          What you&apos;ll need
+        </p>
+        {[
+          { icon: "🪪", title: "Australian Driver's Licence", desc: "Front side only" },
+          { icon: "🛂", title: "Australian Passport", desc: "Photo page" },
+          { icon: "🤳", title: "A short selfie video or photo", desc: "Taken live in your camera" },
+        ].map(({ icon, title, desc }) => (
+          <div
+            key={title}
+            style={{ display: "flex", gap: 14, marginBottom: 14, alignItems: "flex-start" }}
+          >
+            <span style={{ fontSize: 22, flexShrink: 0 }}>{icon}</span>
+            <div>
+              <p
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#0f1623",
+                  marginBottom: 2,
+                  fontFamily:
+                    "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                }}
+              >
+                {title}
+              </p>
+              <p style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.5 }}>{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Stripe Identity info */}
+      <div
+        style={{
+          background: "#f5f3ff",
+          border: "1px solid #ddd6fe",
+          borderRadius: 12,
+          padding: "16px 20px",
+          marginBottom: 28,
+          display: "flex",
+          gap: 12,
+          alignItems: "flex-start",
+        }}
+      >
+        <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>🔒</span>
+        <div>
+          <p style={{ fontSize: 13, color: "#4c1d95", lineHeight: 1.6, marginBottom: 4 }}>
+            <strong>Powered by Stripe Identity</strong> — Verification is automated and typically
+            takes less than 2 minutes. Your documents are encrypted and never stored on
+            TrueBid&apos;s servers.
+          </p>
+          <p style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600, letterSpacing: "0.02em" }}>
+            stripe
           </p>
         </div>
       </div>
 
-      {/* Upload fields */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 24, marginBottom: 24 }}>
-        <DocumentUpload
-          label="Driver's licence (front)"
-          hint="Lay your licence flat, ensure all text is clearly readable, no glare."
-          value={licence}
-          onChange={setLicence}
-          disabled={uploading}
-        />
-        <DocumentUpload
-          label="Selfie photo"
-          hint="Face the camera directly in good lighting. No filters or sunglasses."
-          value={selfie}
-          onChange={setSelfie}
-          disabled={uploading}
-        />
-      </div>
-
-      {/* Privacy notice */}
-      <div
-        style={{
-          background: "#f9f8f6",
-          borderRadius: 10,
-          padding: "12px 16px",
-          marginBottom: 20,
-        }}
-      >
-        <p style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.5 }}>
-          🔒 Your documents are stored securely on encrypted servers and are only accessed by our verification team. They will never be shared publicly.
-        </p>
-      </div>
-
-      {error && (
+      {startError && (
         <div
           role="alert"
           style={{
@@ -770,23 +498,28 @@ function VerifyIdentityContent() {
             fontSize: 13,
           }}
         >
-          {error}
+          {startError}
         </div>
       )}
 
-      <Button
-        size="lg"
-        onClick={handleSubmit}
-        disabled={!canSubmit}
-        loading={uploading}
-        className="w-full"
-      >
-        {uploading ? "Uploading…" : "Submit for review"}
+      <Button size="lg" onClick={handleStartVerification} loading={starting} className="w-full">
+        Start Verification →
       </Button>
 
-      <p style={{ textAlign: "center", fontSize: 12, color: "#9ca3af", marginTop: 12 }}>
-        By submitting, you confirm these documents belong to you.
+      <p style={{ textAlign: "center", fontSize: 12, color: "#6b7280", marginTop: 12 }}>
+        You&apos;ll be guided through the steps by Stripe&apos;s secure verification flow.
       </p>
+
+      <p style={{ textAlign: "center", fontSize: 12, color: "#9ca3af", marginTop: 8 }}>
+        Already verified?{" "}
+        <Link href="/dashboard" style={{ color: "#b45309", textDecoration: "none" }}>
+          Go to dashboard
+        </Link>
+      </p>
+
+      {isDev && (
+        <DevBypassBlock onBypass={handleDevBypass} busy={devBypassing} error={devError} />
+      )}
     </div>
   );
 }

@@ -241,7 +241,7 @@ export default function TermsPage() {
                 <P>4.4 Sellers are not obligated to accept any offer, including the highest offer received.</P>
                 <P>4.5 Buyers may increase their offer during an active Open Offer period. Offer reductions are not permitted once an offer has been submitted.</P>
                 <P>4.6 Withdrawing a submitted offer is permitted but will be recorded on the buyer&rsquo;s account. Repeated offer withdrawals may result in restricted access to the Platform.</P>
-                <P>4.7 Anti-snipe protection automatically extends the Open Offer window if a new offer is submitted within 15 minutes of the scheduled close time. The closing time automatically extends by 15 minutes.</P>
+                <P>4.7 Anti-snipe protection automatically extends the Open Offer window if a new offer is submitted within 10 minutes of the scheduled close time. The closing time automatically extends by 10 minutes.</P>
                 <P>4.8 TrueBid reserves the right to cancel or void any offer it reasonably believes has been submitted in bad faith, through error, or in breach of these Terms.</P>
               </div>
               <Divider />

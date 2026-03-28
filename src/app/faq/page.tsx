@@ -13,15 +13,15 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What is TrueBid?",
-        a: "TrueBid is a free, transparent property sales platform built for Australia. Every offer on a property is visible to all registered buyers in real time \u2014 no hidden negotiations, no blind auctions. You always know exactly where you stand.",
+        a: "TrueBid is a property sales platform built for Australia, currently free to use. Every offer on a property is visible to all registered buyers in real time: no hidden negotiations, no blind auctions. You can see where you stand at any point during the offer period.",
       },
       {
         q: "How is TrueBid different from a traditional sale?",
-        a: "In a traditional private sale, buyers have no idea what others are offering. Agents can play buyers off each other behind closed doors. TrueBid puts every offer on the table \u2014 publicly and in real time \u2014 so the best price is reached fairly and openly.",
+        a: "In a traditional private sale, buyers have no idea what others are offering. Agents can play buyers off each other behind closed doors. TrueBid puts every offer on the table, publicly and in real time, so the process is fair and the outcome is based on what buyers actually want to pay.",
       },
       {
         q: "Who is TrueBid for?",
-        a: "TrueBid is built for anyone buying or selling residential property in Australia \u2014 whether you\u2019re a first home buyer, an investor, a downsizer, or a seller who wants a fairer process. You don\u2019t need to be tech-savvy; the platform is simple and straightforward.",
+        a: "TrueBid is built for anyone buying or selling residential property in Australia, whether you\u2019re a first home buyer, an investor, a downsizer, or a seller who wants a fairer process. You don\u2019t need to be tech-savvy; the platform is simple and straightforward.",
       },
       {
         q: "Does TrueBid work for all property types?",
@@ -29,7 +29,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is TrueBid legal in Australia?",
-        a: "Yes. Open offer selling is legal across Australia. TrueBid operates within existing property law and works alongside the standard contract process — it doesn't replace it.",
+        a: "Yes. Open offer selling is legal across Australia. TrueBid operates within existing property law and works alongside the standard contract process. It doesn\u2019t replace it.",
       },
       {
         q: "Do I need an agent to use TrueBid?",
@@ -58,7 +58,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What is anti-snipe protection?",
-        a: "Anti-snipe protection automatically extends the offer period if a new offer is submitted within 15 minutes of the closing time. The closing time extends by 15 minutes, giving all buyers a fair chance to respond. This prevents anyone from swooping in at the last second.",
+        a: "Anti-snipe protection automatically extends the offer period if a new offer comes in within 10 minutes of the closing time. The closing time extends by 10 minutes, giving all buyers a fair chance to respond. This stops anyone from swooping in at the last second.",
       },
       {
         q: "Can I change or withdraw my offer?",
@@ -107,7 +107,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is there a cost to buyers?",
-        a: "No. Using TrueBid as a buyer is free of charge.",
+        a: "No. There is no charge to buyers for using TrueBid.",
       },
     ],
   },
@@ -116,7 +116,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "How do I list my property on TrueBid?",
-        a: "Create a seller account, complete your property details, upload photos and documents, and set your Open Offer preferences \u2014 including the offer window duration and reserve expectations. Our team reviews every listing before it goes live.",
+        a: "Create a seller account, complete your property details, upload photos and documents, and set your Open Offer preferences, including the offer window duration and reserve expectations. Our team reviews every listing before it goes live.",
       },
       {
         q: "How long does it take to get my property listed?",
@@ -124,7 +124,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does it cost to list on TrueBid?",
-        a: "Listing on TrueBid is Free during our current launch period. We plan to introduce a modest listing fee in the future, and existing users will be given advance notice before any charges apply. There is no commission and no marketing fee, now or in the future.",
+        a: "Listing on TrueBid is free during our current launch period. We plan to introduce a modest listing fee in the future, and existing users will get advance notice before any charges apply. We don\u2019t charge commission on sales.",
       },
       {
         q: "Can I set a reserve price?",
@@ -198,7 +198,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is my personal information secure?",
-        a: "Yes. TrueBid uses bank-grade encryption and does not sell your data to third parties. Personal details are never shared with other buyers.",
+        a: "Yes. TrueBid uses industry-standard encryption and does not sell your data to third parties. Your personal details are never visible to other buyers.",
       },
       {
         q: "What happens if a buyer pulls out after their offer is accepted?",
@@ -210,7 +210,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "How do I report a problem with a buyer or seller?",
-        a: 'You can report any conduct concerns directly through the platform using the "Report an issue" option on the relevant listing or offer. Our team reviews all reports and will contact you within two business days. For urgent legal matters, contact your solicitor or the relevant state consumer protection authority.',
+        a: 'You can report any conduct concerns directly through the platform using the \u201cReport an issue\u201d option on the relevant listing or offer. Our team reviews all reports and aims to follow up within two business days. For urgent legal matters, contact your solicitor or the relevant state consumer protection authority.',
       },
       {
         q: "How does TrueBid handle disputes between buyers and sellers?",
@@ -371,7 +371,7 @@ export default function FaqPage() {
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-6 py-3 rounded-[10px] hover:bg-amber-light transition-colors text-center"
             >
-              Get started for free →
+              Create a free account →
             </Link>
           </div>
         </div>

@@ -6,8 +6,8 @@
 import { prisma } from "@/lib/db";
 import { emitToListing } from "@/lib/socket";
 
-const ANTI_SNIPE_WINDOW_MS = 15 * 60 * 1000;   // 15 minutes
-const ANTI_SNIPE_EXTENSION_MS = 15 * 60 * 1000; // 15 minutes
+const ANTI_SNIPE_WINDOW_MS = 10 * 60 * 1000;   // 10 minutes
+const ANTI_SNIPE_EXTENSION_MS = 10 * 60 * 1000; // 10 minutes
 
 type ListingForAntiSnipe = {
   id: string;
@@ -19,8 +19,8 @@ type ListingForAntiSnipe = {
 /**
  * Check whether an offer event triggers the anti-snipe rule.
  *
- * If the event happens within 15 minutes of closing, the closing date is
- * extended by 15 minutes from NOW (not from the current closing date).
+ * If the event happens within 10 minutes of closing, the closing date is
+ * extended by 10 minutes from NOW (not from the current closing date).
  * Returns the new closing date if extended, null otherwise.
  *
  * Only "offer:new" and "offer:updated" trigger extension.
@@ -39,7 +39,7 @@ export async function checkAntiSnipe(
   const now = new Date();
   const timeUntilClose = listing.closingDate.getTime() - now.getTime();
 
-  // Already closed or more than 15 minutes away — no extension
+  // Already closed or more than 10 minutes away — no extension
   if (timeUntilClose <= 0) return null;
   if (timeUntilClose > ANTI_SNIPE_WINDOW_MS) return null;
 
@@ -53,7 +53,7 @@ export async function checkAntiSnipe(
   emitToListing(listing.id, "timer:extended", {
     listingId: listing.id,
     newClosingDate: newClosingDate.toISOString(),
-    reason: "Anti-snipe: new activity within 15 minutes of closing",
+    reason: "Anti-snipe: new activity within 10 minutes of closing",
   });
 
   return newClosingDate;

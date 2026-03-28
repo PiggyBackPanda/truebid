@@ -203,6 +203,18 @@ model Listing {
   requireInspection  Boolean           @default(false)
   addressVisibility  AddressVisibility @default(LOGGED_IN)
 
+  // Additional property details
+  councilRates          Float?
+  waterRates            Float?
+  occupancyType         String?
+  reasonForSelling      String?
+  currentRentalAmount   Float?
+  titleType             String?
+  bodyCorporateFees     Float?
+  inspectionTimes       Json?
+  buildingPestReportUrl String?
+  floorplanUrl          String?
+
   images            ListingImage[]
   offers            Offer[]
   messages          Message[]

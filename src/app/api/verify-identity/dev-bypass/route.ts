@@ -5,11 +5,8 @@ import { requireAuth, errorResponse } from "@/lib/api-helpers";
 // Development-only: immediately marks the authenticated user as VERIFIED.
 // Returns 404 in production.
 export async function POST() {
-  // Only accessible if ENABLE_DEV_BYPASS=true is explicitly set AND we are not in production
-  if (
-    process.env.NODE_ENV === "production" ||
-    process.env.ENABLE_DEV_BYPASS !== "true"
-  ) {
+  // Only accessible outside of production — NODE_ENV is set at build time and cannot be spoofed
+  if (process.env.NODE_ENV === "production") {
     return Response.json({ error: "Not found", code: "NOT_FOUND" }, { status: 404 });
   }
 

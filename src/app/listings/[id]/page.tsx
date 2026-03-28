@@ -12,6 +12,14 @@ import { OfferBoard } from "@/components/listings/OfferBoard";
 import { FavouriteButton } from "@/components/FavouriteButton";
 import { WatchButton } from "@/components/listings/WatchButton";
 import { InspectionSlotList } from "@/components/listings/InspectionSlotList";
+import { ContactSellerForm } from "@/components/listings/ContactSellerForm";
+import { PhotoGalleryClient } from "@/components/listings/PhotoGalleryClient";
+import { InspectionTimesPanel } from "@/components/listings/InspectionTimesPanel";
+import { AskOwnerModal } from "@/components/listings/AskOwnerModal";
+import { MortgageCalculator } from "@/components/listings/MortgageCalculator";
+import { LiveViewers } from "@/components/listings/LiveViewers";
+import { ShareButton } from "@/components/listings/ShareButton";
+import { AntiSnipeExplainer } from "@/components/listings/AntiSnipeExplainer";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -225,6 +233,15 @@ const SCHEMA_PROPERTY_TYPE: Record<string, string> = {
   VILLA: "House", LAND: "LandForm", RURAL: "Residence", OTHER: "Residence",
 };
 
+function formatDollarsAUD(amount: number): string {
+  return new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
 export default async function ListingDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { published } = await searchParams;
@@ -337,6 +354,8 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
   const features = (listing.features as string[] | null) ?? [];
   const photos = listing.images.filter((img) => img.mediaType === "photo");
   const floorplan = listing.images.find((img) => img.mediaType === "floorplan") ?? null;
+  const inspectionTimes: Array<{ date: string; startTime: string; endTime: string }> =
+    Array.isArray(listing.inspectionTimes) ? listing.inspectionTimes as Array<{ date: string; startTime: string; endTime: string }> : [];
 
   // Shape offers into PublicOffer format for the board
   const publicOffers = listing.saleMethod === "OPEN_OFFERS"
@@ -514,129 +533,67 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       )}
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 120px" }}>
-        {/* Photo gallery */}
-        {photos.length > 0 ? (
-          <>
-            {/* Mobile: single hero image */}
-            <div
-              className="relative block md:hidden mt-4 rounded-lg overflow-hidden"
-              style={{ height: 240 }}
-            >
-              <PropertyImage
-                src={photos[0].url}
-                alt={`${serializedAddress.displayAddress}, cover photo`}
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            {/* Desktop: multi-photo grid */}
-            <div
-              className="hidden md:grid grid-cols-4 gap-2 mt-6 rounded-[16px] overflow-hidden"
-              style={{ height: 420 }}
-            >
-              <div className="relative col-span-2 row-span-2">
-                <PropertyImage
-                  src={photos[0].url}
-                  alt={`${serializedAddress.displayAddress}, cover photo`}
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              {photos.slice(1, 5).map((img, i) => (
-                <div key={img.id} className="relative overflow-hidden">
-                  <PropertyImage
-                    src={img.thumbnailUrl || img.url}
-                    alt={`${serializedAddress.displayAddress}, photo ${i + 2}`}
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <div
-            className="relative mt-4 md:mt-6 rounded-lg md:rounded-[16px] overflow-hidden"
-            style={{ height: 240 }}
-          >
-            <PropertyImage
-              src={getListingFallbackImage(id)}
-              alt={`${serializedAddress.displayAddress}, cover photo`}
-              className="object-cover"
-              priority
+        <div className="lg:grid lg:grid-cols-5 lg:gap-8">
+          {/* Left column — photo gallery + all property content (60% on desktop) */}
+          <div className="lg:col-span-3">
+            {/* Photo gallery */}
+            <PhotoGalleryClient
+              photos={photos}
+              floorplanUrl={listing.floorplanUrl ?? null}
+              displayAddress={serializedAddress.displayAddress}
+              listingId={id}
             />
-          </div>
-        )}
 
-        {/* Floor Plan */}
-        <div className="mt-6 mb-2">
-          <div className="flex items-center gap-2 mb-3">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#334766", flexShrink: 0 }}>
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M3 9h18M9 21V9" />
-            </svg>
-            <h2 className="text-base font-semibold text-navy">Floor Plan</h2>
-          </div>
-
-          {floorplan ? (
-            floorplan.url.endsWith(".pdf") ? (
-              <a
-                href={floorplan.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-white border border-border rounded-[12px] px-5 py-4 hover:border-slate transition-colors"
-              >
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 8,
-                    background: "#fef2f2",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "#e05252" }}>
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
+            {/* Floor Plan from uploaded image (ListingImage) */}
+            {floorplan && (
+              <div className="mt-6 mb-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#334766", flexShrink: 0 }}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 9h18M9 21V9" />
                   </svg>
+                  <h2 className="text-base font-semibold text-navy">Floor Plan</h2>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-navy">View floor plan</p>
-                  <p className="text-xs text-text-muted">PDF (opens in new tab)</p>
-                </div>
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#9ca3af", marginLeft: 4 }}>
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                </svg>
-              </a>
-            ) : (
-              <div className="rounded-[12px] overflow-hidden border border-border bg-white">
-                <img
-                  src={floorplan.url}
-                  alt={`Floor plan, ${serializedAddress.displayAddress}`}
-                  style={{ width: "100%", display: "block", maxHeight: 480, objectFit: "contain", background: "#f7f5f0" }}
-                />
+                {floorplan.url.endsWith(".pdf") ? (
+                  <a
+                    href={floorplan.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 bg-white border border-border rounded-[12px] px-5 py-4 hover:border-slate transition-colors"
+                  >
+                    <div
+                      style={{
+                        width: 40, height: 40, borderRadius: 8, background: "#fef2f2",
+                        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                      }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "#e05252" }}>
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-navy">View floor plan</p>
+                      <p className="text-xs text-text-muted">PDF (opens in new tab)</p>
+                    </div>
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#9ca3af", marginLeft: 4 }}>
+                      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                    </svg>
+                  </a>
+                ) : (
+                  <div className="rounded-[12px] overflow-hidden border border-border bg-white">
+                    <img
+                      src={floorplan.url}
+                      alt={`Floor plan, ${serializedAddress.displayAddress}`}
+                      style={{ width: "100%", display: "block", maxHeight: 480, objectFit: "contain", background: "#f7f5f0" }}
+                    />
+                  </div>
+                )}
               </div>
-            )
-          ) : (
-            <div
-              className="bg-white border border-border rounded-[12px] flex items-center justify-center gap-3"
-              style={{ height: 100 }}
-            >
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" style={{ color: "#9ca3af" }}>
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M3 9h18M9 21V9" />
-              </svg>
-              <p className="text-sm text-text-muted">Floor plan not provided</p>
-            </div>
-          )}
-        </div>
+            )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-          {/* Main content */}
-          <div className="lg:col-span-2">
+            {/* Main content */}
+            <div className="mt-8">
             {/* Header */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
@@ -662,7 +619,14 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     </p>
                   )}
                 </div>
-                <FavouriteButton listingId={id} initialFavourited={initialFavourited} />
+                <div className="flex items-center gap-2 shrink-0">
+                  <ShareButton
+                    title={serializedAddress.streetAddress ?? serializedAddress.displayAddress}
+                    address={`${listing.suburb} ${listing.state} ${listing.postcode}`}
+                    url={canonicalUrl}
+                  />
+                  <FavouriteButton listingId={id} initialFavourited={initialFavourited} />
+                </div>
               </div>
               {serializedAddress.addressRevealed && (
                 <p className="text-base text-text-muted">
@@ -696,6 +660,13 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                   </span>
                 )}
               </div>
+
+              {/* Live viewers — only for non-OPEN_OFFERS to avoid doubling the socket count */}
+              {currentUser && listing.saleMethod !== "OPEN_OFFERS" && (
+                <div className="mt-3">
+                  <LiveViewers listingId={id} />
+                </div>
+              )}
             </div>
 
             {/* Primary CTA — inline, visible without scrolling */}
@@ -706,7 +677,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     href={`/listings/${id}/offer`}
                     className="flex-1 block text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors shadow-sm"
                   >
-                    Place an Offer (Free)
+                    Place an Offer
                   </a>
                 )}
                 {(listing.status === "COMING_SOON" || listing.status === "INSPECTIONS_OPEN") && (
@@ -722,11 +693,24 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               </div>
             )}
 
+            {/* Ask the Owner */}
+            {!isOwner && (
+              <div className="mb-6">
+                <AskOwnerModal listingId={id} sellerFirstName={listing.seller.firstName} />
+              </div>
+            )}
+
             {/* Description */}
             <div className="mb-8">
               <h2 className="text-base font-semibold text-navy mb-3">About this property</h2>
               <p className="text-sm text-text leading-relaxed whitespace-pre-line">{listing.description}</p>
             </div>
+
+            {/* Open for Inspection times (seller-entered JSON field) */}
+            <InspectionTimesPanel
+              times={inspectionTimes}
+              address={serializedAddress.displayAddress}
+            />
 
             {/* Inspection slots — shown for all pre-offer and active states */}
             {publicSlots.length > 0 && (
@@ -842,6 +826,22 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                   listing.buildingSizeM2 ? { label: "Building size", value: `${listing.buildingSizeM2.toLocaleString()} m²` } : null,
                   listing.landSizeM2 ? { label: "Land size", value: `${listing.landSizeM2.toLocaleString()} m²` } : null,
                   listing.yearBuilt ? { label: "Year built", value: String(listing.yearBuilt) } : null,
+                  listing.occupancyType === "owner_occupier" ? { label: "Occupancy", value: "Owner Occupied" } : null,
+                  listing.occupancyType === "investment" ? { label: "Occupancy", value: "Investment Property" } : null,
+                  listing.occupancyType === "investment" && listing.currentRentalAmount != null
+                    ? { label: "Currently Rented", value: `${formatDollarsAUD(listing.currentRentalAmount)} / week` }
+                    : null,
+                  listing.titleType === "own_title" ? { label: "Title Type", value: "Green Title" } : null,
+                  listing.titleType === "survey_strata" ? { label: "Title Type", value: "Survey Strata" } : null,
+                  listing.titleType === "survey_strata" && listing.bodyCorporateFees != null
+                    ? { label: "Body Corporate Fees", value: `${formatDollarsAUD(listing.bodyCorporateFees)} / quarter` }
+                    : null,
+                  listing.councilRates != null
+                    ? { label: "Council Rates", value: `${formatDollarsAUD(listing.councilRates)} / year` }
+                    : null,
+                  listing.waterRates != null
+                    ? { label: "Water Rates", value: `${formatDollarsAUD(listing.waterRates)} / year` }
+                    : null,
                   listing.publishedAt ? { label: "Listed", value: formatDate(listing.publishedAt) } : null,
                 ] as Array<{ label: string; value: string } | null>).filter(Boolean).map((row) => (
                   <div key={row!.label} className="flex items-center justify-between px-5 py-3">
@@ -851,6 +851,39 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 ))}
               </div>
             </div>
+
+            {/* Mortgage Calculator */}
+            <MortgageCalculator guidePriceCents={listing.guidePriceCents} />
+
+            {/* Reason for Selling */}
+            {listing.reasonForSelling && (
+              <div className="mb-8">
+                <h2 className="text-base font-semibold text-navy mb-3">Reason for Selling</h2>
+                <p className="text-sm text-text leading-relaxed">
+                  {listing.reasonForSelling}
+                </p>
+              </div>
+            )}
+
+            {/* Building & Pest Report */}
+            {listing.buildingPestReportUrl && (
+              <div className="mb-8">
+                <a
+                  href={listing.buildingPestReportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 border border-border bg-white text-navy font-semibold text-sm px-5 py-3 rounded-[12px] hover:border-slate hover:bg-bg transition-colors"
+                >
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="12" y1="18" x2="12" y2="12" />
+                    <line x1="9" y1="15" x2="15" y2="15" />
+                  </svg>
+                  Download Building &amp; Pest Report
+                </a>
+              </div>
+            )}
 
             {/* Private Offers notice */}
             {listing.saleMethod === "PRIVATE_OFFERS" && !isOwner && listing.status === "ACTIVE" && (
@@ -883,10 +916,14 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 </a>
               </div>
             )}
-          </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
+            {/* Anti-snipe explainer */}
+            <AntiSnipeExplainer />
+          </div>{/* end main content */}
+          </div>{/* end left column */}
+
+          {/* Right column — sticky offers panel + seller info (40% on desktop) */}
+          <div className="lg:col-span-2 mt-8 lg:mt-0">
             <div className="sticky top-20 space-y-4">
               {/* Open Offers board — only shown when listing is ACTIVE or past */}
               {listing.saleMethod === "OPEN_OFFERS" && listing.status !== "COMING_SOON" && listing.status !== "INSPECTIONS_OPEN" && (
@@ -1001,9 +1038,18 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                   </div>
                 </div>
               </div>
+
+              {/* Contact seller */}
+              {!isOwner && (listing.status === "ACTIVE" || listing.status === "UNDER_OFFER") && (
+                <ContactSellerForm
+                  listingId={id}
+                  sellerId={listing.seller.id}
+                  sellerFirstName={listing.seller.firstName}
+                />
+              )}
             </div>
           </div>
-        </div>
+        </div>{/* end outer grid */}
       </div>
 
       {/* Sticky CTA bar */}
@@ -1014,7 +1060,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               href={`/listings/${id}/offer`}
               className="block w-full text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors"
             >
-              Place an Offer (Free)
+              Place an Offer
             </a>
           </div>
         </div>
