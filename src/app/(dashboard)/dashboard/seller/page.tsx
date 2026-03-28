@@ -121,7 +121,7 @@ export default async function SellerDashboardPage() {
           const statusColors: Record<string, { bg: string; color: string }> = {
             ACTIVE: { bg: "#dcfce7", color: "#15803d" },
             DRAFT: { bg: "#f3f4f6", color: "#374151" },
-            UNDER_OFFER: { bg: "#dbeafe", color: "#d97706" },
+            UNDER_OFFER: { bg: "#fef3c7", color: "#b45309" },
           };
           const statusStyle = statusColors[listing.status] ?? { bg: "#f3f4f6", color: "#374151" };
 

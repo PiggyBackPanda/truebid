@@ -106,7 +106,7 @@ export function ListingStatusProgress({ status }: Props) {
 // Compact badge used in listing cards and tables
 const BADGE_STYLES: Partial<Record<ListingStatus, { bg: string; color: string; label: string }>> = {
   DRAFT:            { bg: "#f3f4f6", color: "#6b7280",  label: "Draft" },
-  COMING_SOON:      { bg: "#eff6ff", color: "#2563eb",  label: "Coming Soon" },
+  COMING_SOON:      { bg: "#fef3c7", color: "#b45309",  label: "Coming Soon" },
   INSPECTIONS_OPEN: { bg: "#fffbeb", color: "#d97706",  label: "Inspections Open" },
   ACTIVE:           { bg: "#dcfce7", color: "#16a34a",  label: "Active" },
   UNDER_OFFER:      { bg: "#fef3c7", color: "#d97706",  label: "Under Offer" },

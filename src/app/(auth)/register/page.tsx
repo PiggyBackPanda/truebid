@@ -300,11 +300,11 @@ function RegisterForm() {
             />
             <span style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.5 }}>
               I agree to the{" "}
-              <Link href="/terms" style={{ color: "#4a90d9", textDecoration: "none" }}>
+              <Link href="/terms" style={{ color: "#b45309", textDecoration: "none" }}>
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" style={{ color: "#4a90d9", textDecoration: "none" }}>
+              <Link href="/privacy" style={{ color: "#b45309", textDecoration: "none" }}>
                 Privacy Policy
               </Link>
             </span>
@@ -329,7 +329,7 @@ function RegisterForm() {
 
       <p style={{ textAlign: "center", fontSize: 14, color: "#6b7280", marginTop: 24 }}>
         Already have an account?{" "}
-        <Link href="/login" style={{ color: "#4a90d9", fontWeight: 500, textDecoration: "none" }}>
+        <Link href="/login" style={{ color: "#b45309", fontWeight: 500, textDecoration: "none" }}>
           Sign in
         </Link>
       </p>

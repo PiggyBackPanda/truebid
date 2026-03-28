@@ -203,8 +203,8 @@ function SlotCard({
             <span style={{
               fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em",
               padding: "2px 8px", borderRadius: 20,
-              background: slot.type === "OPEN_HOUSE" ? "#dbeafe" : "#dcfce7",
-              color: slot.type === "OPEN_HOUSE" ? "#1d4ed8" : "#15803d",
+              background: slot.type === "OPEN_HOUSE" ? "#fef3c7" : "#dcfce7",
+              color: slot.type === "OPEN_HOUSE" ? "#b45309" : "#15803d",
             }}>
               {slot.type === "OPEN_HOUSE" ? "Open House" : "Scheduled"}
             </span>

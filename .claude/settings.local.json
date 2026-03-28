@@ -108,7 +108,17 @@
       "WebFetch(domain:unsplash.com)",
       "WebFetch(domain:images.unsplash.com)",
       "Bash(curl -s http://localhost:3000/faq)",
-      "Bash(curl -s http://localhost:3000/terms)"
+      "Bash(curl -s http://localhost:3000/terms)",
+      "Bash(npx vitest:*)",
+      "Bash(npx eslint:*)",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/inspections\")",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/inspections/[slotId]\")",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/inspections/[slotId]/bookings\")",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/inspections/[slotId]/bookings/[bookingId]\")",
+      "Bash(git checkout:*)",
+      "Bash(find /c/Users/jorda/AppData/Local/Temp/claude -name *.output)",
+      "Bash(1:*)",
+      "Bash(PGPASSWORD=truebid123 psql -U postgres -h localhost -d truebid_dev -c \"\\\\dt\")"
     ]
   }
 }

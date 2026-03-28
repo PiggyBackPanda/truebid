@@ -16,7 +16,7 @@ const CONDITION_LABELS: Record<string, string> = {
 
 const CONDITION_COLORS: Record<string, { bg: string; color: string }> = {
   UNCONDITIONAL: { bg: "#dcfce7", color: "#15803d" },
-  SUBJECT_TO_FINANCE: { bg: "#dbeafe", color: "#d97706" },
+  SUBJECT_TO_FINANCE: { bg: "#fef3c7", color: "#b45309" },
   SUBJECT_TO_BUILDING_PEST: { bg: "#fef9c3", color: "#a16207" },
   SUBJECT_TO_BOTH: { bg: "#fef3c7", color: "#d97706" },
   SUBJECT_TO_SALE: { bg: "#fce7f3", color: "#be185d" },

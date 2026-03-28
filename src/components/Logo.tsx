@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 type LogoVariant = "dark" | "light" | "mono";
 
 interface LogoProps {
@@ -65,9 +67,9 @@ export function Logo({ variant = "dark", className = "", linked = false }: LogoP
 
   if (linked) {
     return (
-      <a href="/" className="no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] rounded-sm">
+      <Link href="/" className="no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b] rounded-sm">
         {wordmark}
-      </a>
+      </Link>
     );
   }
 

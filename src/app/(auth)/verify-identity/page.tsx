@@ -444,7 +444,7 @@ function VerifyIdentityContent() {
             width: 56,
             height: 56,
             borderRadius: "50%",
-            background: "#eff6ff",
+            background: "#fffbeb",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -550,7 +550,7 @@ function VerifyIdentityContent() {
 
         <p style={{ textAlign: "center", fontSize: 12, color: "#9ca3af", marginTop: 16 }}>
           Already verified?{" "}
-          <Link href="/dashboard" style={{ color: "#4a90d9", textDecoration: "none" }}>
+          <Link href="/dashboard" style={{ color: "#b45309", textDecoration: "none" }}>
             Go to dashboard
           </Link>
         </p>

@@ -116,7 +116,7 @@ function Avatar({ name }: { name: string }) {
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
   ACTIVE: { bg: "#dcfce7", color: "#15803d", label: "Active" },
   WITHDRAWN: { bg: "#f3f4f6", color: "#374151", label: "Withdrawn" },
-  ACCEPTED: { bg: "#dbeafe", color: "#d97706", label: "Accepted" },
+  ACCEPTED: { bg: "#fef3c7", color: "#b45309", label: "Accepted" },
   REJECTED: { bg: "#fee2e2", color: "#dc2626", label: "Rejected" },
   EXPIRED: { bg: "#f3f4f6", color: "#9ca3af", label: "Expired" },
 };
@@ -124,8 +124,8 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }>
 const LISTING_STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   ACTIVE: { bg: "#dcfce7", color: "#15803d" },
   DRAFT: { bg: "#f3f4f6", color: "#374151" },
-  UNDER_OFFER: { bg: "#dbeafe", color: "#d97706" },
-  SOLD: { bg: "#e0e7ff", color: "#4338ca" },
+  UNDER_OFFER: { bg: "#fef3c7", color: "#b45309" },
+  SOLD: { bg: "#f0fdf4", color: "#15803d" },
   WITHDRAWN: { bg: "#f3f4f6", color: "#9ca3af" },
   EXPIRED: { bg: "#f3f4f6", color: "#9ca3af" },
 };
@@ -723,8 +723,8 @@ function BuyerMessagesTab({
           <div
             style={{
               padding: "8px 16px",
-              background: "#eff6ff",
-              borderBottom: "1px solid #dbeafe",
+              background: "#fffbeb",
+              borderBottom: "1px solid #fde68a",
               fontSize: 12,
               color: "#d97706",
               fontFamily: "Outfit, sans-serif",

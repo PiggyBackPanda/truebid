@@ -498,7 +498,7 @@ export function MessagesPageClient({
           <span
             className="text-xs font-bold rounded-full px-3 py-1"
             style={{
-              background: "#eff6ff",
+              background: "#fffbeb",
               color: "#d97706",
               fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}

@@ -153,7 +153,7 @@ function LoginForm() {
 
       <p style={{ textAlign: "center", fontSize: 14, color: "#6b7280", marginTop: 24 }}>
         Don&apos;t have an account?{" "}
-        <Link href="/register" style={{ color: "#4a90d9", fontWeight: 500, textDecoration: "none" }}>
+        <Link href="/register" style={{ color: "#b45309", fontWeight: 500, textDecoration: "none" }}>
           Create one
         </Link>
       </p>

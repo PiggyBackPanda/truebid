@@ -9,20 +9,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary
-        navy: "#0f1a2e",
-        "navy-light": "#1a2a45",
-        "navy-mid": "#243656",
+        // Brand core
+        navy: "#0f1623",
+        "navy-light": "#1b2640",
+        "navy-mid": "#243456",
+        surface: "#1a2b40",
         slate: "#334766",
-        // Accent
-        amber: "#e8a838",
-        "amber-light": "#f5c563",
-        "amber-glow": "rgba(232, 168, 56, 0.15)",
+        // Amber — single primary accent
+        amber: {
+          DEFAULT: "#f59e0b",
+          light: "#fbbf24",
+          dark: "#b45309",
+          glow: "rgba(245, 158, 11, 0.15)",
+        },
         // Semantic
-        green: "#3db87a",
-        "green-bg": "#e8f5e9",
-        red: "#e05252",
-        sky: "#4a90d9",
+        green: "#10b981",
+        "green-bg": "#d1fae5",
+        red: "#ef4444",
         // Neutrals
         bg: "#f7f5f0",
         "bg-card": "#ffffff",
@@ -32,9 +35,15 @@ const config: Config = {
         border: "#e5e2db",
       },
       fontFamily: {
-        serif: ["DM Serif Display", "Georgia", "serif"],
-        sans: ["Outfit", "-apple-system", "sans-serif"],
-        heading: ["var(--font-fraunces)", "serif"],
+        serif: ["Georgia", "Times New Roman", "serif"],
+        sans: [
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif",
+        ],
+        heading: ["Georgia", "Times New Roman", "serif"],
       },
       fontSize: {
         hero: ["56px", { lineHeight: "1.1", letterSpacing: "-0.03em" }],
@@ -57,9 +66,9 @@ const config: Config = {
       },
       boxShadow: {
         DEFAULT:
-          "0 1px 3px rgba(15, 26, 46, 0.06), 0 4px 12px rgba(15, 26, 46, 0.04)",
-        lg: "0 4px 6px rgba(15, 26, 46, 0.04), 0 12px 32px rgba(15, 26, 46, 0.08)",
-        amber: "0 4px 16px rgba(232, 168, 56, 0.3)",
+          "0 1px 3px rgba(15, 22, 35, 0.06), 0 4px 12px rgba(15, 22, 35, 0.04)",
+        lg: "0 4px 6px rgba(15, 22, 35, 0.04), 0 12px 32px rgba(15, 22, 35, 0.08)",
+        amber: "0 4px 16px rgba(245, 158, 11, 0.35)",
       },
       keyframes: {
         fadeIn: {
@@ -71,7 +80,7 @@ const config: Config = {
           "50%": { opacity: "0.4" },
         },
         highlightNew: {
-          "0%": { backgroundColor: "rgba(232, 168, 56, 0.15)" },
+          "0%": { backgroundColor: "rgba(245, 158, 11, 0.15)" },
           "100%": { backgroundColor: "transparent" },
         },
       },

@@ -24,7 +24,7 @@ export default function AboutPage() {
               marginBottom: 16,
             }}
           >
-            What we're here for
+            What we&apos;re here for
           </p>
           <h1
             className="text-white mb-6"

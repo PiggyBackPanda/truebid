@@ -17,7 +17,7 @@ function formatSlotTime(startIso: string, endIso: string): string {
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
   CONFIRMED: { label: "Confirmed", bg: "#dcfce7", color: "#15803d" },
-  ATTENDED:  { label: "Attended ✓", bg: "#dbeafe", color: "#1d4ed8" },
+  ATTENDED:  { label: "Attended ✓", bg: "#fef3c7", color: "#b45309" },
   NO_SHOW:   { label: "No-show", bg: "#fee2e2", color: "#dc2626" },
   CANCELLED: { label: "Cancelled", bg: "#f3f4f6", color: "#6b7280" },
 };
