@@ -36,7 +36,7 @@ export function ListingCard({
   suburb,
   state,
   postcode,
-  propertyType,
+  propertyType: _propertyType,
   bedrooms,
   bathrooms,
   carSpaces,
