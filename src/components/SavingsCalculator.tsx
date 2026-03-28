@@ -13,8 +13,15 @@ export function SavingsCalculator() {
 
   const commLow  = price * 0.020
   const commHigh = price * 0.035
-  const mktLow   = price * 0.005
-  const mktHigh  = price * 0.007
+
+  function getMarketingRange(p: number): [number, number] {
+    if (p < 500000)  return [2000,  5000]
+    if (p < 1000000) return [3000,  8000]
+    if (p < 2000000) return [5000, 12000]
+    return                  [8000, 18000]
+  }
+  const [mktLow, mktHigh] = getMarketingRange(price)
+
   const savLow   = commLow + mktLow
   const savHigh  = commHigh + mktHigh
 
@@ -73,12 +80,14 @@ export function SavingsCalculator() {
 
       {/* Hero result */}
       <div className="bg-[#0D1B2A] rounded-xl px-6 py-5 text-center mb-4">
-        <p className="text-sm text-[#C8B99A] mb-1">Estimated savings with TrueBid</p>
+        <p className="text-sm text-[#C8B99A] mb-1">Typical agent costs on a sale of this value</p>
         <p className="text-3xl font-medium text-[#D4900A] tracking-tight">
           {fmt(savLow)} – {fmt(savHigh)}
         </p>
-        <p className="text-sm text-[#C8B99A] mt-1">Based on a {fmt(price)} sale</p>
+        <p className="text-sm text-[#C8B99A] mt-1">What agents typically charge on a {fmt(price)} sale</p>
       </div>
+
+      <p className="text-xs text-[#8B7355] text-center mb-4">This shows what agents typically charge. Your actual outcome depends on the price you achieve.</p>
 
       {/* Breakdown */}
       <div className="grid grid-cols-2 gap-3 mb-4">
@@ -90,12 +99,13 @@ export function SavingsCalculator() {
         <div className="bg-white border border-[#E8E2D8] rounded-lg p-3">
           <p className="text-xs text-[#8B7355] mb-1">Marketing fees</p>
           <p className="text-base font-medium text-[#0D1B2A]">{fmt(mktLow)} – {fmt(mktHigh)}</p>
-          <p className="text-xs text-[#8B7355] mt-1">0.5% – 0.7% of sale price</p>
+          <p className="text-xs text-[#8B7355] mt-1">Flat fee, varies by campaign</p>
         </div>
         <div className="bg-white border-2 border-[#D4900A] rounded-lg p-5 col-span-2 text-center">
           <p className="text-xs text-[#D4900A] mb-1">TrueBid listing cost</p>
           <p className="text-3xl font-medium text-[#0D1B2A] tracking-tight">$0</p>
-          <p className="text-xs text-[#8B7355] mt-1">Free to list during our launch period. No commission. No marketing fees.</p>
+          <p className="text-xs text-[#8B7355] mt-1">Free to list during our current launch period, which will end with no less than 30 days written notice to registered users. No commission. No portal listing fees.</p>
+          <p className="text-xs text-[#8B7355] mt-2">Professional photography is still recommended and is your own cost, typically $300 to $700.</p>
         </div>
       </div>
 
@@ -117,26 +127,36 @@ export function SavingsCalculator() {
           <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-500 leading-relaxed space-y-1">
             <div className="flex justify-between">
               <span>Agent commission range</span>
-              <span className="font-medium text-gray-700">2.0% – 3.5%</span>
+              <span className="font-medium text-gray-700">2.0% – 3.5% of sale price</span>
             </div>
             <div className="flex justify-between">
-              <span>Marketing fees range</span>
-              <span className="font-medium text-gray-700">0.5% – 0.7%</span>
+              <span>Marketing fees</span>
+              <span className="font-medium text-gray-700">{fmt(mktLow)} – {fmt(mktHigh)} (flat fee)</span>
             </div>
             <div className="flex justify-between">
               <span>TrueBid listing fee</span>
               <span className="font-medium text-gray-700">$0</span>
             </div>
-            <p className="pt-2 border-t border-gray-200 mt-2">
-              Agent commission rates are based on Real Estate Institute of Australia (REIA)
-              reported averages across Australian states, typically ranging from 2.0% to 3.5%
-              of the final sale price. Marketing costs — including photography, copywriting,
-              online portal listings, and print — typically add 0.5% to 0.7% of the sale
-              price. Figures are indicative only and will vary by state, agent, property
-              type, and campaign. TrueBid charges no commission and no marketing fees. This
-              calculator is a guide only. Always obtain independent financial advice before
-              making decisions.
-            </p>
+            <div className="pt-2 border-t border-gray-200 mt-2 space-y-2">
+              <p>
+                Commission range sourced from Real Estate Institute of Australia (REIA) reported
+                state averages, typically ranging from 2.0% to 3.5% of the final sale price.
+                Marketing fee estimates reflect typical flat-fee campaign costs at each price point
+                and do not scale with sale price.
+              </p>
+              <p>
+                <span className="font-medium text-gray-600">Not included in this estimate:</span>{" "}
+                professional photography (typically $300 to $700, required on any platform),
+                legal and conveyancing fees (required regardless of sale method), and optional
+                costs such as home staging or auctioneer fees.
+              </p>
+              <p>
+                This calculator shows agent-related costs avoided. It does not account for any
+                difference in sale price that may or may not result from selling with or without
+                an agent. Figures are a guide only. Always obtain independent financial advice
+                before making decisions.
+              </p>
+            </div>
           </div>
         )}
       </div>
@@ -146,7 +166,7 @@ export function SavingsCalculator() {
         href="/register"
         className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 rounded-lg transition-colors"
       >
-        List Your Property →
+        List Your Property
       </Link>
 
     </div>

@@ -16,7 +16,7 @@ const WINDOW_MINUTES = 70; // look 70 min ahead so hourly calls have overlap buf
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
-    console.error("[cron] CRON_SECRET is not set — refusing to run unprotected");
+    console.error("[cron] CRON_SECRET is not set, refusing to run unprotected");
     return Response.json({ error: "Server misconfiguration" }, { status: 500 });
   }
   const auth = req.headers.get("authorization");

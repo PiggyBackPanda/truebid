@@ -15,7 +15,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Viewer identity (optional — endpoint is public)
+    // Viewer identity (optional, endpoint is public)
     const session = await getServerSession(authOptions);
     const viewerId = (session?.user as { id?: string } | undefined)?.id;
 
@@ -50,6 +50,13 @@ export async function GET(
         depositAmountCents: true,
         requireInspection: true,
         addressVisibility: true,
+        councilRates: true,
+        waterRates: true,
+        occupancyType: true,
+        reasonForSelling: true,
+        currentRentalAmount: true,
+        titleType: true,
+        bodyCorporateFees: true,
         createdAt: true,
         publishedAt: true,
         _count: { select: { inspectionSlots: { where: { status: { not: "CANCELLED" } } } } },
@@ -63,6 +70,17 @@ export async function GET(
             mediaType: true,
           },
         },
+        documents: {
+          orderBy: { createdAt: "asc" },
+          select: {
+            id: true,
+            name: true,
+            url: true,
+            mimeType: true,
+            fileSize: true,
+            createdAt: true,
+          },
+        },
         seller: {
           select: {
             id: true,
@@ -71,7 +89,7 @@ export async function GET(
             verificationStatus: true,
           },
         },
-        // Offers — public board data only (no personal details)
+        // Offers: public board data only (no personal details)
         offers: {
           where: { isPublic: true },
           orderBy: [{ amountCents: "desc" }, { createdAt: "asc" }],

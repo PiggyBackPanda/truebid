@@ -46,7 +46,7 @@ function generateIcal(slot: Slot, address: string): string {
     "BEGIN:VEVENT",
     `DTSTART:${formatDt(start)}`,
     `DTEND:${formatDt(end)}`,
-    `SUMMARY:Property Inspection — ${address}`,
+    `SUMMARY:Property Inspection: ${address}`,
     `LOCATION:${address}`,
     `DESCRIPTION:Property inspection at ${address}. Book via TrueBid.`,
     "END:VEVENT",
@@ -101,7 +101,7 @@ export function InspectionSlotList({ slots, listingId, isLoggedIn }: Props) {
                   </p>
                 )}
                 {slot.type === "OPEN_HOUSE" && (
-                  <p className="text-xs text-green font-medium mt-1">Open House — no booking required</p>
+                  <p className="text-xs text-green font-medium mt-1">Open House: no booking required</p>
                 )}
                 {slot.notes && (
                   <p className="text-xs text-text-muted mt-1 italic">{slot.notes}</p>

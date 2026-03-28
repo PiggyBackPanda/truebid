@@ -9,7 +9,7 @@ import { ListingCard } from "@/components/listings/ListingCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Favourites — TrueBid",
+  title: "My Favourites | TrueBid",
 };
 
 type FavouritedListing = {
@@ -84,7 +84,7 @@ export default async function FavouritesPage() {
     });
     listings = favourites.map((f) => f.listing as FavouritedListing);
   } catch {
-    // Table may not exist yet — run: npm run db:migrate
+    // Table may not exist yet. Run: npm run db:migrate
   }
 
   return (
@@ -99,7 +99,7 @@ export default async function FavouritesPage() {
       >
         My Favourites
       </h1>
-      <p style={{ fontSize: 14, color: "#6b7280", marginBottom: 32, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      <p style={{ fontSize: 14, color: "#6b7280", marginBottom: 32, fontFamily: "var(--font-sans)" }}>
         {listings.length} saved {listings.length === 1 ? "listing" : "listings"}
       </p>
 
@@ -139,7 +139,7 @@ export default async function FavouritesPage() {
             style={{
               fontSize: 14,
               color: "#6b7280",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               marginBottom: 24,
             }}
           >
@@ -150,7 +150,7 @@ export default async function FavouritesPage() {
             style={{
               background: "#f59e0b",
               color: "#1a0f00",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 14,
               fontWeight: 600,
               textDecoration: "none",

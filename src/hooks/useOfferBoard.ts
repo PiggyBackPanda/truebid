@@ -82,7 +82,7 @@ export function useOfferBoard(
             setClosingDate(data.listing.closingDate);
           }
         })
-        .catch(() => {/* ignore — we'll be up to date on next event */});
+        .catch(() => {/* ignore: we'll be up to date on next event */});
       socket.emit("join_listing", { listingId });
     });
 

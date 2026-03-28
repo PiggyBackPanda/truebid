@@ -9,7 +9,7 @@ import { VerifyClient } from "./VerifyClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Verify Identity — TrueBid",
+  title: "Verify Identity | TrueBid",
 };
 
 const STATUS_CONFIG = {
@@ -80,7 +80,7 @@ export default async function VerifyPage({
           style={{
             fontSize: 13,
             color: "#6b7280",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             textDecoration: "none",
           }}
         >
@@ -102,7 +102,7 @@ export default async function VerifyPage({
         style={{
           fontSize: 14,
           color: "#6b7280",
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "var(--font-sans)",
           marginBottom: 32,
           lineHeight: 1.6,
         }}
@@ -121,7 +121,7 @@ export default async function VerifyPage({
             padding: "12px 16px",
             marginBottom: 24,
             fontSize: 14,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             color: "#92400e",
           }}
         >
@@ -137,7 +137,7 @@ export default async function VerifyPage({
             padding: "12px 16px",
             marginBottom: 24,
             fontSize: 14,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             color: "#92400e",
           }}
         >
@@ -167,7 +167,7 @@ export default async function VerifyPage({
             padding: "6px 14px",
             fontSize: 13,
             fontWeight: 600,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             marginBottom: 20,
           }}
         >
@@ -182,7 +182,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 14,
                 color: "#374151",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 lineHeight: 1.65,
                 marginBottom: 20,
               }}
@@ -201,7 +201,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 14,
                 color: "#374151",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 lineHeight: 1.65,
                 marginBottom: 12,
               }}
@@ -213,7 +213,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 13,
                 color: "#6b7280",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
               }}
             >
               Refresh this page to check for updates. You will also receive an
@@ -230,7 +230,7 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 12,
                     color: "#6b7280",
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                     marginBottom: 2,
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
@@ -243,7 +243,7 @@ export default async function VerifyPage({
                     fontSize: 16,
                     fontWeight: 600,
                     color: "#0f1623",
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   {verifiedName}
@@ -256,7 +256,7 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 12,
                     color: "#6b7280",
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                     marginBottom: 2,
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
@@ -268,7 +268,7 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 14,
                     color: "#374151",
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   {formatDate(user.verifiedAt)}
@@ -280,7 +280,7 @@ export default async function VerifyPage({
                 marginTop: 20,
                 fontSize: 13,
                 color: "#6b7280",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 lineHeight: 1.6,
               }}
             >
@@ -296,7 +296,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 14,
                 color: "#374151",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 lineHeight: 1.65,
                 marginBottom: 12,
               }}
@@ -308,7 +308,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 13,
                 color: "#6b7280",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
               }}
             >
               You will be notified by email once the review is complete. If you
@@ -335,7 +335,7 @@ export default async function VerifyPage({
           style={{
             fontSize: 12,
             color: "#6b7280",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             lineHeight: 1.7,
           }}
         >

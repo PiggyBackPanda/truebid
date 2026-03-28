@@ -25,12 +25,12 @@ describe("fuzzCoordinates", () => {
     const lng = 115.8605;
     const a = fuzzCoordinates(lat, lng, "seed_one");
     const b = fuzzCoordinates(lat, lng, "seed_two");
-    // Astronomically unlikely to collide — treat as always different
+    // Astronomically unlikely to collide, treat as always different
     expect(a.lat !== b.lat || a.lng !== b.lng).toBe(true);
   });
 
   it("does not return the original coordinates when offset is non-zero", () => {
-    // This test is probabilistic — the hash of this specific seed is non-zero
+    // This test is probabilistic: the hash of this specific seed is non-zero
     const result = fuzzCoordinates(-31.9505, 115.8605, "truebid_listing");
     expect(result.lat).not.toBe(-31.9505);
   });

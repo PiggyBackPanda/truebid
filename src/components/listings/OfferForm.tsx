@@ -148,7 +148,7 @@ export function OfferForm({
     );
   }
 
-  // Inspection gate — show locked state if seller requires inspection and buyer hasn't attended
+  // Inspection gate: show locked state if seller requires inspection and buyer hasn't attended
   if (requireInspection && viewerInspectionStatus && !viewerInspectionStatus.hasInspected) {
     const { hasUpcomingBooking, upcomingBookingSlot } = viewerInspectionStatus;
 

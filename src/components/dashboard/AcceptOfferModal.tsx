@@ -133,6 +133,10 @@ export function AcceptOfferModal({
           </div>
         )}
 
+        <p style={{ fontSize: 12, color: "#9ca3af", marginBottom: 20, lineHeight: 1.5 }}>
+          This is your decision. TrueBid is a technology platform and does not advise on, recommend, or influence offer acceptance.
+        </p>
+
         <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
           <button
             onClick={onCancel}
@@ -143,7 +147,7 @@ export function AcceptOfferModal({
               borderRadius: 8,
               padding: "10px 20px",
               cursor: "pointer",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 14,
               color: "#334766",
             }}
@@ -160,7 +164,7 @@ export function AcceptOfferModal({
               borderRadius: 8,
               padding: "10px 24px",
               cursor: loading ? "not-allowed" : "pointer",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 14,
               fontWeight: 600,
             }}

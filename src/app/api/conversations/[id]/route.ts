@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
 
-// GET /api/conversations/[id] — fetch conversation + all messages, mark incoming as read
+// GET /api/conversations/[id]: fetch conversation + all messages, mark incoming as read
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

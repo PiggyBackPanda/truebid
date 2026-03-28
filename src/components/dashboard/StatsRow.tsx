@@ -31,7 +31,7 @@ function StatCard({ label, value, sub, subColor = "#6b7280" }: StatCardProps) {
         padding: "20px 24px",
       }}
     >
-      <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 6, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 6, fontFamily: "var(--font-sans)" }}>
         {label}
       </p>
       <p
@@ -46,7 +46,7 @@ function StatCard({ label, value, sub, subColor = "#6b7280" }: StatCardProps) {
       >
         {value}
       </p>
-      <p style={{ fontSize: 12, color: subColor, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>{sub}</p>
+      <p style={{ fontSize: 12, color: subColor, fontFamily: "var(--font-sans)" }}>{sub}</p>
     </div>
   );
 }

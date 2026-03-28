@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse } from "@/lib/api-helpers";
 
-// GET /api/verification/status — check current verification status
+// GET /api/verification/status: check current verification status
 export async function GET() {
   try {
     const sessionUser = await requireAuth();

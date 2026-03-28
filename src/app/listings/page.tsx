@@ -5,6 +5,9 @@ import { authOptions } from "@/lib/auth";
 import { serializeListingAddress } from "@/lib/listing-serializer";
 import type { AddressVisibility } from "@/lib/listing-serializer";
 import { ListingCard } from "@/components/listings/ListingCard";
+import { SaveSearchButton } from "@/components/listings/SaveSearchButton";
+import { ViewToggle } from "@/components/listings/ViewToggle";
+import { MapViewClient } from "@/components/listings/MapViewClient";
 import type { Metadata } from "next";
 import type { Prisma, AustralianState, PropertyType, SaleMethod } from "@prisma/client";
 
@@ -21,6 +24,7 @@ interface SearchParams {
   minBaths?: string;
   sort?: string;
   page?: string;
+  view?: string;
 }
 
 export async function generateMetadata({
@@ -82,7 +86,7 @@ const BATH_OPTIONS = [
 
 const SALE_METHOD_OPTIONS = [
   { value: "", label: "All Methods" },
-  { value: "OPEN_OFFERS", label: "Open Offers" },
+  { value: "OPEN_OFFERS", label: "Live Offers" },
   { value: "PRIVATE_OFFERS", label: "Private Offers" },
   { value: "FIXED_PRICE", label: "Fixed Price" },
 ];
@@ -156,9 +160,10 @@ const STATE_DISPLAY: Record<string, string> = {
 
 const VALID_STATES = new Set<string>(["WA", "NSW", "VIC", "QLD", "SA", "TAS", "ACT", "NT"]);
 
-// Shared select shape — used for every listing query so the return type is consistent.
+// Shared select shape used for every listing query so the return type is consistent.
 const LISTING_SELECT = {
   id: true,
+  status: true,
   streetAddress: true,
   suburb: true,
   state: true,
@@ -232,7 +237,7 @@ async function fetchNearbyListings(
   suburb: string,
   geo: Awaited<ReturnType<typeof geocodeSuburbAU>>,
   baseFilters: Prisma.ListingWhereInput,
-  // Anchor derived from found listings — works even when Mapbox is unavailable
+  // Anchor derived from found listings (works even when Mapbox is unavailable)
   anchor?: { state: string; postcode: string } | null,
 ): Promise<ListingRow[]> {
   const notThisSuburb: Prisma.ListingWhereInput = {
@@ -243,7 +248,7 @@ async function fetchNearbyListings(
   const targetPostcode = geo?.postcode ?? anchor?.postcode ?? null;
   const targetState = geo?.stateCode?.toUpperCase() ?? anchor?.state ?? null;
 
-  // A — Same postcode
+  // A: Same postcode
   if (targetPostcode) {
     const results = await prisma.listing.findMany({
       where: { ...baseFilters, ...notThisSuburb, postcode: targetPostcode },
@@ -254,12 +259,12 @@ async function fetchNearbyListings(
     if (results.length > 0) return results;
   }
 
-  // B — 10 km radius using listing coordinates (only works if listings have lat/lng stored)
+  // B: 10 km radius using listing coordinates (only works if listings have lat/lng stored)
   if (geo?.lat != null && geo?.lng != null) {
     const { lat, lng } = geo;
     const radiusRows = await prisma.$queryRaw<Array<{ id: string }>>`
       SELECT id FROM "Listing"
-      WHERE status = 'ACTIVE'
+      WHERE status IN ('ACTIVE', 'COMING_SOON')
         AND latitude  IS NOT NULL
         AND longitude IS NOT NULL
         AND (
@@ -299,7 +304,7 @@ async function searchListingsWithSuburbFallback(
   fallbackMeta: { searchedSuburb: string; postcode?: string; state?: string };
   nearbyListings: ListingRow[];
 }> {
-  // STEP 1 — Exact suburb match (case-insensitive)
+  // STEP 1: Exact suburb match (case-insensitive)
   // Geocoding runs in parallel: needed for nearby listings on a hit, or fallback steps on a miss.
   const step1Where: Prisma.ListingWhereInput = {
     ...baseFilters,
@@ -320,7 +325,7 @@ async function searchListingsWithSuburbFallback(
     return { listings: step1Listings, total: step1Total, fallbackLevel: 0, fallbackMeta: { searchedSuburb: suburb }, nearbyListings };
   }
 
-  // STEP 2 — Same postcode
+  // STEP 2: Same postcode
   if (geo?.postcode) {
     const step2Where: Prisma.ListingWhereInput = { ...baseFilters, postcode: geo.postcode };
     const [step2Listings, step2Total] = await Promise.all([
@@ -336,12 +341,12 @@ async function searchListingsWithSuburbFallback(
     }
   }
 
-  // STEP 3 — 10 km radius (requires lat/lng on listings)
+  // STEP 3: 10 km radius (requires lat/lng on listings)
   if (geo?.lat != null && geo?.lng != null) {
     const { lat, lng } = geo;
     const radiusRows = await prisma.$queryRaw<Array<{ id: string }>>`
       SELECT id FROM "Listing"
-      WHERE status = 'ACTIVE'
+      WHERE status IN ('ACTIVE', 'COMING_SOON')
         AND latitude  IS NOT NULL
         AND longitude IS NOT NULL
         AND (
@@ -370,7 +375,7 @@ async function searchListingsWithSuburbFallback(
     }
   }
 
-  // STEP 4 — Same state
+  // STEP 4: Same state
   const stateCode = geo?.stateCode?.toUpperCase() ?? null;
   const validState = stateCode && VALID_STATES.has(stateCode) ? stateCode as AustralianState : null;
   if (validState) {
@@ -388,7 +393,7 @@ async function searchListingsWithSuburbFallback(
     }
   }
 
-  // STEP 5 — Truly no results
+  // STEP 5: Truly no results
   return { listings: [], total: 0, fallbackLevel: 4, fallbackMeta: { searchedSuburb: suburb }, nearbyListings: [] };
 }
 
@@ -414,9 +419,9 @@ export default async function ListingsPage({
   const minBaths = params.minBaths ? parseInt(params.minBaths, 10) : undefined;
   const sort = params.sort ?? "newest";
 
-  // Attribute filters (price, beds, type etc.) — safe to apply to nearby listings too
+  // Attribute filters (price, beds, type etc.) are safe to apply to nearby listings too
   const attributeFilters: Prisma.ListingWhereInput = {
-    status: "ACTIVE",
+    status: { in: ["ACTIVE", "COMING_SOON"] },
     ...(params.propertyType ? { propertyType: params.propertyType as PropertyType } : {}),
     ...(params.saleMethod ? { saleMethod: params.saleMethod as SaleMethod } : {}),
     ...(minBeds ? { bedrooms: { gte: minBeds } } : {}),
@@ -425,7 +430,7 @@ export default async function ListingsPage({
     ...(maxPrice ? { guidePriceCents: { lte: parseInt(maxPrice, 10) } } : {}),
   };
 
-  // Full filters including free-text search — used for the main results query only.
+  // Full filters including free-text search, used for the main results query only.
   // The q OR clause must NOT be passed to fetchNearbyListings: a Karrinyup listing
   // won't mention "Scarborough" in any field, so it would be incorrectly excluded.
   const baseFilters: Prisma.ListingWhereInput = {
@@ -457,7 +462,7 @@ export default async function ListingsPage({
   let nearbyListings: ListingRow[] = [];
 
   if (params.suburb) {
-    // Suburb search — run progressive fallback logic
+    // Suburb search: run progressive fallback logic
     const result = await searchListingsWithSuburbFallback(
       params.suburb, baseFilters, orderBy, skip, PAGE_SIZE
     );
@@ -467,7 +472,7 @@ export default async function ListingsPage({
     fallbackMeta = result.fallbackMeta;
     nearbyListings = result.nearbyListings;
   } else {
-    // No suburb filter — standard query
+    // No suburb filter: standard query
     const where = baseFilters;
     const fetched = await Promise.all([
       prisma.listing.findMany({ where, skip, take: PAGE_SIZE, orderBy, select: LISTING_SELECT }),
@@ -563,7 +568,7 @@ export default async function ListingsPage({
               ))}
             </select>
 
-            {/* Price Range — encode as minPrice/maxPrice */}
+            {/* Price Range: encoded as minPrice/maxPrice */}
             <select
               name="_price"
               defaultValue={currentPriceKey}
@@ -752,28 +757,105 @@ export default async function ListingsPage({
           </div>
         )}
 
-        {/* Results count */}
-        <p className="text-sm text-text-muted mb-4">
-          {total === 0
-            ? "No properties found"
-            : `Showing ${skip + 1}–${Math.min(skip + PAGE_SIZE, total)} of ${total.toLocaleString()} ${total === 1 ? "property" : "properties"}`}
-        </p>
-
-        {/* Results grid */}
-        {listings.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-text-muted text-sm mb-4">
-              {params.suburb && fallbackLevel === 4
-                ? `No listings found near ${fallbackMeta.searchedSuburb}. New properties are added regularly — check back soon.`
-                : "No properties match your search. Try adjusting your filters or broadening your search area."}
-            </p>
-            <Link
-              href="/listings"
-              className="inline-block bg-amber text-navy text-sm font-semibold px-5 py-2.5 rounded-[10px] hover:bg-amber/90 transition-colors"
-            >
-              Clear all filters
-            </Link>
+        {/* Results count + view toggle + save search */}
+        <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
+          <p className="text-sm text-text-muted">
+            {total === 0
+              ? "No properties found"
+              : `Showing ${skip + 1}\u2013${Math.min(skip + PAGE_SIZE, total)} of ${total.toLocaleString()} ${total === 1 ? "property" : "properties"}`}
+          </p>
+          <div className="flex items-center gap-3">
+            <ViewToggle currentView={params.view === "map" ? "map" : "list"} />
+            <SaveSearchButton
+              suburb={params.suburb}
+              propertyType={params.propertyType}
+              saleMethod={params.saleMethod}
+              minPrice={params.minPrice}
+              maxPrice={params.maxPrice}
+              minBeds={params.minBeds}
+              minBaths={params.minBaths}
+              isLoggedIn={!!viewerId}
+            />
           </div>
+        </div>
+
+        {/* Results grid / map */}
+        {listings.length === 0 ? (
+          (() => {
+            const hasActiveFilters = !!(
+              params.q || params.suburb || params.propertyType || params.saleMethod ||
+              params.minPrice || params.maxPrice || params.minBeds || params.minBaths
+            );
+            return hasActiveFilters ? (
+              <div className="text-center py-20">
+                <p className="text-text-muted text-sm mb-4">
+                  {params.suburb && fallbackLevel === 4
+                    ? `No listings found near ${fallbackMeta.searchedSuburb}. New properties are added regularly.`
+                    : "No properties match your search. Try adjusting your filters or broadening your search area."}
+                </p>
+                <Link
+                  href="/listings"
+                  className="inline-block bg-amber text-navy text-sm font-semibold px-5 py-2.5 rounded-[10px] hover:bg-amber/90 transition-colors"
+                >
+                  Clear all filters
+                </Link>
+              </div>
+            ) : (
+              <div className="text-center py-20 max-w-xl mx-auto">
+                <div className="w-14 h-14 rounded-full bg-amber/10 flex items-center justify-center mx-auto mb-5">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-amber">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <h3
+                  className="text-navy mb-2"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 22, fontWeight: 400 }}
+                >
+                  New listings coming soon
+                </h3>
+                <p className="text-text-muted text-sm mb-2 leading-relaxed">
+                  TrueBid is launching in Western Australia. Properties will appear here as sellers go live.
+                </p>
+                <p className="text-text-muted text-sm mb-6 leading-relaxed">
+                  Selling? List your property for free and be among the first on the platform.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link
+                    href="/register"
+                    className="inline-block bg-amber text-navy text-sm font-semibold px-5 py-2.5 rounded-[10px] hover:bg-amber/90 transition-colors"
+                  >
+                    List Your Property Free
+                  </Link>
+                  <Link
+                    href="/how-it-works"
+                    className="inline-block border border-border text-text text-sm font-medium px-5 py-2.5 rounded-[10px] hover:bg-white transition-colors"
+                  >
+                    How it works
+                  </Link>
+                </div>
+              </div>
+            );
+          })()
+        ) : params.view === "map" ? (
+          <MapViewClient
+            listings={listings.map((listing) => ({
+              id: listing.id,
+              streetAddress: listing.streetAddress,
+              suburb: listing.suburb,
+              state: listing.state,
+              status: listing.status,
+              closingDate: listing.closingDate ? listing.closingDate.toISOString() : null,
+              guidePriceCents: listing.guidePriceCents,
+              latitude: listing.latitude,
+              longitude: listing.longitude,
+              bedrooms: listing.bedrooms,
+              bathrooms: listing.bathrooms,
+              coverImage: listing.images[0]
+                ? { thumbnailUrl: listing.images[0].thumbnailUrl }
+                : null,
+            }))}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {listings.map((listing, index) => {
@@ -807,6 +889,7 @@ export default async function ListingsPage({
                   carSpaces={listing.carSpaces}
                   landSizeM2={listing.landSizeM2}
                   guidePriceCents={listing.guidePriceCents}
+                  status={listing.status}
                   saleMethod={listing.saleMethod}
                   closingDate={listing.closingDate}
                   activeOfferCount={listing._count.offers}
@@ -818,13 +901,13 @@ export default async function ListingsPage({
           </div>
         )}
 
-        {/* Nearby listings — shown when exact suburb results exist and there are properties just outside */}
+        {/* Nearby listings: shown when exact suburb results exist and there are properties just outside */}
         {nearbyListings.length > 0 && page === 1 && (
           <div className="mt-10">
             <div className="flex items-center gap-3 mb-5">
               <div className="h-px flex-1 bg-border" />
               <p className="text-xs font-semibold text-text-muted uppercase tracking-wide whitespace-nowrap">
-                Also nearby — outside {params.suburb ?? params.q}
+                Also nearby: outside {params.suburb ?? params.q}
               </p>
               <div className="h-px flex-1 bg-border" />
             </div>
@@ -907,7 +990,7 @@ export default async function ListingsPage({
                   href={buildUrl(params, { page: String(page + 1) })}
                   className="px-4 py-2 text-sm font-medium text-text border border-border bg-white rounded-[10px] hover:bg-bg transition-colors"
                 >
-                  Next →
+                  Next
                 </a>
               )}
             </div>

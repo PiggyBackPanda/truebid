@@ -9,7 +9,7 @@ import {
 import { emitToListing } from "@/lib/socket";
 import { sendOfferAcceptedEmail, sendOfferRejectedEmail } from "@/lib/email";
 
-// POST /api/offers/[id]/accept — seller accepts an offer
+// POST /api/offers/[id]/accept: seller accepts an offer
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

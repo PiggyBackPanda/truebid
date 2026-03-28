@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { Logo } from "@/components/Logo";
 
-const SYS = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const SYS = "var(--font-sans)";
 
 export function Nav() {
   const { data: session, status } = useSession();
@@ -69,8 +69,9 @@ export function Nav() {
         <div className="hidden md:flex" style={{ alignItems: "center", gap: 8 }}>
           <NavLink href="/listings">Browse</NavLink>
           <NavLink href="/how-it-works">How it works</NavLink>
-          <NavLink href="/about">About</NavLink>
+          <NavLink href="/guides">Guides</NavLink>
           <NavLink href="/faq">FAQ</NavLink>
+          <NavLink href="/about">About</NavLink>
 
           {status === "loading" ? null : session ? (
             <>
@@ -170,20 +171,14 @@ export function Nav() {
                     <DropdownLink href="/account" onClick={() => setDropdownOpen(false)}>
                       My Account
                     </DropdownLink>
-                    <DropdownLink href="/dashboard/verify" onClick={() => setDropdownOpen(false)}>
-                      Verify Identity
-                    </DropdownLink>
                     <DropdownLink href="/dashboard/buyer" onClick={() => setDropdownOpen(false)}>
-                      My Offers
+                      Buyer Dashboard
                     </DropdownLink>
                     {(user?.role === "SELLER" || user?.role === "BOTH") && (
                       <DropdownLink href="/dashboard/seller" onClick={() => setDropdownOpen(false)}>
                         Seller Dashboard
                       </DropdownLink>
                     )}
-                    <DropdownLink href="/favourites" onClick={() => setDropdownOpen(false)}>
-                      Favourites
-                    </DropdownLink>
                     <div style={{ position: "relative" }}>
                       <DropdownLink
                         href="/dashboard/messages"
@@ -318,12 +313,13 @@ export function Nav() {
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <MobileNavLink href="/listings" onClick={() => setMenuOpen(false)}>Browse</MobileNavLink>
             <MobileNavLink href="/how-it-works" onClick={() => setMenuOpen(false)}>How it works</MobileNavLink>
-            <MobileNavLink href="/about" onClick={() => setMenuOpen(false)}>About</MobileNavLink>
+            <MobileNavLink href="/guides" onClick={() => setMenuOpen(false)}>Guides</MobileNavLink>
             <MobileNavLink href="/faq" onClick={() => setMenuOpen(false)}>FAQ</MobileNavLink>
+            <MobileNavLink href="/about" onClick={() => setMenuOpen(false)}>About</MobileNavLink>
             {status === "loading" ? null : session ? (
               <>
                 <MobileNavLink href="/account" onClick={() => setMenuOpen(false)}>My Account</MobileNavLink>
-                <MobileNavLink href="/dashboard/buyer" onClick={() => setMenuOpen(false)}>My Offers</MobileNavLink>
+                <MobileNavLink href="/dashboard/buyer" onClick={() => setMenuOpen(false)}>Buyer Dashboard</MobileNavLink>
                 {(user?.role === "SELLER" || user?.role === "BOTH") && (
                   <MobileNavLink href="/dashboard/seller" onClick={() => setMenuOpen(false)}>
                     Seller Dashboard

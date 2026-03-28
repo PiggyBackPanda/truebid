@@ -9,7 +9,7 @@ const bodySchema = z.object({
   status: z.enum(["ATTENDED", "NO_SHOW"]),
 });
 
-// PATCH — seller marks a buyer as attended or no-show
+// PATCH: seller marks a buyer as attended or no-show
 export async function PATCH(req: NextRequest, { params }: RouteContext) {
   try {
     const user = await requireAuth();

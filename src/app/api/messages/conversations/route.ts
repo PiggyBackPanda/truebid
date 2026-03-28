@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse } from "@/lib/api-helpers";
 
-// GET /api/messages/conversations — all conversations for the current user
+// GET /api/messages/conversations: all conversations for the current user
 export async function GET() {
   try {
     const user = await requireAuth();

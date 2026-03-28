@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse } from "@/lib/api-helpers";
 
-// GET /api/messages/conversations/[listingId]/[userId] — get thread and mark as read
+// GET /api/messages/conversations/[listingId]/[userId]: get thread and mark as read
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ listingId: string; userId: string }> }

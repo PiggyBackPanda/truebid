@@ -4,12 +4,12 @@ import { getServerSession } from "next-auth";
 
 export const metadata: Metadata = {
   title: "List Your Property",
-  description: "List your property on TrueBid — free. No agent commission. No marketing fees.",
+  description: "List your property on TrueBid. Free. No agent commission. No marketing fees.",
 };
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-// Entry point — if seller has an existing DRAFT, resume it; otherwise start fresh
+// Entry point: if seller has an existing DRAFT, resume it; otherwise start fresh
 export default async function CreateListingPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user) {

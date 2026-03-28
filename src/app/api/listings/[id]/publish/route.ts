@@ -20,14 +20,14 @@ export async function POST(
 
     const { id } = await params;
 
-    // Body is optional — defaults to coming_soon
+    // Body is optional, defaults to coming_soon
     let mode: "coming_soon" | "active" = "coming_soon";
     try {
       const body = await req.json();
       const parsed = bodySchema.safeParse(body);
       if (parsed.success) mode = parsed.data.mode;
     } catch {
-      // empty body — use default mode
+      // empty body: use default mode
     }
 
     const listing = await prisma.listing.findUnique({
@@ -49,16 +49,23 @@ export async function POST(
 
     requireOwner(user, listing.sellerId);
 
-    if (listing.status !== "DRAFT") {
-      throw new ApiError(400, "INVALID_STATUS", "Only draft listings can be published");
+    // DRAFT → COMING_SOON or ACTIVE
+    // COMING_SOON → ACTIVE (seller activates a previously coming-soon listing)
+    const allowedTransitions: Record<string, string[]> = {
+      DRAFT: ["COMING_SOON", "ACTIVE"],
+      COMING_SOON: ["ACTIVE"],
+    };
+    const newStatus = mode === "active" ? "ACTIVE" : "COMING_SOON";
+    if (!allowedTransitions[listing.status]?.includes(newStatus)) {
+      throw new ApiError(400, "INVALID_STATUS", `Cannot transition from ${listing.status} to ${newStatus}`);
     }
 
     if (listing.images.length === 0) {
       throw new ApiError(400, "NO_IMAGES", "At least one image is required before publishing");
     }
 
-    // Going straight to ACTIVE requires a valid closing date for Open Offers
-    if (mode === "active" && listing.saleMethod === "OPEN_OFFERS") {
+    // Going to ACTIVE requires a valid closing date for Open Offers
+    if (newStatus === "ACTIVE" && listing.saleMethod === "OPEN_OFFERS") {
       if (!listing.closingDate) {
         throw new ApiError(400, "MISSING_CLOSING_DATE", "Open Offers listings require a closing date to go live");
       }
@@ -67,8 +74,6 @@ export async function POST(
         throw new ApiError(400, "INVALID_CLOSING_DATE", "Closing date must be at least 14 days in the future");
       }
     }
-
-    const newStatus = mode === "active" ? "ACTIVE" : "COMING_SOON";
 
     const published = await prisma.listing.update({
       where: { id },

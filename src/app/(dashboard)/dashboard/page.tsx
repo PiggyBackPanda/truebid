@@ -75,7 +75,7 @@ export default async function DashboardPage() {
               borderRadius: 8,
               textDecoration: "none",
               whiteSpace: "nowrap",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             Verify now
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
         <DashboardCard
           title="Browse listings"
-          description="Find properties with open offers in your area."
+          description="Find properties with live offers in your area."
           href="/listings"
           icon="🏡"
         />
@@ -153,12 +153,12 @@ function DashboardCard({
           color: "#0f1623",
           fontSize: 15,
           marginBottom: 6,
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "var(--font-sans)",
         }}
       >
         {title}
       </p>
-      <p style={{ color: "#6b7280", fontSize: 13, lineHeight: 1.5, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      <p style={{ color: "#6b7280", fontSize: 13, lineHeight: 1.5, fontFamily: "var(--font-sans)" }}>
         {description}
       </p>
     </Link>

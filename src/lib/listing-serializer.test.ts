@@ -131,7 +131,7 @@ describe("Seller visibility override", () => {
   });
 
   it("seller sees full address regardless of LOGGED_IN when anonymous context", () => {
-    // isSeller=true overrides even with no userId (edge case — shouldn't happen in practice)
+    // isSeller=true overrides even with no userId (edge case: should not happen in practice)
     const result = serializeListingAddress(
       baseListing({ addressVisibility: "LOGGED_IN" }),
       { isSeller: true }

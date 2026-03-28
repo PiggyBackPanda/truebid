@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, requireOwner, errorResponse, ApiError } from "@/lib/api-helpers";
 
-// GET /api/dashboard/seller/offers/[listingId] — full offer details with buyer info (seller only)
+// GET /api/dashboard/seller/offers/[listingId]: full offer details with buyer info (seller only)
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ listingId: string }> }

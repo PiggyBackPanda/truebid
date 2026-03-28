@@ -123,7 +123,7 @@ export function OfferTable({
               fontWeight: 600,
               color: "#0f1623",
               marginBottom: 12,
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             Next Steps:
@@ -176,12 +176,12 @@ export function OfferTable({
             borderRadius: 8,
             padding: "12px 24px",
             cursor: "pointer",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: 14,
             fontWeight: 500,
           }}
         >
-          Message the buyer →
+          Message the Buyer
         </button>
       </div>
     );
@@ -220,6 +220,22 @@ export function OfferTable({
 
   return (
     <>
+      {/* Seller autonomy notice */}
+      <div
+        style={{
+          background: "#f9f8f6",
+          border: "1px solid #e5e2db",
+          borderRadius: 10,
+          padding: "12px 16px",
+          marginBottom: 16,
+          fontSize: 13,
+          color: "#334766",
+          lineHeight: 1.6,
+        }}
+      >
+        <strong style={{ color: "#0f1623" }}>The decision is yours.</strong> You are not obligated to accept any offer. TrueBid does not recommend or rank offers on your behalf. Review each offer on its own merits and choose what is right for you.
+      </div>
+
       {acceptingOffer && (
         <AcceptOfferModal
           offer={acceptingOffer}
@@ -246,7 +262,7 @@ export function OfferTable({
                       fontSize: 12,
                       fontWeight: 600,
                       color: "#6b7280",
-                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily: "var(--font-sans)",
                       whiteSpace: "nowrap",
                     }}
                   >
@@ -517,7 +533,7 @@ export function OfferTable({
                               cursor: "pointer",
                               fontSize: 14,
                               fontWeight: 600,
-                              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                              fontFamily: "var(--font-sans)",
                             }}
                           >
                             Accept This Offer

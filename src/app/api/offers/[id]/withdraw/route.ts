@@ -48,7 +48,7 @@ export async function POST(
       select: { id: true, status: true, withdrawnAt: true },
     });
 
-    // Withdrawn offers stay visible on the board — broadcast the withdrawal
+    // Withdrawn offers stay visible on the board: broadcast the withdrawal
     emitToListing(offer.listingId, "offer:withdrawn", {
       listingId: offer.listingId,
       offerId: id,

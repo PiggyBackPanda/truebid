@@ -10,7 +10,7 @@ const checklistRequestSchema = z.object({
   state: AustralianStateSchema,
 });
 
-// PATCH /api/dashboard/seller/checklist — upsert a checklist item's status
+// PATCH /api/dashboard/seller/checklist: upsert a checklist item's status
 export async function PATCH(req: NextRequest) {
   try {
     const user = await requireAuth();
@@ -43,7 +43,7 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// GET /api/dashboard/seller/checklist — get all checklist progress for current user
+// GET /api/dashboard/seller/checklist: get all checklist progress for current user
 export async function GET(req: NextRequest) {
   try {
     const user = await requireAuth();

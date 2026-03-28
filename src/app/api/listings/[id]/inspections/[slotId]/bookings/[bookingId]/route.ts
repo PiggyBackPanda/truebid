@@ -7,7 +7,7 @@ type RouteContext = { params: Promise<{ id: string; slotId: string; bookingId: s
 
 const CANCEL_CUTOFF_MS = 2 * 60 * 60 * 1000; // 2 hours
 
-// DELETE — buyer cancels their own booking
+// DELETE: buyer cancels their own booking
 export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
     const user = await requireAuth();

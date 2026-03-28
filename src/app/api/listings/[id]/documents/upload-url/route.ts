@@ -4,10 +4,17 @@ import { requireAuth, requireOwner, errorResponse, ApiError } from "@/lib/api-he
 import { getPresignedUploadUrl } from "@/lib/s3";
 import { z } from "zod";
 
-const schema = z.object({
+const ALLOWED_MIME_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/jpeg",
+  "image/png",
+] as const;
+
+const uploadUrlSchema = z.object({
   fileName: z.string().min(1).max(200),
-  contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]),
-  documentType: z.enum(["buildingPestReport", "floorplan"]),
+  contentType: z.enum(ALLOWED_MIME_TYPES),
 });
 
 // POST /api/listings/[id]/documents/upload-url
@@ -30,15 +37,20 @@ export async function POST(
 
     requireOwner(user, listing.sellerId);
 
-    const body = await req.json();
-    const { fileName, contentType, documentType } = schema.parse(body);
+    const docCount = await prisma.listingDocument.count({ where: { listingId: id } });
+    if (docCount >= 10) {
+      throw new ApiError(400, "DOCUMENT_LIMIT", "Maximum 10 documents allowed per listing");
+    }
 
-    const ext = fileName.split(".").pop()?.toLowerCase() ?? contentType.split("/")[1];
-    const s3Key = `listings/${id}/documents/${documentType}-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const body = await req.json();
+    const { fileName, contentType } = uploadUrlSchema.parse(body);
+
+    const ext = fileName.split(".").pop()?.toLowerCase() ?? "bin";
+    const s3Key = `listings/${id}/documents/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
     const { uploadUrl, publicUrl } = await getPresignedUploadUrl(s3Key, contentType);
 
-    return Response.json({ uploadUrl, publicUrl });
+    return Response.json({ uploadUrl, s3Key, publicUrl });
   } catch (error) {
     return errorResponse(error);
   }

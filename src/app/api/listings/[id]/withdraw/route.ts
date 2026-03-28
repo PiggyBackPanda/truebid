@@ -8,7 +8,7 @@ import {
 } from "@/lib/api-helpers";
 import { emitToListing } from "@/lib/socket";
 
-// POST /api/listings/[id]/withdraw — withdraw an active listing
+// POST /api/listings/[id]/withdraw: withdraw an active listing
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

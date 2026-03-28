@@ -11,7 +11,7 @@ const sendMessageSchema = z.object({
   body: z.string().min(1, "Message cannot be empty").max(4000),
 });
 
-// POST /api/conversations/[id]/messages — send a message
+// POST /api/conversations/[id]/messages: send a message
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

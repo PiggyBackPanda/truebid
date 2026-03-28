@@ -63,7 +63,7 @@ function baseOpenHouseSlot(overrides: object = {}) {
 describe("POST /api/listings/[id]/inspections/[slotId]/open-house-attendance", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("marks existing registered user as ATTENDED — creates synthetic booking", async () => {
+  it("marks existing registered user as ATTENDED: creates synthetic booking", async () => {
     const seller = mockUser({ id: "seller_1" });
     mockRequireAuth.mockResolvedValue(seller);
     mockRequireOwner.mockReturnValue(undefined);

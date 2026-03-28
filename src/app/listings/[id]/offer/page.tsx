@@ -15,9 +15,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     where: { id },
     select: { streetAddress: true, suburb: true, state: true },
   });
-  if (!listing) return { title: "Listing not found — TrueBid" };
+  if (!listing) return { title: "Listing not found | TrueBid" };
   return {
-    title: `Place an Offer — ${listing.streetAddress}, ${listing.suburb} — TrueBid`,
+    title: `Place an Offer: ${listing.streetAddress}, ${listing.suburb} | TrueBid`,
   };
 }
 
@@ -105,10 +105,15 @@ export default async function PlaceOfferPage({ params }: PageProps) {
               href="/verify-identity"
               className="text-xs font-semibold text-amber underline hover:no-underline"
             >
-              Verify now →
+              Verify Now
             </a>
           </div>
         )}
+
+        {/* Platform disclaimer */}
+        <p className="text-xs text-text-muted mb-6">
+          TrueBid is a technology platform, not a licensed real estate agency. We recommend engaging a licensed conveyancer or settlement agent to manage your transaction.
+        </p>
 
         <OfferForm
           listingId={id}

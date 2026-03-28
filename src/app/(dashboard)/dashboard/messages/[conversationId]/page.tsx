@@ -16,7 +16,7 @@ export async function generateMetadata({
   });
   return {
     title: conv
-      ? `Messages — ${conv.listing.streetAddress}`
+      ? `Messages: ${conv.listing.streetAddress}`
       : "Messages",
   };
 }

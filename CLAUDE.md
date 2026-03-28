@@ -1,6 +1,14 @@
 # TrueBid
 
-Free, transparent property sales platform for Australia. Sellers list for free, buyers place offers publicly via the Open Offers system (real-time, transparent bidding with anti-snipe protection). No agent commissions. No middleman.
+Free, transparent property sales platform for Australia.
+
+## Writing Style
+
+- NEVER use em dashes (—) or double hyphens (--) in any copy, UI text, comments, or documentation. Use commas, colons, or reword the sentence instead. Sellers list for free, buyers place offers publicly via the Open Offers system (real-time, transparent bidding with anti-snipe protection). No agent commissions. No middleman.
+
+## Security
+
+- The dev verification bypass (`DevBypassBlock`) and dev upload route (`/api/dev/upload`) must NEVER be reachable in production. Both are gated by `process.env.NODE_ENV === 'development'` checks. Never remove or weaken these guards.
 
 ## Tech Stack
 

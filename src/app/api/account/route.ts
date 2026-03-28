@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse } from "@/lib/api-helpers";
 import { updateProfileSchema, deleteAccountSchema } from "@/lib/validation";
 
-// PATCH /api/account — update personal details
+// PATCH /api/account: update personal details
 export async function PATCH(request: Request) {
   try {
     const user = await requireAuth();
@@ -31,7 +31,7 @@ export async function PATCH(request: Request) {
   }
 }
 
-// DELETE /api/account — delete account and withdraw all active listings
+// DELETE /api/account: delete account and withdraw all active listings
 export async function DELETE(request: Request) {
   try {
     const user = await requireAuth();

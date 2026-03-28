@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, requireOwner, errorResponse, ApiError } from "@/lib/api-helpers";
+import { isS3Configured } from "@/lib/s3";
 import { z } from "zod";
 
 const confirmSchema = z.object({
@@ -49,8 +50,9 @@ export async function POST(
       ? (listing.images[0].displayOrder ?? 0) + 1
       : 0;
 
-    const cdnBase = process.env.CLOUDFRONT_URL ?? `https://${process.env.AWS_S3_BUCKET ?? ""}.s3.${process.env.AWS_REGION ?? "ap-southeast-2"}.amazonaws.com`;
-    const imageUrl = `${cdnBase}/${s3Key}`;
+    const imageUrl = isS3Configured()
+      ? `${process.env.CLOUDFRONT_URL ?? `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION ?? "ap-southeast-2"}.amazonaws.com`}/${s3Key}`
+      : `/dev-uploads/${s3Key}`;
 
     const image = await prisma.listingImage.create({
       data: {

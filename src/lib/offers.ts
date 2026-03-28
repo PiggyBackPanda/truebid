@@ -1,6 +1,6 @@
 /**
  * Server-side offer business logic.
- * Do NOT import this in Client Components — it uses Prisma and socket.io.
+ * Do NOT import this in Client Components: it uses Prisma and socket.io.
  */
 
 import { prisma } from "@/lib/db";
@@ -30,7 +30,7 @@ export async function checkAntiSnipe(
   listing: ListingForAntiSnipe,
   eventType: "offer:new" | "offer:updated"
 ): Promise<Date | null> {
-  void eventType; // only new/updated calls reach this function — caller is responsible
+  void eventType; // only new/updated calls reach this function; caller is responsible
 
   if (listing.saleMethod !== "OPEN_OFFERS") return null;
   if (!listing.closingDate) return null;
@@ -39,7 +39,7 @@ export async function checkAntiSnipe(
   const now = new Date();
   const timeUntilClose = listing.closingDate.getTime() - now.getTime();
 
-  // Already closed or more than 10 minutes away — no extension
+  // Already closed or more than 10 minutes away: no extension
   if (timeUntilClose <= 0) return null;
   if (timeUntilClose > ANTI_SNIPE_WINDOW_MS) return null;
 

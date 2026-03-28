@@ -103,7 +103,7 @@ function RegisterForm() {
             body: JSON.stringify({ listingId: watchListingId }),
           });
         } catch {
-          // Non-fatal — continue with redirect
+          // Non-fatal, continue with redirect
         }
       }
 
@@ -266,7 +266,7 @@ function RegisterForm() {
                     fontWeight: 600,
                     color: role === r.value ? "#0f1623" : "#1a1a1a",
                     marginBottom: 4,
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   {r.label}
@@ -276,7 +276,7 @@ function RegisterForm() {
                     fontSize: 11,
                     color: "#6b7280",
                     lineHeight: 1.4,
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   {r.description}

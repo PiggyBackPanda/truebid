@@ -1,5 +1,5 @@
 /**
- * Shared offer utilities — no server-side dependencies.
+ * Shared offer utilities with no server-side dependencies.
  * Safe to import in both Server Components and Client Components.
  */
 
@@ -17,7 +17,7 @@ export type PublicOffer = {
 
 /**
  * Calculate an offer's "strength" score (0–60) for display purposes.
- * Purely informational — does NOT affect ranking.
+ * Purely informational. Does NOT affect ranking.
  */
 export function offerStrengthScore(offer: {
   conditionType: string;

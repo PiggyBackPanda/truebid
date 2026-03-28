@@ -36,7 +36,7 @@ function emailLayout(body: string): string {
         <tr>
           <td style="padding:16px 32px 24px;border-top:1px solid #e5e1da;">
             <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.5;">
-              This email was sent by <a href="${BASE_URL()}" style="color:#f59e0b;text-decoration:none;">TrueBid</a> — free, transparent property sales for Australia.
+              This email was sent by <a href="${BASE_URL()}" style="color:#f59e0b;text-decoration:none;">TrueBid</a>: free, transparent property sales for Australia.
             </p>
             <p style="font-size:11px;color:#c0bdb6;margin:8px 0 0;">
               <a href="${BASE_URL()}/account" style="color:#c0bdb6;text-decoration:underline;">Manage email preferences</a>
@@ -66,7 +66,7 @@ export async function sendEmail({
   html: string;
 }): Promise<void> {
   if (!process.env.RESEND_API_KEY) {
-    logger.warn("Email skipped — RESEND_API_KEY not set", { to, subject });
+    logger.warn("Email skipped: RESEND_API_KEY not set", { to, subject });
     return;
   }
 
@@ -231,7 +231,7 @@ export async function sendInspectionBookingConfirmedEmail({
   const timeStr = formatInspectionTime(startTime, endTime);
   await sendEmail({
     to: buyerEmail,
-    subject: `Inspection confirmed — ${address}`,
+    subject: `Inspection confirmed: ${address}`,
     html: emailLayout(`
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Inspection Confirmed</h1>
       <p style="color:#334766;font-size:15px;margin:0 0 20px;">Your inspection booking has been confirmed.</p>
@@ -256,7 +256,7 @@ export async function sendInspectionNewBookingEmail({
   const timeStr = formatInspectionTime(startTime, endTime);
   await sendEmail({
     to: sellerEmail,
-    subject: `New inspection booking — ${address}`,
+    subject: `New inspection booking: ${address}`,
     html: emailLayout(`
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">New Booking</h1>
       <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${sellerName}, a buyer has booked your inspection.</p>
@@ -282,7 +282,7 @@ export async function sendInspectionCancelledEmail({
   const timeStr = formatInspectionTime(startTime, endTime);
   await sendEmail({
     to: buyerEmail,
-    subject: `Inspection cancelled — ${address}`,
+    subject: `Inspection cancelled: ${address}`,
     html: emailLayout(`
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Inspection Cancelled</h1>
       <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${buyerName}, your inspection at the following property has been cancelled by the seller.</p>
@@ -308,7 +308,7 @@ export async function sendInspectionReminderEmail({
   const when = hoursAway <= 2 ? "in 2 hours" : "tomorrow";
   await sendEmail({
     to: buyerEmail,
-    subject: `Inspection reminder — ${address} (${when})`,
+    subject: `Inspection reminder: ${address} (${when})`,
     html: emailLayout(`
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Inspection Reminder</h1>
       <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${buyerName}, you have an inspection ${when}.</p>
@@ -323,6 +323,60 @@ export async function sendInspectionReminderEmail({
   });
 }
 
+export async function sendHigherOfferEmail({
+  buyerEmail,
+  buyerName,
+  listingAddress,
+  listingId,
+  buyerOfferCents,
+  highestOfferCents,
+  closingDate,
+}: {
+  buyerEmail: string;
+  buyerName: string;
+  listingAddress: string;
+  listingId: string;
+  buyerOfferCents: number;
+  highestOfferCents: number;
+  closingDate: Date | null;
+}): Promise<void> {
+  const yourOffer = formatAUD(buyerOfferCents);
+  const highestOffer = formatAUD(highestOfferCents);
+
+  const now = new Date();
+  const closingLine =
+    closingDate !== null && closingDate > now
+      ? `<p style="font-size:14px;line-height:1.6;margin:0 0 16px;color:#334766;">
+          The offer window closes on ${new Date(closingDate).toLocaleString("en-AU", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZone: "Australia/Perth",
+          })} AWST.
+        </p>`
+      : "";
+
+  await sendEmail({
+    to: buyerEmail,
+    subject: `A higher offer has been placed on ${listingAddress}`,
+    html: emailLayout(`
+      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;margin:0 0 16px;color:#0f1a2e;">A higher offer has been placed</h2>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">Hi ${buyerName},</p>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
+        A new offer has been submitted on <strong>${listingAddress}</strong> that is higher than your current offer of <strong>${yourOffer}</strong>. The current highest offer is now <strong style="color:#0f1a2e;font-size:18px;">${highestOffer}</strong>.
+      </p>
+      ${closingLine}
+      ${ctaButton(`${BASE_URL()}/listings/${listingId}/offer`, "Update Your Offer")}
+      <p style="font-size:11px;color:#c0bdb6;margin:16px 0 0;line-height:1.5;">
+        You are receiving this email because you have an active offer on this property. TrueBid is a technology platform, not a licensed real estate agency.
+      </p>
+    `),
+  });
+}
+
 export async function sendBuyerCancelledBookingEmail({
   sellerEmail, sellerName, buyerName, address, startTime, endTime, spotsRemaining,
 }: {
@@ -332,7 +386,7 @@ export async function sendBuyerCancelledBookingEmail({
   const timeStr = formatInspectionTime(startTime, endTime);
   await sendEmail({
     to: sellerEmail,
-    subject: `Booking cancelled — ${address}`,
+    subject: `Booking cancelled: ${address}`,
     html: emailLayout(`
       <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Booking Cancelled</h1>
       <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${sellerName}, a buyer has cancelled their inspection booking.</p>

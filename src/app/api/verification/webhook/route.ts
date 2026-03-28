@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { encrypt } from "@/lib/encryption";
 import { logger } from "@/lib/logger";
 
-// Disable body parsing — Stripe signature validation requires the raw body
+// Disable body parsing: Stripe signature validation requires the raw body
 export const dynamic = "force-dynamic";
 
 // POST /api/verification/webhook
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Return 200 immediately — process inline (fast DB ops)
+  // Return 200 immediately: process inline (fast DB ops)
   const response = Response.json({ received: true });
 
   try {
@@ -86,7 +86,7 @@ async function handleEvent(event: Stripe.Event, stripe: Stripe) {
           const fullName = [outputs.first_name, outputs.last_name]
             .filter(Boolean)
             .join(" ");
-          // Encrypt before storing — never persist plaintext PII
+          // Encrypt before storing: never persist plaintext PII
           verifiedName = process.env.ENCRYPTION_KEY ? encrypt(fullName) : null;
         }
       } catch (err) {
@@ -123,7 +123,7 @@ async function handleEvent(event: Stripe.Event, stripe: Stripe) {
       break;
 
     default:
-      // Unhandled event type — already audit-logged above
+      // Unhandled event type (already audit-logged above)
       break;
   }
 }

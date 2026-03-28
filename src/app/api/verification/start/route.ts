@@ -59,7 +59,7 @@ export async function POST() {
 
     logger.info("Verification session created", { userId: user.id });
 
-    // Return ONLY the client_secret — never expose the full session object
+    // Return ONLY the client_secret: never expose the full session object
     return Response.json({
       clientSecret: session.client_secret,
       sessionId: session.id,

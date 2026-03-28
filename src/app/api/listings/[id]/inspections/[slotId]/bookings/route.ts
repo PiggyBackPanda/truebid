@@ -13,7 +13,7 @@ const createBookingSchema = z.object({
   note: z.string().max(200).optional(),
 });
 
-// POST /api/listings/[id]/inspections/[slotId]/bookings — buyer books a slot
+// POST /api/listings/[id]/inspections/[slotId]/bookings: buyer books a slot
 export async function POST(req: NextRequest, { params }: RouteContext) {
   try {
     const user = await requireAuth();
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
     }
 
     if (slot.type !== "SCHEDULED") {
-      throw new ApiError(400, "NO_BOOKING_REQUIRED", "This is an open house — no booking required");
+      throw new ApiError(400, "NO_BOOKING_REQUIRED", "This is an open house. No booking required.");
     }
 
     if (slot.listing.sellerId === user.id) {
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
   }
 }
 
-// GET /api/listings/[id]/inspections/[slotId]/bookings — seller views bookings for a slot
+// GET /api/listings/[id]/inspections/[slotId]/bookings: seller views bookings for a slot
 export async function GET(
   _req: NextRequest,
   { params }: RouteContext

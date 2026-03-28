@@ -33,7 +33,7 @@ export async function rateLimit(
   if (!client) {
     if (process.env.NODE_ENV === "production") {
       console.warn(
-        "[rate-limit] Redis not configured — rate limiting is disabled. " +
+        "[rate-limit] Redis not configured, rate limiting is disabled. " +
           "Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN."
       );
     }

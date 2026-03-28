@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
-const SYS = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const SYS = "var(--font-sans)";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -53,6 +53,7 @@ export function Footer() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <FooterLink href="/listings">Browse Listings</FooterLink>
               <FooterLink href="/how-it-works">How It Works</FooterLink>
+              <FooterLink href="/guides">Guides</FooterLink>
               <FooterLink href="/register">List Your Property</FooterLink>
               <FooterLink href="/faq">FAQ</FooterLink>
             </div>
@@ -95,8 +96,8 @@ export function Footer() {
               Contact
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <FooterLink href="/contact">Contact us</FooterLink>
               <FooterLink href="mailto:hello@truebid.com.au">hello@truebid.com.au</FooterLink>
-              <FooterLink href="mailto:privacy@truebid.com.au">privacy@truebid.com.au</FooterLink>
             </div>
           </div>
         </div>
@@ -118,6 +119,9 @@ export function Footer() {
           </p>
           <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: SYS }}>
             Launching in Western Australia · 2026
+          </p>
+          <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, fontFamily: SYS, width: "100%" }}>
+            TrueBid is a technology platform, not a licensed real estate agency. We do not act as an agent for buyers or sellers.
           </p>
         </div>
       </div>

@@ -29,7 +29,7 @@ export function PhotoGalleryClient({
 
   return (
     <div>
-      {/* Tabs — only shown when floorplan URL exists */}
+      {/* Tabs: only shown when floorplan URL exists */}
       {hasFloorplan && (
         <div className="flex gap-1 mt-4 md:mt-6 mb-0">
           <button

@@ -22,7 +22,7 @@ export default async function BuyerDashboardPage() {
     select: { listingId: true, createdAt: true },
   });
 
-  const [savedListingsRaw, rawOffers, messages, unreadGroups] = await Promise.all([
+  const [savedListingsRaw, rawOffers, messages, unreadGroups, savedSearchesRaw] = await Promise.all([
     saveRows.length === 0
       ? Promise.resolve([])
       : prisma.listing.findMany({
@@ -100,9 +100,26 @@ export default async function BuyerDashboardPage() {
       where: { recipientId: user.id, status: { not: "READ" } },
       _count: { id: true },
     }),
+
+    prisma.savedSearch.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        suburb: true,
+        propertyType: true,
+        saleMethod: true,
+        minPriceCents: true,
+        maxPriceCents: true,
+        minBeds: true,
+        minBaths: true,
+        createdAt: true,
+      },
+    }),
   ]);
 
-  // Process saved listings — join save rows with listing data, preserve order
+  // Process saved listings: join save rows with listing data, preserve order
   const listingById = new Map(savedListingsRaw.map((l) => [l.id, l]));
   const savedListings = saveRows
     .map((s) => {
@@ -194,12 +211,18 @@ export default async function BuyerDashboardPage() {
 
   const conversations = Array.from(seen.values());
 
+  const savedSearches = savedSearchesRaw.map((s) => ({
+    ...s,
+    createdAt: s.createdAt.toISOString(),
+  }));
+
   return (
     <BuyerDashboardClient
       currentUserId={user.id}
       savedListings={savedListings}
       myOffers={myOffers}
       initialConversations={conversations}
+      savedSearches={savedSearches}
     />
   );
 }

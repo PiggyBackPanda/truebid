@@ -27,7 +27,7 @@ export default async function SellerDashboardPage() {
   const listings = await prisma.listing.findMany({
     where: {
       sellerId: user.id,
-      status: { in: ["DRAFT", "ACTIVE", "UNDER_OFFER"] },
+      status: { in: ["DRAFT", "COMING_SOON", "ACTIVE", "UNDER_OFFER"] },
     },
     orderBy: { updatedAt: "desc" },
     select: {
@@ -85,17 +85,17 @@ export default async function SellerDashboardPage() {
             padding: "12px 28px",
             borderRadius: 10,
             textDecoration: "none",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: 15,
           }}
         >
-          Create your first listing →
+          Create Your First Listing
         </Link>
       </div>
     );
   }
 
-  // Multiple listings — show selector
+  // Multiple listings: show selector
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
@@ -111,7 +111,7 @@ export default async function SellerDashboardPage() {
         >
           My Listings
         </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "var(--font-sans)" }}>
           Select a listing to manage it
         </p>
       </div>
@@ -120,6 +120,7 @@ export default async function SellerDashboardPage() {
         {listings.map((listing) => {
           const statusColors: Record<string, { bg: string; color: string }> = {
             ACTIVE: { bg: "#dcfce7", color: "#15803d" },
+            COMING_SOON: { bg: "#e0f2fe", color: "#0369a1" },
             DRAFT: { bg: "#f3f4f6", color: "#374151" },
             UNDER_OFFER: { bg: "#fef3c7", color: "#b45309" },
           };
@@ -171,7 +172,7 @@ export default async function SellerDashboardPage() {
                     fontWeight: 600,
                     fontSize: 15,
                     color: "#0f1623",
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                     marginBottom: 3,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -180,7 +181,7 @@ export default async function SellerDashboardPage() {
                 >
                   {listing.streetAddress}
                 </p>
-                <p style={{ color: "#6b7280", fontSize: 13, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+                <p style={{ color: "#6b7280", fontSize: 13, fontFamily: "var(--font-sans)" }}>
                   {listing.suburb}, {listing.state}
                 </p>
               </div>
@@ -194,7 +195,7 @@ export default async function SellerDashboardPage() {
                     padding: "3px 10px",
                     fontSize: 12,
                     fontWeight: 600,
-                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-sans)",
                   }}
                 >
                   {listing.status.replace("_", " ")}
@@ -233,7 +234,7 @@ export default async function SellerDashboardPage() {
             borderRadius: 10,
             padding: "10px 20px",
             textDecoration: "none",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: 14,
             fontWeight: 500,
           }}

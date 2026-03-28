@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse } from "@/lib/api-helpers";
 
-// GET /api/auth/me — return the current authenticated user's profile
+// GET /api/auth/me: return the current authenticated user's profile
 export async function GET() {
   try {
     const sessionUser = await requireAuth();

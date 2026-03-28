@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Create Listing — TrueBid",
+  title: "Create Listing | TrueBid",
 };
 
 export default async function CreateListingLayout({

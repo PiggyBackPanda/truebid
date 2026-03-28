@@ -80,8 +80,6 @@ function MethodForm() {
   const [guidePriceFrom, setGuidePriceFrom] = useState("");
   const [guidePriceTo, setGuidePriceTo] = useState("");
   const [minOffer, setMinOffer] = useState("");
-  const [requireDeposit, setRequireDeposit] = useState(false);
-  const [depositAmount, setDepositAmount] = useState("");
 
   // Private Offers fields
   const [privateGuidePrice, setPrivateGuidePrice] = useState("");
@@ -93,6 +91,31 @@ function MethodForm() {
   useEffect(() => {
     if (!listingId) router.replace("/listings/create/details");
   }, [listingId, router]);
+
+  useEffect(() => {
+    if (!listingId) return;
+    fetch(`/api/listings/${listingId}`)
+      .then((r) => r.json())
+      .then((data: { listing?: Record<string, unknown> }) => {
+        const l = data.listing;
+        if (!l) return;
+        if (typeof l.saleMethod === "string") setMethod(l.saleMethod as SaleMethod);
+        if (typeof l.requireInspection === "boolean") setRequireInspection(l.requireInspection);
+        if (typeof l.addressVisibility === "string") setAddressVisibility(l.addressVisibility as "PUBLIC" | "LOGGED_IN" | "BOOKED_ONLY");
+        const dateStr = typeof l.closingDate === "string" ? l.closingDate.slice(0, 10) : null;
+        if (l.saleMethod === "OPEN_OFFERS") {
+          if (dateStr) setClosingDate(dateStr);
+          if (typeof l.guidePriceCents === "number") setGuidePriceFrom(String(l.guidePriceCents / 100));
+          if (typeof l.guideRangeMaxCents === "number") setGuidePriceTo(String(l.guideRangeMaxCents / 100));
+          if (typeof l.minOfferCents === "number") setMinOffer(String(l.minOfferCents / 100));
+        } else if (l.saleMethod === "PRIVATE_OFFERS") {
+          if (dateStr) setPrivateClosingDate(dateStr);
+          if (typeof l.guidePriceCents === "number") setPrivateGuidePrice(String(l.guidePriceCents / 100));
+        } else if (l.saleMethod === "FIXED_PRICE") {
+          if (typeof l.guidePriceCents === "number") setFixedPrice(String(l.guidePriceCents / 100));
+        }
+      });
+  }, [listingId]);
 
   async function handleSubmit() {
     setErrors({});
@@ -128,11 +151,6 @@ function MethodForm() {
       if (toCents) body.guideRangeMaxCents = toCents;
       const minCents = dollarsToCents(minOffer);
       if (minCents) body.minOfferCents = minCents;
-      body.requireDeposit = requireDeposit;
-      if (requireDeposit) {
-        const depCents = dollarsToCents(depositAmount);
-        if (depCents) body.depositAmountCents = depCents;
-      }
     } else if (method === "PRIVATE_OFFERS") {
       const guideCents = dollarsToCents(privateGuidePrice);
       if (guideCents) body.guidePriceCents = guideCents;
@@ -178,9 +196,9 @@ function MethodForm() {
 
         <div className="flex flex-col gap-3 mb-8">
           <MethodCard
-            title="Open Offers"
+            title="Live Offers"
             badge="Recommended"
-            description="Transparent public bidding with a closing date. All buyers see every offer: price, conditions, and timing. Creates competitive tension and typically achieves the best price."
+            description="Transparent public offers with a closing date. All buyers see every offer: price, conditions, and timing. Creates competitive tension and typically achieves the best price."
             selected={method === "OPEN_OFFERS"}
             onClick={() => setMethod("OPEN_OFFERS")}
           />
@@ -203,7 +221,7 @@ function MethodForm() {
         {/* Open Offers fields */}
         {method === "OPEN_OFFERS" && (
           <div className="bg-white border border-border rounded-[12px] p-6 flex flex-col gap-5">
-            <h3 className="text-sm font-semibold text-navy">Open Offers settings</h3>
+            <h3 className="text-sm font-semibold text-navy">Live Offers settings</h3>
 
             <div>
               <label className="text-sm font-medium text-text block mb-1.5">
@@ -256,28 +274,6 @@ function MethodForm() {
               />
             </div>
 
-            <div>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={requireDeposit}
-                  onChange={(e) => setRequireDeposit(e.target.checked)}
-                  className="w-4 h-4 accent-amber"
-                />
-                <span className="text-sm font-medium text-text">Require holding deposit</span>
-              </label>
-              {requireDeposit && (
-                <div className="mt-3">
-                  <Input
-                    label="Deposit amount ($)"
-                    placeholder="e.g. 10,000"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                    hint="Buyers placing offers will be asked to provide a deposit receipt."
-                  />
-                </div>
-              )}
-            </div>
           </div>
         )}
 
@@ -389,7 +385,7 @@ function MethodForm() {
             ← Back
           </button>
           <Button size="lg" onClick={handleSubmit} loading={submitting}>
-            Continue to Review →
+            Continue to Review
           </Button>
         </div>
       </div>

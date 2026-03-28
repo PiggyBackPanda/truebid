@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — TrueBid",
+  title: "Privacy Policy | TrueBid",
   description:
     "TrueBid Privacy Policy. How we collect, use, store, and protect your personal information under the Privacy Act 1988 (Cth) and the Australian Privacy Principles.",
 };
@@ -23,7 +23,7 @@ const TOC_ITEMS = [
 ];
 
 const serif = "Georgia, 'Times New Roman', serif";
-const body  = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const body  = "var(--font-sans)";
 
 const headingStyle: React.CSSProperties = {
   fontFamily: serif,
@@ -118,7 +118,7 @@ export default function PrivacyPage() {
       {/* ── Body: sidebar TOC + content ──────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:flex lg:gap-12">
 
-        {/* Sticky sidebar TOC — desktop only */}
+        {/* Sticky sidebar TOC: desktop only */}
         <nav className="hidden lg:block lg:w-60 flex-shrink-0" aria-label="Table of contents">
           <div className="sticky top-8">
             <p className="text-navy font-semibold mb-3" style={{ fontSize: 12, fontFamily: body, letterSpacing: "0.08em", textTransform: "uppercase" }}>
@@ -150,8 +150,8 @@ export default function PrivacyPage() {
               provided for informational purposes and will be updated prior to the
               platform&rsquo;s public launch. If you have questions in the meantime,
               contact{" "}
-              <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                privacy@truebid.com.au
+              <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                hello@truebid.com.au
               </a>.
             </p>
           </div>
@@ -168,8 +168,9 @@ export default function PrivacyPage() {
                   <strong className="text-navy">&ldquo;us&rdquo;</strong>, or{" "}
                   <strong className="text-navy">&ldquo;our&rdquo;</strong>) operates a free,
                   transparent property sales platform at truebid.com.au (the
-                  &ldquo;Platform&rdquo;). We are an Australian company and our services are
-                  directed at Australian residents.
+                  &ldquo;Platform&rdquo;). We are an Australian technology company and our
+                  services are directed at Australian residents. TrueBid is not a licensed
+                  real estate agency and does not act as an agent for buyers or sellers.
                 </P>
                 <P>
                   This Privacy Policy explains how we collect, use, disclose, and protect
@@ -330,7 +331,7 @@ export default function PrivacyPage() {
               <P>
                 Passwords are hashed using bcrypt with a work factor of 12 before being
                 stored. We do not store your password in plaintext at any point, and we
-                cannot recover your password — only reset it.
+                cannot recover your password, only reset it.
               </P>
 
               <SubHeading>4.5 Access controls</SubHeading>
@@ -347,8 +348,8 @@ export default function PrivacyPage() {
                 controls, we cannot warrant that your information will never be accessed,
                 disclosed, or altered by an unauthorised party. If you suspect unauthorised
                 access to your account, contact us immediately at{" "}
-                <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                  privacy@truebid.com.au
+                <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                  hello@truebid.com.au
                 </a>.
               </P>
               <Divider />
@@ -417,8 +418,8 @@ export default function PrivacyPage() {
               <P>
                 You may request deletion of your encrypted verified name and verification
                 status by contacting{" "}
-                <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                  privacy@truebid.com.au
+                <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                  hello@truebid.com.au
                 </a>. Note that deletion may prevent you from using features that require
                 verification. Requests to delete data held by Stripe must be directed to
                 Stripe directly.
@@ -564,8 +565,8 @@ export default function PrivacyPage() {
                 </DefRow>
                 <DefRow label="Right to request deletion">
                   You may request deletion of your account and personal data by contacting{" "}
-                  <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                    privacy@truebid.com.au
+                  <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                    hello@truebid.com.au
                   </a>.
                   Deletion is subject to our legal retention obligations (see Section 9).
                   Data that must be retained for legal or financial compliance will be
@@ -595,8 +596,8 @@ export default function PrivacyPage() {
 
               <P style={{ marginTop: 16 }}>
                 To exercise any of these rights, contact{" "}
-                <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                  privacy@truebid.com.au
+                <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                  hello@truebid.com.au
                 </a>{" "}
                 with your name and registered email address. We may need to verify your
                 identity before processing the request.
@@ -754,8 +755,8 @@ export default function PrivacyPage() {
                 If you become aware of, or suspect, a data security incident involving
                 your TrueBid account or personal information, please contact us
                 immediately at{" "}
-                <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                  privacy@truebid.com.au
+                <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                  hello@truebid.com.au
                 </a>{" "}
                 with the subject line <em>&ldquo;Security Incident&rdquo;</em>.
               </P>
@@ -780,9 +781,10 @@ export default function PrivacyPage() {
                 )}
                 <p className="text-text-muted">
                   Email:{" "}
-                  <a href="mailto:privacy@truebid.com.au" className="text-navy underline">
-                    privacy@truebid.com.au
+                  <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                    hello@truebid.com.au
                   </a>
+                  {" "}with subject line <em>&ldquo;Privacy&rdquo;</em>
                 </p>
               </div>
               <P style={{ marginTop: 16 }}>

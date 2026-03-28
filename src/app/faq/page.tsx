@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "FAQ — TrueBid",
+  title: "FAQ | TrueBid",
   description:
-    "Frequently asked questions about TrueBid's free, transparent property sales platform. Selling, buying, Open Offers, commissions, and more.",
+    "Frequently asked questions about TrueBid's free, transparent property sales platform. Selling, buying, Live Offers, commissions, and more.",
 };
 
 const FAQ_CATEGORIES = [
@@ -42,18 +42,18 @@ const FAQ_CATEGORIES = [
     ],
   },
   {
-    category: "Open Offers",
+    category: "Live Offers",
     items: [
       {
-        q: "What is an Open Offer?",
-        a: "An Open Offer is TrueBid\u2019s core feature. When a property is listed with Open Offers enabled, all registered buyers can see every offer\u2019s amount and submission time in real time. Buyer identities and offer conditions are kept private. There are no secret bids.",
+        q: "What is a Live Offer?",
+        a: "A Live Offer is TrueBid\u2019s core feature. When a property is listed with Live Offers enabled, all registered buyers can see every offer\u2019s amount and submission time in real time. Buyer identities and offer conditions are kept private. There are no secret bids.",
       },
       {
-        q: "How long does an Open Offer period last?",
-        a: "The seller sets the Open Offer window when they create their listing. This can range from 24 hours to several weeks depending on the campaign. The duration is clearly shown on every listing.",
+        q: "How long does a Live Offers period last?",
+        a: "The seller sets the Live Offers window when they create their listing. This can range from 24 hours to several weeks depending on the campaign. The duration is clearly shown on every listing.",
       },
       {
-        q: "Can buyers see who else is bidding?",
+        q: "Can buyers see other offers?",
         a: "Buyers can see offer amounts and submission times only. Personal details and offer conditions are kept private \u2014 only prices and timing are visible to other buyers.",
       },
       {
@@ -62,7 +62,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Can I change or withdraw my offer?",
-        a: "You can update your offer upward during the Open Offer period. Withdrawing an offer is possible but may be noted on your account record. We encourage buyers to only submit offers they are serious about.",
+        a: "You can update your offer upward during the Live Offers period. Withdrawing an offer is possible but may be noted on your account record. We encourage buyers to only submit offers they are serious about.",
       },
       {
         q: "What happens if two offers come in at the same price?",
@@ -70,7 +70,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Can a seller still accept an offer before the deadline?",
-        a: "Yes. Sellers can accept an offer at any time if it meets their expectations. The Open Offer period is a minimum window, not a fixed end point.",
+        a: "Yes. Sellers can accept an offer at any time if it meets their expectations. The Live Offers period is a minimum window, not a fixed end point.",
       },
       {
         q: "What happens after an offer is accepted?",
@@ -83,7 +83,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "How do I make an offer on a property?",
-        a: "Create a free TrueBid account, verify your identity, and browse listed properties. When you find a property you want, submit your offer directly through the platform during the Open Offer window.",
+        a: "Create a free TrueBid account, verify your identity, and browse listed properties. When you find a property you want, submit your offer directly through the platform during the Live Offers window.",
       },
       {
         q: "Do I need to be pre-approved for finance?",
@@ -91,7 +91,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Can I make offers on multiple properties at once?",
-        a: "Yes, but be aware that if multiple offers are accepted simultaneously, you may be legally obligated on more than one contract depending on your state\u2019s property laws. We recommend speaking with a conveyancer or solicitor before bidding on multiple properties.",
+        a: "Yes, but be aware that if multiple offers are accepted simultaneously, you may be legally obligated on more than one contract depending on your state\u2019s property laws. We recommend speaking with a conveyancer or solicitor before placing offers on multiple properties.",
       },
       {
         q: "What is a cooling-off period and does it apply to TrueBid sales?",
@@ -102,8 +102,8 @@ const FAQ_CATEGORIES = [
         a: "TrueBid is a sales platform and doesn\u2019t administer government grants or schemes. However, buying through TrueBid doesn\u2019t affect your eligibility for any first home buyer grants, stamp duty concessions, or schemes you qualify for.",
       },
       {
-        q: "What if I want to make an offer before the Open Offer period opens?",
-        a: "Some sellers may accept early offers. Check the individual listing for details. If an Open Offer period is active, all offers must go through the platform.",
+        q: "What if I want to make an offer before the Live Offers period opens?",
+        a: "Some sellers may accept early offers. Check the individual listing for details. If a Live Offers period is active, all offers must go through the platform.",
       },
       {
         q: "Is there a cost to buyers?",
@@ -116,23 +116,19 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "How do I list my property on TrueBid?",
-        a: "Create a seller account, complete your property details, upload photos and documents, and set your Open Offer preferences, including the offer window duration and reserve expectations. Our team reviews every listing before it goes live.",
+        a: "Create a seller account, complete your property details, upload photos and documents, and set your Live Offers preferences, including the offer window duration and minimum offer threshold. Once you publish, your listing goes live immediately as Coming Soon, or straight to Active if you choose.",
       },
       {
         q: "How long does it take to get my property listed?",
-        a: "Once you submit your listing, our team reviews it for completeness and accuracy. Most listings are approved and live within one business day.",
+        a: "Publishing is instant. Once you complete your listing details, upload photos, and choose your sale method, you can publish and your listing goes live right away.",
       },
       {
         q: "What does it cost to list on TrueBid?",
-        a: "Listing on TrueBid is free during our current launch period. We plan to introduce a modest listing fee in the future, and existing users will get advance notice before any charges apply. We don\u2019t charge commission on sales.",
+        a: "Listing on TrueBid is free during our current launch period, which will end with no less than 30 days written notice to registered users. We don\u2019t charge commission on sales.",
       },
       {
-        q: "Can I set a reserve price?",
-        a: "You can set a confidential reserve. Buyers will not see the exact reserve, but you will only be obligated to sell if an offer meets it.",
-      },
-      {
-        q: "Can I set a \u2018buy it now\u2019 price to accept an offer immediately?",
-        a: "Yes. You can set an instant acceptance price in your listing settings. If any buyer meets that price, the offer is automatically accepted and the Open Offer period closes.",
+        q: "Can I set a minimum offer threshold?",
+        a: "You can set a minimum offer threshold in your listing settings. Offers below this amount will not appear on the public board, though you will still see them in your seller dashboard. This acts as a non-binding floor, not a legal obligation. You are never required to sell simply because an offer meets the threshold.",
       },
       {
         q: "What information do I need to provide to list my property?",
@@ -140,11 +136,11 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Can I pause or remove my listing?",
-        a: "Yes. You can pause or withdraw your listing at any time before a contract is exchanged. If an Open Offer period is active, you\u2019ll be prompted to notify registered buyers before closing it.",
+        a: "Yes. You can pause or withdraw your listing at any time before a contract is exchanged. If a Live Offers period is active, you\u2019ll be prompted to notify registered buyers before closing it.",
       },
       {
         q: "What if I don\u2019t get the price I want?",
-        a: "You are never obligated to accept an offer you are not happy with. If the Open Offer period closes without an acceptable offer, you can relist, negotiate privately, or choose not to sell.",
+        a: "You are never obligated to accept an offer you are not happy with. If the Live Offers period closes without an acceptable offer, you can relist, negotiate privately, or choose not to sell.",
       },
       {
         q: "Can I use TrueBid alongside a real estate agent?",
@@ -210,7 +206,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "How do I report a problem with a buyer or seller?",
-        a: 'You can report any conduct concerns directly through the platform using the \u201cReport an issue\u201d option on the relevant listing or offer. Our team reviews all reports and aims to follow up within two business days. For urgent legal matters, contact your solicitor or the relevant state consumer protection authority.',
+        a: "You can report any conduct concerns by contacting us directly at hello@truebid.com.au. Our team aims to follow up within two business days. For urgent legal matters, contact your solicitor or the relevant state consumer protection authority.",
       },
       {
         q: "How does TrueBid handle disputes between buyers and sellers?",
@@ -244,7 +240,7 @@ export default function FaqPage() {
         <p
           style={{
             color: "rgba(255,255,255,0.55)",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: 16,
             lineHeight: 1.5,
           }}
@@ -311,7 +307,7 @@ export default function FaqPage() {
                           className="font-semibold text-navy"
                           style={{
                             fontSize: 14,
-                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily: "var(--font-sans)",
                           }}
                         >
                           {item.q}
@@ -338,7 +334,7 @@ export default function FaqPage() {
                           className="text-text-muted leading-relaxed"
                           style={{
                             fontSize: 14,
-                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                            fontFamily: "var(--font-sans)",
                           }}
                         >
                           {item.a}
@@ -356,7 +352,7 @@ export default function FaqPage() {
         <div className="mt-12 text-center border-t border-border pt-10">
           <p
             className="text-text-muted mb-6"
-            style={{ fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+            style={{ fontSize: 14, fontFamily: "var(--font-sans)" }}
           >
             Still have questions?
           </p>
@@ -368,10 +364,16 @@ export default function FaqPage() {
               How it works
             </Link>
             <Link
+              href="/contact"
+              className="inline-block border border-border text-text font-medium text-sm px-6 py-3 rounded-[10px] hover:bg-white transition-colors text-center"
+            >
+              Contact us
+            </Link>
+            <Link
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-6 py-3 rounded-[10px] hover:bg-amber-light transition-colors text-center"
             >
-              Create a free account →
+              Create a Free Account
             </Link>
           </div>
         </div>

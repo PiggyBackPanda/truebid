@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About — TrueBid",
+  title: "About | TrueBid",
   description:
     "TrueBid was built to make Australian property sales transparent, fair, and free of agent commissions. Learn our story and values.",
 };
@@ -15,7 +15,7 @@ export default function AboutPage() {
         <div className="max-w-3xl mx-auto">
           <p
             style={{
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 13,
               fontWeight: 600,
               letterSpacing: "0.1em",
@@ -36,21 +36,22 @@ export default function AboutPage() {
               fontWeight: 400,
             }}
           >
-            Property sales in Australia are opaque.
-            <br className="hidden sm:block" /> We&rsquo;re changing that.
+            Property sales in Australia deserve
+            <br className="hidden sm:block" /> to be more transparent.
           </h1>
           <p
             className="text-white/65 max-w-2xl mx-auto"
             style={{
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 17,
               lineHeight: 1.7,
             }}
           >
             Selling your home is the largest financial transaction most
-            Australians will ever make. Yet the process is opaque, stressful,
-            and dominated by intermediaries who take a cut without adding
-            proportionate value. TrueBid exists to change that.
+            Australians will ever make.
+            <br />
+            Yet the process is often stressful, complex, and hard to navigate
+            without paying significant fees along the way. TrueBid exists to change that.
           </p>
         </div>
       </div>
@@ -71,7 +72,7 @@ export default function AboutPage() {
           </h2>
           <div
             style={{
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 16,
               lineHeight: 1.8,
               color: "#4a5568",
@@ -81,25 +82,35 @@ export default function AboutPage() {
             }}
           >
             <p>
-              The idea for TrueBid started with a frustrating experience that
-              most Australian home-sellers will recognise: you hand over your
-              most valuable asset to an agent, pay tens of thousands of dollars
-              in commission, and still have almost no visibility into what&rsquo;s
-              happening. Offers arrive filtered through a middleman. You never
-              know if there were other buyers. You can&rsquo;t see what a property
-              truly traded for until weeks later, if at all.
+              For most Australians, buying or selling a home is the single
+              largest financial decision of their lives. Yet the process has
+              remained remarkably opaque. Sellers pay significant commissions
+              without knowing how many buyers showed genuine interest or whether
+              a better outcome was within reach. Buyers compete without knowing
+              what other offers are on the table, often wondering afterward
+              whether they overpaid or missed out for no good reason.
             </p>
             <p>
-              The internet fixed this in every other industry.
-              Travel, finance, accommodation — all disintermediated.
-              Property was the last holdout, protected by inertia and the fact that
-              most people only sell a few times in their lives.
+              Every other major industry has been transformed by transparency
+              and direct access. You can see flight prices update in real time,
+              compare hotel rates across platforms, and track your investments
+              to the minute. Property is the last holdout, and the reason is
+              simply that the status quo has never been seriously challenged.
             </p>
             <p>
-              So we built TrueBid: a platform where sellers list for free, buyers
-              see every offer in real time, and the transaction happens directly
-              between the two parties. No agent commission. No information
-              asymmetry. No games.
+              TrueBid is that challenge. We built a platform where offers are
+              visible to everyone, sellers stay in control, and both parties
+              can transact with confidence that the process is fair. No hidden
+              negotiations. No information gaps. Just an open, honest market
+              for one of the most important decisions you will ever make.
+            </p>
+            <p>
+              For many of our sellers, that last point is the real reason they
+              choose TrueBid. Not just to save on fees, but to take control.
+              To set their own timeline, see every offer as it comes in, and
+              make decisions based on complete information rather than a phone
+              call from someone else. Buying or selling a home is deeply
+              personal. TrueBid puts that experience back in your hands.
             </p>
           </div>
         </div>
@@ -152,7 +163,7 @@ export default function AboutPage() {
               </h2>
               <p
                 style={{
-                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: 16,
                   lineHeight: 1.7,
                   color: "#4a5568",
@@ -168,7 +179,7 @@ export default function AboutPage() {
           </div>
           <p
             style={{
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 16,
               lineHeight: 1.7,
               color: "#4a5568",
@@ -178,8 +189,47 @@ export default function AboutPage() {
             built for a different country. Every design decision, every feature,
             every safeguard has been built with Australian property law,
             Australian buyers, and Australian sellers in mind. When you have a
-            question, you reach a real person based in Australia.
+            question, you reach a real person based in Australia.{" "}
+            <a href="/contact" style={{ color: "#e8a838", textDecoration: "underline" }}>Get in touch.</a>
           </p>
+        </div>
+      </section>
+
+      <div className="border-t border-border" />
+
+      {/* Team */}
+      <section className="py-16 px-6 bg-bg">
+        <div className="max-w-3xl mx-auto">
+          <h2
+            className="text-navy text-center mb-3"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontSize: "clamp(24px, 3.5vw, 36px)",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            The people behind TrueBid
+          </h2>
+          <p
+            className="text-center text-text-muted text-sm mb-10"
+            style={{ fontFamily: "var(--font-sans)" }}
+          >
+            A small team of Australians who got frustrated with how property sales work and decided to do something about it.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <TeamCard
+              name="Jordan"
+              role="Co-founder"
+              bio="Based in Perth. Has navigated both sides of the Australian property market and spent too long wondering why offer details are kept secret from buyers."
+            />
+            <TeamCard
+              name="The TrueBid team"
+              role="Product, engineering, and support"
+              bio="We're a small Australian team. When you email us, a real person reads it and responds. We're building this platform because we think property transactions deserve better."
+            />
+          </div>
         </div>
       </section>
 
@@ -201,7 +251,7 @@ export default function AboutPage() {
           </h2>
           <p
             className="text-center text-text-muted text-sm mb-12"
-            style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+            style={{ fontFamily: "var(--font-sans)" }}
           >
             Three principles that shape every decision we make.
           </p>
@@ -251,7 +301,7 @@ export default function AboutPage() {
                 </svg>
               }
               title="No commissions"
-              body="Placing offers is always free. During our launch period, listing is also free. We'll give you at least 30 days notice before any listing fee is introduced. The core transaction will never carry a commission."
+              body="Placing offers is always free. Listing is free during our current launch period, which will end with no less than 30 days written notice to registered users. The core transaction will never carry a commission."
             />
             <ValueCard
               icon={
@@ -289,7 +339,7 @@ export default function AboutPage() {
           <p
             className="text-white/60 mb-8"
             style={{
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: 16,
               lineHeight: 1.6,
             }}
@@ -302,14 +352,14 @@ export default function AboutPage() {
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
             >
-              List your home for free →
+              List Your Home for Free
             </Link>
             <Link
               href="/how-it-works"
               className="inline-block text-white font-medium text-sm px-8 py-4 rounded-[10px] hover:bg-white/10 transition-colors"
               style={{ border: "1px solid rgba(255,255,255,0.25)" }}
             >
-              How it works →
+              How It Works
             </Link>
           </div>
           <p
@@ -317,7 +367,7 @@ export default function AboutPage() {
             style={{
               color: "rgba(255,255,255,0.3)",
               fontSize: 12,
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             Australian owned and operated · No commissions on transactions · Identity
@@ -369,10 +419,41 @@ function ValueCard({
       </h3>
       <p
         className="text-text-muted leading-relaxed"
-        style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 14 }}
+        style={{ fontFamily: "var(--font-sans)", fontSize: 14 }}
       >
         {body}
       </p>
+    </div>
+  );
+}
+
+function TeamCard({ name, role, bio }: { name: string; role: string; bio: string }) {
+  return (
+    <div className="bg-white border border-border rounded-xl p-6" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "#fef3dc",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="12" cy="7" r="4" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-navy font-semibold text-sm" style={{ fontFamily: "var(--font-sans)" }}>{name}</p>
+          <p className="text-text-muted text-xs" style={{ fontFamily: "var(--font-sans)" }}>{role}</p>
+        </div>
+      </div>
+      <p className="text-text-muted text-sm leading-relaxed" style={{ fontFamily: "var(--font-sans)" }}>{bio}</p>
     </div>
   );
 }

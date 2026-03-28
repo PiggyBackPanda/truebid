@@ -54,7 +54,7 @@ function Avatar({ name, size = 40 }: { name: string; size?: number }) {
   return (
     <div
       className="flex items-center justify-center rounded-full bg-navy text-white font-semibold shrink-0"
-      style={{ width: size, height: size, fontSize: size * 0.35, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+      style={{ width: size, height: size, fontSize: size * 0.35, fontFamily: "var(--font-sans)" }}
     >
       {initials}
     </div>
@@ -108,7 +108,7 @@ function ConversationList({
               <div className="flex justify-between items-baseline mb-0.5">
                 <p
                   className="font-semibold text-navy text-sm truncate"
-                  style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+                  style={{ fontFamily: "var(--font-sans)" }}
                 >
                   {name}
                 </p>
@@ -118,14 +118,14 @@ function ConversationList({
               </div>
               <p
                 className="text-xs text-text-muted truncate mb-1"
-                style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+                style={{ fontFamily: "var(--font-sans)" }}
               >
                 {conv.listing.streetAddress}
               </p>
               <div className="flex items-center justify-between">
                 <p
                   className="text-xs text-text-muted truncate max-w-[160px]"
-                  style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+                  style={{ fontFamily: "var(--font-sans)" }}
                 >
                   {conv.lastMessage
                     ? `${conv.lastMessage.isFromMe ? "You: " : ""}${conv.lastMessage.body}`
@@ -140,7 +140,7 @@ function ConversationList({
                       minWidth: 18,
                       height: 18,
                       padding: "0 5px",
-                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily: "var(--font-sans)",
                     }}
                   >
                     {conv.unreadCount}
@@ -272,7 +272,7 @@ function MessageThread({
         <div className="flex-1 min-w-0">
           <p
             className="font-semibold text-navy text-sm"
-            style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+            style={{ fontFamily: "var(--font-sans)" }}
           >
             {otherName}
           </p>
@@ -288,7 +288,7 @@ function MessageThread({
         <button
           onClick={handleExport}
           className="flex items-center gap-1.5 text-xs font-medium text-slate border border-border rounded-lg px-3 py-2 hover:bg-bg transition-colors shrink-0"
-          style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+          style={{ fontFamily: "var(--font-sans)" }}
           title="Download conversation transcript"
         >
           <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2">
@@ -340,7 +340,7 @@ function MessageThread({
                       style={{
                         fontSize: 11,
                         color: "#6b7280",
-                        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                        fontFamily: "var(--font-sans)",
                       }}
                     >
                       {msg.senderId === detail.buyer.id
@@ -350,7 +350,7 @@ function MessageThread({
                   )}
                   <p
                     className="text-sm leading-relaxed"
-                    style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                    style={{ fontFamily: "var(--font-sans)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}
                   >
                     {msg.body}
                   </p>
@@ -359,7 +359,7 @@ function MessageThread({
                       fontSize: 11,
                       marginTop: 4,
                       color: isMe ? "rgba(255,255,255,0.55)" : "#9ca3af",
-                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily: "var(--font-sans)",
                     }}
                   >
                     {formatDateTime(msg.sentAt)}
@@ -423,7 +423,7 @@ function MessageThread({
             style={{
               minHeight: 40,
               maxHeight: 120,
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               lineHeight: 1.5,
             }}
           />
@@ -434,7 +434,7 @@ function MessageThread({
             style={{
               background: draft.trim() && !sending ? "#0f1623" : "#e5e2db",
               cursor: draft.trim() && !sending ? "pointer" : "not-allowed",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               height: 40,
             }}
           >
@@ -500,7 +500,7 @@ export function MessagesPageClient({
             style={{
               background: "#fffbeb",
               color: "#d97706",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             {totalUnread} unread
@@ -525,7 +525,7 @@ export function MessagesPageClient({
             <div className="px-4 py-3 border-b border-border bg-bg shrink-0">
               <p
                 className="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: "0.08em" }}
+                style={{ fontFamily: "var(--font-sans)", letterSpacing: "0.08em" }}
               >
                 Conversations ({conversations.length})
               </p>

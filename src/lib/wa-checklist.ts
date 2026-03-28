@@ -41,7 +41,7 @@ export const WA_CHECKLIST: ChecklistItem[] = [
       "The standard WA contract is the REIWA/Law Society Joint Form of General Conditions for the Sale of Land. Your settlement agent prepares this with the agreed terms once you accept an offer.",
     mandatory: true,
     helpText:
-      "The contract includes the purchase price, settlement date, deposit amount, any special conditions, and the general conditions of sale. Your settlement agent drafts this — you don't need to write it yourself.",
+      "The contract includes the purchase price, settlement date, deposit amount, any special conditions, and the general conditions of sale. Your settlement agent drafts this, so you don't need to write it yourself.",
     ctaLabel: null,
     ctaType: null,
     partnerBusinessType: null,
@@ -65,7 +65,7 @@ export const WA_CHECKLIST: ChecklistItem[] = [
       "If you've made renovations, extensions, or additions to the property, gather the relevant building permits and certificates of completion. Buyers and their inspectors will ask for these.",
     mandatory: false,
     helpText:
-      "Check with your local council for records of approved building permits. If renovations were done without permits, disclose this to potential buyers — it's a material fact that can affect the sale.",
+      "Check with your local council for records of approved building permits. If renovations were done without permits, disclose this to potential buyers, as it's a material fact that can affect the sale.",
     ctaLabel: null,
     ctaType: null,
     partnerBusinessType: null,
@@ -77,7 +77,7 @@ export const WA_CHECKLIST: ChecklistItem[] = [
       "Understanding your property's market value helps you set a realistic guide price. This can be a formal valuation or a comparative market analysis.",
     mandatory: false,
     helpText:
-      "Options: 1) Formal sworn valuation by a licensed valuer ($300–$600) — useful if you need certainty. 2) Free online estimates from CoreLogic or similar — useful as a rough guide. 3) Check recent sales of similar properties in your area on realestate.com.au.",
+      "Options: 1) Formal sworn valuation by a licensed valuer ($300–$600), useful if you need certainty. 2) Free online estimates from CoreLogic or similar, useful as a rough guide. 3) Check recent sales of similar properties in your area on realestate.com.au.",
     ctaLabel: null,
     ctaType: null,
     partnerBusinessType: null,

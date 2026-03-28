@@ -1,6 +1,7 @@
 import { PropertyImage } from "@/components/listings/PropertyImage";
 import { getListingFallbackImage } from "@/lib/listing-images";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -18,13 +19,13 @@ import { InspectionTimesPanel } from "@/components/listings/InspectionTimesPanel
 import { AskOwnerModal } from "@/components/listings/AskOwnerModal";
 import { MortgageCalculator } from "@/components/listings/MortgageCalculator";
 import { LiveViewers } from "@/components/listings/LiveViewers";
+import { ListingStats } from "@/components/listings/ListingStats";
 import { ShareButton } from "@/components/listings/ShareButton";
-import { AntiSnipeExplainer } from "@/components/listings/AntiSnipeExplainer";
 import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ published?: string }>;
+  searchParams: Promise<{ published?: string; updated?: string }>;
 }
 
 const PROPERTY_TYPE_LABELS_META: Record<string, string> = {
@@ -33,7 +34,7 @@ const PROPERTY_TYPE_LABELS_META: Record<string, string> = {
 };
 
 const SALE_METHOD_LABELS_META: Record<string, string> = {
-  OPEN_OFFERS: "Open Offers", PRIVATE_OFFERS: "Private Offers", FIXED_PRICE: "Fixed Price",
+  OPEN_OFFERS: "Live Offers", PRIVATE_OFFERS: "Private Offers", FIXED_PRICE: "Fixed Price",
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -78,7 +79,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const description = listing.description
     ? listing.description.slice(0, 155) + (listing.description.length > 155 ? "…" : "")
-    : `${specs ? `${specs} ` : ""}${typeLabel} for sale via ${methodLabel} at ${address}. Listed on TrueBid — free, transparent property sales. No agent commissions.`;
+    : `${specs ? `${specs} ` : ""}${typeLabel} for sale via ${methodLabel} at ${address}. Listed on TrueBid: free, transparent property sales. No agent commissions.`;
 
   const url = `${baseUrl}/listings/${id}`;
   const ogImage = listing.images[0]?.url;
@@ -115,7 +116,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // ── Mapbox suburb centroid geocoding ─────────────────────────────────────────
-// Always geocodes at suburb level — never uses the street address — to protect
+// Always geocodes at suburb level (never uses the street address) to protect
 // seller privacy on the public listing page.
 async function getSuburbCentroid(
   suburb: string,
@@ -225,7 +226,7 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 };
 
 const SALE_METHOD_LABELS: Record<string, string> = {
-  OPEN_OFFERS: "Open Offers", PRIVATE_OFFERS: "Private Offers", FIXED_PRICE: "Fixed Price",
+  OPEN_OFFERS: "Live Offers", PRIVATE_OFFERS: "Private Offers", FIXED_PRICE: "Fixed Price",
 };
 
 const SCHEMA_PROPERTY_TYPE: Record<string, string> = {
@@ -244,7 +245,7 @@ function formatDollarsAUD(amount: number): string {
 
 export default async function ListingDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
-  const { published } = await searchParams;
+  const { published, updated } = await searchParams;
 
   const session = await getServerSession(authOptions);
   const currentUser = session?.user as unknown as Record<string, unknown> | undefined;
@@ -347,7 +348,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       });
       initialFavourited = !!fav;
     } catch {
-      // Table may not exist yet — migration pending
+      // Table may not exist yet (migration pending)
     }
   }
 
@@ -479,10 +480,39 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Published banner */}
-      {published && (
+      {/* Published banner + seller next steps */}
+      {published && isOwner && (
+        <div className="bg-green text-white px-4 py-4">
+          <p className="text-sm font-semibold text-center mb-3">Your listing is now live!</p>
+          <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
+              <p className="font-semibold mb-0.5">Share your listing</p>
+              <p className="opacity-80">Copy the URL and send it to your network</p>
+            </div>
+            <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
+              <p className="font-semibold mb-0.5">Manage from your dashboard</p>
+              <p className="opacity-80">
+                <Link href="/dashboard/seller" className="underline hover:no-underline">Dashboard</Link>
+                {" "}tracks offers, messages and checklist
+              </p>
+            </div>
+            <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
+              <p className="font-semibold mb-0.5">Engage a conveyancer</p>
+              <p className="opacity-80">Have one lined up before you accept an offer</p>
+            </div>
+          </div>
+        </div>
+      )}
+      {published && !isOwner && (
         <div className="bg-green text-white text-sm font-medium text-center py-3 px-4">
-          Your listing is now live! Buyers can view it and place offers.
+          This listing is now live. Browse below and place an offer when you&apos;re ready.
+        </div>
+      )}
+
+      {/* Updated banner */}
+      {updated && (
+        <div className="bg-green text-white text-sm font-medium text-center py-3 px-4">
+          Your changes have been applied and are now live.
         </div>
       )}
 
@@ -497,9 +527,17 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       )}
 
       {/* Coming Soon banner */}
-      {listing.status === "COMING_SOON" && (
+      {listing.status === "COMING_SOON" && isOwner && (
         <div className="bg-navy text-white text-sm text-center py-3 px-4">
-          Coming Soon — This property is not yet accepting offers.{" "}
+          Your listing is published as Coming Soon. Buyers can view it but cannot yet place offers.{" "}
+          <a href={`/dashboard/seller`} className="underline hover:no-underline opacity-80">
+            Go to your dashboard
+          </a>{" "}to activate it for offers.
+        </div>
+      )}
+      {listing.status === "COMING_SOON" && !isOwner && (
+        <div className="bg-navy text-white text-sm text-center py-3 px-4">
+          Coming Soon. This property is not yet accepting offers.{" "}
           <span className="opacity-75">Save it to get notified when it opens.</span>
         </div>
       )}
@@ -507,14 +545,14 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       {/* Inspections Open banner */}
       {listing.status === "INSPECTIONS_OPEN" && (
         <div className="bg-amber text-navy font-medium text-sm text-center py-3 px-4">
-          Inspections Open — Book an inspection below. Offers will open once the seller is ready.
+          Inspections Open: Book an inspection below. Offers will open once the seller is ready.
         </div>
       )}
 
       {/* Under Offer banner */}
       {listing.status === "UNDER_OFFER" && (
         <div className="text-sm font-medium text-center py-3 px-4" style={{ background: "#334766", color: "#ffffff" }}>
-          Under Offer — This property has a conditional offer accepted.
+          Under Offer: This property has a conditional offer accepted.
         </div>
       )}
 
@@ -534,7 +572,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px 120px" }}>
         <div className="lg:grid lg:grid-cols-5 lg:gap-8">
-          {/* Left column — photo gallery + all property content (60% on desktop) */}
+          {/* Left column: photo gallery + all property content (60% on desktop) */}
           <div className="lg:col-span-3">
             {/* Photo gallery */}
             <PhotoGalleryClient
@@ -661,24 +699,43 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 )}
               </div>
 
-              {/* Live viewers — only for non-OPEN_OFFERS to avoid doubling the socket count */}
+              {/* Live viewers: only for non-OPEN_OFFERS to avoid doubling the socket count */}
               {currentUser && listing.saleMethod !== "OPEN_OFFERS" && (
                 <div className="mt-3">
                   <LiveViewers listingId={id} />
                 </div>
               )}
+
+              {/* Registered viewer count and active offer count (live, excludes the owner) */}
+              <div className="mt-2">
+                <ListingStats
+                  listingId={id}
+                  initialViewerCount={0}
+                  initialOfferCount={listing._count.offers}
+                  isActive={
+                    listing.status === "ACTIVE" &&
+                    (listing.closingDate === null || listing.closingDate > new Date())
+                  }
+                  isOwner={isOwner}
+                />
+              </div>
             </div>
 
-            {/* Primary CTA — inline, visible without scrolling */}
+            {/* Primary CTA: inline, visible without scrolling */}
             {!isOwner && (
               <div className="mb-8 flex gap-3">
                 {listing.status === "ACTIVE" && !isClosed && (
-                  <a
-                    href={`/listings/${id}/offer`}
-                    className="flex-1 block text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors shadow-sm"
-                  >
-                    Place an Offer
-                  </a>
+                  <div className="flex-1">
+                    <a
+                      href={`/listings/${id}/offer`}
+                      className="block w-full text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors shadow-sm"
+                    >
+                      Place an Offer
+                    </a>
+                    <p className="text-center text-xs text-text-muted mt-1.5">
+                      Requires identity verification (2 min, one-time)
+                    </p>
+                  </div>
                 )}
                 {(listing.status === "COMING_SOON" || listing.status === "INSPECTIONS_OPEN") && (
                   <div className="flex-1 block text-center bg-navy/5 border border-navy/15 text-navy/50 font-bold text-base py-4 rounded-[12px] cursor-not-allowed select-none">
@@ -712,7 +769,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               address={serializedAddress.displayAddress}
             />
 
-            {/* Inspection slots — shown for all pre-offer and active states */}
+            {/* Inspection slots: shown for all pre-offer and active states */}
             {publicSlots.length > 0 && (
               <InspectionSlotList
                 slots={publicSlots}
@@ -917,17 +974,19 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               </div>
             )}
 
-            {/* Anti-snipe explainer */}
-            <AntiSnipeExplainer />
           </div>{/* end main content */}
           </div>{/* end left column */}
 
-          {/* Right column — sticky offers panel + seller info (40% on desktop) */}
+          {/* Right column: sticky offers panel + seller info (40% on desktop) */}
           <div className="lg:col-span-2 mt-8 lg:mt-0">
             <div className="sticky top-20 space-y-4">
-              {/* Open Offers board — only shown when listing is ACTIVE or past */}
+              {/* Live Offers board: only shown when listing is ACTIVE or past */}
               {listing.saleMethod === "OPEN_OFFERS" && listing.status !== "COMING_SOON" && listing.status !== "INSPECTIONS_OPEN" && (
-                <OfferBoard
+                <>
+                  <p className="text-xs text-text-muted px-1">
+                    All participants are identity verified. TrueBid monitors for suspicious offer activity.
+                  </p>
+                  <OfferBoard
                   listingId={id}
                   initialOffers={publicOffers}
                   initialClosingDate={listing.closingDate?.toISOString() ?? null}
@@ -935,6 +994,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                   isOwner={isOwner}
                   isClosed={isClosed}
                 />
+                </>
               )}
 
               {/* Save CTA for pre-launch states */}
@@ -979,12 +1039,17 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                   )}
 
                   {listing.status === "ACTIVE" && !isOwner && listing.saleMethod !== "FIXED_PRICE" && (
-                    <a
-                      href={`/listings/${id}/offer`}
-                      className="block w-full text-center bg-amber text-navy font-semibold text-sm py-3 rounded-[10px] hover:bg-amber/90 transition-colors"
-                    >
-                      Place an Offer
-                    </a>
+                    <div>
+                      <a
+                        href={`/listings/${id}/offer`}
+                        className="block w-full text-center bg-amber text-navy font-semibold text-sm py-3 rounded-[10px] hover:bg-amber/90 transition-colors"
+                      >
+                        Place an Offer
+                      </a>
+                      <p className="text-center text-xs text-text-muted mt-1.5">
+                        Requires identity verification (2 min, one-time)
+                      </p>
+                    </div>
                   )}
 
                   {isOwner && (

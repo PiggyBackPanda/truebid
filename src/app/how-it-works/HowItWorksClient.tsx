@@ -6,15 +6,15 @@ import Link from "next/link";
 const SELLER_STEPS = [
   {
     title: "Create your listing (15 minutes)",
-    body: "Sign up and verify your identity, then enter your property details: address, bedrooms, bathrooms, land size, and a description of your home. Upload your best photos (your phone camera is fine; good lighting makes a big difference). Choose your sale method: Open Offers for transparent bidding, Private Offers if you prefer discretion, or Fixed Price if you know exactly what you want.",
+    body: "Sign up and verify your identity, then enter your property details: address, bedrooms, bathrooms, land size, and a description of your home. Upload your best photos (your phone camera is fine; good lighting makes a big difference). Choose your sale method: Live Offers for transparent, competitive offers, Private Offers if you prefer discretion, or Fixed Price if you know exactly what you want.",
   },
   {
     title: "Go live and attract buyers",
-    body: "Hit publish and your listing is submitted for review. Most listings are reviewed and live within one business day. Once live, buyers can find your property through our search, browse the details, and — for Open Offers — see the live offer board. You manage everything from your seller dashboard: track views, respond to questions, and watch offers come in.",
+    body: "Hit publish and your listing goes live instantly. Buyers can find your property through our search, browse the details, and for Live Offers listings, see the live offer board. You manage everything from your seller dashboard: track views, respond to questions, and watch offers come in.",
   },
   {
     title: "Review offers and accept",
-    body: "When your Open Offers closing date arrives, review all offers in your dashboard. You'll see each buyer's offer amount, their conditions, and their preferred settlement timeline. You choose the offer that suits you best. It doesn't have to be the highest. An unconditional offer with a quick settlement might be worth more to you than a higher offer subject to finance.",
+    body: "When your Live Offers closing date arrives, review all offers in your dashboard. You'll see each buyer's offer amount, their conditions, and their preferred settlement timeline. You choose the offer that suits you best. It doesn't have to be the highest. An unconditional offer with a quick settlement might be worth more to you than a higher offer subject to finance.",
   },
   {
     title: "Settle with your conveyancer",
@@ -29,7 +29,7 @@ const BUYER_STEPS = [
   },
   {
     title: "Verify and place an offer",
-    body: "When you find a property you love, verify your identity (takes 2 minutes with your driver's licence) and place your offer. For Open Offers listings, you'll see exactly where your offer ranks against other buyers: no guesswork, no phantom offers, no games.",
+    body: "When you find a property you love, verify your identity (takes 2 minutes with your driver's licence) and place your offer. For Live Offers listings, you'll see exactly where your offer ranks against other buyers: no guesswork, no phantom offers, no games.",
   },
   {
     title: "Compete transparently",
@@ -87,9 +87,9 @@ export function HowItWorksToggle() {
               role="tab"
               aria-selected={tab === "seller"}
               onClick={() => setTab("seller")}
-              className="px-6 py-2 rounded-md text-sm font-semibold transition-colors"
+              className="px-6 py-2 rounded-md text-sm font-semibold transition-colors cursor-pointer"
               style={{
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 background: tab === "seller" ? "#0f1623" : "transparent",
                 color: tab === "seller" ? "#ffffff" : "#334766",
               }}
@@ -100,9 +100,9 @@ export function HowItWorksToggle() {
               role="tab"
               aria-selected={tab === "buyer"}
               onClick={() => setTab("buyer")}
-              className="px-6 py-2 rounded-md text-sm font-semibold transition-colors"
+              className="px-6 py-2 rounded-md text-sm font-semibold transition-colors cursor-pointer"
               style={{
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 background: tab === "buyer" ? "#0f1623" : "transparent",
                 color: tab === "buyer" ? "#ffffff" : "#334766",
               }}
@@ -126,14 +126,14 @@ export function HowItWorksToggle() {
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
             >
-              List your home for free →
+              List Your Home for Free
             </Link>
           ) : (
             <Link
               href="/listings"
               className="inline-block bg-navy text-white font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-navy-light transition-colors"
             >
-              Browse properties →
+              Browse Properties
             </Link>
           )}
         </div>

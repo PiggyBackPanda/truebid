@@ -42,11 +42,11 @@ export function initSocketServer(httpServer: HTTPServer): SocketServer {
       socketIo.adapter(createAdapter(pubClient, subClient));
       console.log("[socket.io] Redis adapter attached");
     } catch (err) {
-      console.error("[socket.io] Failed to attach Redis adapter — falling back to in-memory", err);
+      console.error("[socket.io] Failed to attach Redis adapter, falling back to in-memory", err);
     }
   } else if (process.env.NODE_ENV === "production") {
     console.warn(
-      "[socket.io] REDIS_URL not set in production — Socket.io running with in-memory adapter. " +
+      "[socket.io] REDIS_URL not set in production. Socket.io running with in-memory adapter. " +
         "Real-time events will not propagate across multiple server instances."
     );
   }
@@ -101,7 +101,7 @@ export function initSocketServer(httpServer: HTTPServer): SocketServer {
           select: { buyerId: true, sellerId: true },
         });
         if (!conv || (conv.buyerId !== uid && conv.sellerId !== uid)) {
-          return; // silently ignore — user is not a party
+          return; // silently ignore: user is not a party
         }
         socket.join(`conversation:${conversationId}`);
       }

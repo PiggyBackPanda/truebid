@@ -78,26 +78,30 @@ export const authOptions: NextAuthOptions = {
         token.verificationStatus = u.verificationStatus as string;
         token.publicAlias = u.publicAlias as string;
       }
-      // If user data is not being set for the first time, check if password was changed
+      // If user data is not being set for the first time, re-fetch mutable fields
       if (!user) {
-        // Re-fetch passwordChangedAt on every token refresh to detect password changes
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { passwordChangedAt: true },
+          select: { passwordChangedAt: true, verificationStatus: true, role: true },
         });
         if (dbUser?.passwordChangedAt) {
           const changedAt = dbUser.passwordChangedAt.getTime() / 1000;
           const issuedAt = token.iat as number | undefined;
           if (issuedAt && changedAt > issuedAt) {
-            // Password was changed after this token was issued — invalidate it
+            // Password was changed after this token was issued, invalidating it
             return {} as typeof token;
           }
+        }
+        // Sync verificationStatus and role so changes (e.g. dev bypass) take effect immediately
+        if (dbUser) {
+          token.verificationStatus = dbUser.verificationStatus;
+          token.role = dbUser.role;
         }
       }
       return token;
     },
     async session({ session, token }) {
-      // Token was invalidated (empty) — return null-like session
+      // Token was invalidated (empty): return null-like session
       if (!token.id) {
         return { ...session, user: undefined as unknown as typeof session.user };
       }

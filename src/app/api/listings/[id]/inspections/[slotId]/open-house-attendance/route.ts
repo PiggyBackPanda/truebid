@@ -75,11 +75,11 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
         select: { id: true },
       });
     } else {
-      // User not found — store pending attendance
+      // User not found: store pending attendance
       await prisma.pendingInspectionAttendance.upsert({
         where: { slotId_email: { slotId, email } },
         create: { slotId, email },
-        update: {}, // already exists — no-op
+        update: {}, // already exists, no-op
       });
     }
 
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
   }
 }
 
-// GET — list all attendees (registered + pending) for this open house slot
+// GET: list all attendees (registered + pending) for this open house slot
 export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
     const user = await requireAuth();

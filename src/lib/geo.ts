@@ -4,7 +4,7 @@
 
 /**
  * Produces a deterministic ±0.002-degree offset from a seed string.
- * Same seed always yields the same offset — map pin won't drift on reload.
+ * Same seed always yields the same offset, so the map pin will not drift on reload.
  */
 export function fuzzCoordinates(
   lat: number,

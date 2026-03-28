@@ -143,6 +143,7 @@ model User {
   favourites          Favourite[]
   verificationEvents  VerificationEvent[]
   inspectionBookings  InspectionBooking[]
+  savedSearches       SavedSearch[]
 
   @@index([email])
   @@index([verificationStatus])
@@ -216,6 +217,7 @@ model Listing {
   floorplanUrl          String?
 
   images            ListingImage[]
+  documents         ListingDocument[]
   offers            Offer[]
   messages          Message[]
   conversations     Conversation[]
@@ -252,6 +254,20 @@ model ListingImage {
 
   @@index([listingId])
   @@index([listingId, displayOrder])
+}
+
+model ListingDocument {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  name      String   // user-provided label, e.g. "Building & Pest Report"
+  url       String
+  s3Key     String
+  mimeType  String?
+  fileSize  Int?
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
 }
 
 model Offer {
@@ -349,6 +365,23 @@ model Favourite {
   @@index([listingId])
 }
 
+
+model SavedSearch {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String?
+  suburb       String?
+  propertyType String?
+  saleMethod   String?
+  minPriceCents Int?
+  maxPriceCents Int?
+  minBeds      Int?
+  minBaths     Int?
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
 
 model VerificationEvent {
   id        String   @id @default(cuid())

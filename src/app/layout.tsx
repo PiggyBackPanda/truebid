@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "TrueBid — Transparent Property Sales",
-    template: "%s — TrueBid",
+    default: "TrueBid | Transparent Property Sales",
+    template: "%s | TrueBid",
   },
   description:
     "Free, transparent property sales for Australia. No agent commissions. Real offers, publicly visible.",
@@ -27,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className={`h-full antialiased ${outfit.variable}`}>
       <body className="min-h-full flex flex-col bg-bg text-text font-sans">
         <Providers>
           <Nav />

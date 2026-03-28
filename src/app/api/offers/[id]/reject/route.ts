@@ -8,7 +8,7 @@ import {
 } from "@/lib/api-helpers";
 import { sendOfferRejectedEmail } from "@/lib/email";
 
-// POST /api/offers/[id]/reject — seller explicitly rejects one offer
+// POST /api/offers/[id]/reject: seller explicitly rejects one offer
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -54,7 +54,7 @@ export async function POST(
       data: { status: "REJECTED", rejectedAt: now },
     });
 
-    // No public WebSocket event — individual rejections are private
+    // No public WebSocket event: individual rejections are private
     const address = `${offer.listing.streetAddress}, ${offer.listing.suburb} ${offer.listing.state}`;
 
     sendOfferRejectedEmail({

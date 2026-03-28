@@ -85,7 +85,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
       return Response.json({ success: true });
     }
 
-    // Time/capacity edits — only if no confirmed bookings
+    // Time/capacity edits: only if no confirmed bookings
     const updateData: Record<string, unknown> = {};
 
     if (data.notes !== undefined) updateData.notes = data.notes;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — TrueBid",
+  title: "Terms of Service | TrueBid",
   description:
     "TrueBid Terms of Service. Read our terms governing use of the TrueBid property sales platform.",
 };
@@ -11,7 +11,7 @@ const TOC_ITEMS = [
   { id: "eligibility", label: "1. Eligibility & Account Registration" },
   { id: "identity", label: "2. Identity Verification" },
   { id: "platform", label: "3. The TrueBid Platform" },
-  { id: "open-offers", label: "4. Open Offers" },
+  { id: "open-offers", label: "4. Live Offers" },
   { id: "seller-responsibilities", label: "5. Seller Responsibilities" },
   { id: "buyer-responsibilities", label: "6. Buyer Responsibilities" },
   { id: "fees", label: "7. Fees" },
@@ -28,7 +28,7 @@ const TOC_ITEMS = [
 
 /* ── shared text styles ─────────────────────── */
 const serif = "Georgia, 'Times New Roman', serif";
-const body = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+const body = "var(--font-sans)";
 
 const headingStyle: React.CSSProperties = {
   fontFamily: serif,
@@ -125,7 +125,7 @@ export default function TermsPage() {
 
       {/* Body: sidebar TOC + content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:flex lg:gap-12">
-        {/* Sticky TOC — desktop only */}
+        {/* Sticky TOC: desktop only */}
         <nav
           className="hidden lg:block lg:w-60 flex-shrink-0"
           aria-label="Table of contents"
@@ -231,17 +231,17 @@ export default function TermsPage() {
               <Divider />
             </section>
 
-            {/* 4. Open Offers */}
+            {/* 4. Live Offers */}
             <section>
-              <SectionHeading id="open-offers" number="4" title="Open Offers" />
+              <SectionHeading id="open-offers" number="4" title="Live Offers" />
               <div className="space-y-3">
-                <P>4.1 The Open Offer feature allows sellers to receive and display offers from verified buyers in real time during a defined offer window. All registered buyers viewing a listing can see offer amounts and submission times during this period.</P>
+                <P>4.1 The Live Offers feature allows sellers to receive and display offers from verified buyers in real time during a defined offer window. All registered buyers viewing a listing can see offer amounts and submission times during this period.</P>
                 <P>4.2 Buyer identity, personal details, and offer conditions are not disclosed to other buyers. Only offer amounts and submission times are visible to other participants.</P>
                 <P>4.3 An offer submitted through the Platform is a formal expression of intent to purchase the property at the stated price and on the stated conditions. It is not a legally binding contract until a formal contract of sale has been signed by both parties.</P>
                 <P>4.4 Sellers are not obligated to accept any offer, including the highest offer received.</P>
-                <P>4.5 Buyers may increase their offer during an active Open Offer period. Offer reductions are not permitted once an offer has been submitted.</P>
+                <P>4.5 Buyers may increase their offer during an active Live Offers period. Offer reductions are not permitted once an offer has been submitted.</P>
                 <P>4.6 Withdrawing a submitted offer is permitted but will be recorded on the buyer&rsquo;s account. Repeated offer withdrawals may result in restricted access to the Platform.</P>
-                <P>4.7 Anti-snipe protection automatically extends the Open Offer window if a new offer is submitted within 10 minutes of the scheduled close time. The closing time automatically extends by 10 minutes.</P>
+                <P>4.7 Anti-snipe protection automatically extends the Live Offers window if a new offer is submitted within 10 minutes of the scheduled close time. The closing time automatically extends by 10 minutes.</P>
                 <P>4.8 TrueBid reserves the right to cancel or void any offer it reasonably believes has been submitted in bad faith, through error, or in breach of these Terms.</P>
               </div>
               <Divider />
@@ -290,7 +290,7 @@ export default function TermsPage() {
               <SectionHeading id="fees" number="7" title="Fees" />
               <div className="space-y-3">
                 <P>7.1 Browsing listings and creating a buyer account on TrueBid is free of charge.</P>
-                <P>7.2 During the current launch period, listing a property on TrueBid is provided at no cost to the seller. TrueBid reserves the right to introduce listing fees in the future. Registered users will be notified of any fee changes no less than 30 days before they take effect.</P>
+                <P>7.2 Listing a property on TrueBid is free during our current launch period, which will end with no less than 30 days written notice to registered users. TrueBid reserves the right to introduce listing fees following that notice period.</P>
                 <P>7.3 TrueBid reserves the right to introduce, change, or remove fees at any time. Where fees change for existing users, we will provide at least 30 days&rsquo; written notice before the change takes effect.</P>
                 <P>7.4 All fees are quoted in Australian dollars and are inclusive of GST unless otherwise stated.</P>
                 <P>7.5 Fees paid are non-refundable except where required by Australian Consumer Law.</P>
@@ -315,7 +315,16 @@ export default function TermsPage() {
                   <li>(i) circumvent any security, verification, or access control measures;</li>
                   <li>(j) use the Platform for any purpose that is unlawful under Australian law.</li>
                 </ul>
-                <P>8.2 TrueBid may investigate any suspected breach of this section and take any action it considers appropriate, including immediate account suspension, permanent bans, removal of listings or offers, and referral to law enforcement authorities.</P>
+                <P>8.2 The following conduct is expressly prohibited and constitutes a serious breach of these Terms:</P>
+                <ul className="text-text-muted leading-relaxed list-none space-y-2" style={subListStyle}>
+                  <li>(a) <strong className="text-navy">Shill bidding:</strong> placing, arranging, or encouraging fictitious offers for the purpose of artificially inflating the offer board or creating a false impression of demand;</li>
+                  <li>(b) <strong className="text-navy">Fictitious offers:</strong> submitting an offer with no genuine intention to proceed to purchase if accepted;</li>
+                  <li>(c) <strong className="text-navy">Collusion:</strong> coordinating with any other party, whether a buyer, seller, or third party, to manipulate offer outcomes or undermine the integrity of the offer process;</li>
+                  <li>(d) <strong className="text-navy">Impersonation:</strong> representing yourself as another person or entity, whether real or fictitious, in any part of the Platform;</li>
+                  <li>(e) <strong className="text-navy">Circumventing verification:</strong> attempting to bypass, defeat, or work around TrueBid&rsquo;s identity verification process by any means, including the use of false documents, third-party identities, or multiple accounts.</li>
+                </ul>
+                <P>8.3 Where TrueBid reasonably believes a breach of clause 8.2 has occurred, TrueBid may take any or all of the following actions: remove affected offers from the Platform; suspend or permanently terminate the accounts of all involved parties; refer the conduct to relevant authorities, including state consumer protection bodies, where appropriate. These consequences are in addition to any other rights TrueBid may have under these Terms or at law.</P>
+                <P>8.4 TrueBid may investigate any suspected breach of this section and take any action it considers appropriate, including immediate account suspension, permanent bans, removal of listings or offers, and referral to law enforcement authorities.</P>
               </div>
               <Divider />
             </section>
@@ -348,7 +357,7 @@ export default function TermsPage() {
                 <P>10.2 By using the Platform, you consent to the collection and use of your personal information as described in the Privacy Policy.</P>
                 <P>10.3 TrueBid complies with the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).</P>
                 <P>10.4 TrueBid will not sell your personal information to third parties. We may share information with third-party service providers (including identity verification providers, cloud hosting services, and payment processors) solely for the purpose of operating the Platform.</P>
-                <P>10.5 Offer amounts and submission times are visible to other registered buyers during an active Open Offer period. By submitting an offer, you consent to this disclosure.</P>
+                <P>10.5 Offer amounts and submission times are visible to other registered buyers during an active Live Offers period. By submitting an offer, you consent to this disclosure.</P>
                 <P>10.6 TrueBid may use anonymised and aggregated data for research, product development, and market reporting purposes.</P>
               </div>
               <Divider />
@@ -358,7 +367,7 @@ export default function TermsPage() {
             <section>
               <SectionHeading id="ip" number="11" title="Intellectual Property" />
               <div className="space-y-3">
-                <P>11.1 All content on the Platform created by TrueBid &mdash; including the TrueBid name, logo, design, software, and written content &mdash; is owned by or licensed to TrueBid and is protected by Australian and international intellectual property laws.</P>
+                <P>11.1 All content on the Platform created by TrueBid, including the TrueBid name, logo, design, software, and written content, is owned by or licensed to TrueBid and is protected by Australian and international intellectual property laws.</P>
                 <P>11.2 By submitting listing content, photos, or other material to the Platform, you grant TrueBid a non-exclusive, royalty-free, worldwide licence to use, display, and reproduce that content for the purposes of operating and promoting the Platform.</P>
                 <P>11.3 You represent and warrant that any content you submit does not infringe the intellectual property rights of any third party.</P>
                 <P>11.4 You must not reproduce, copy, modify, or distribute any part of the Platform without prior written consent from TrueBid.</P>
@@ -401,8 +410,8 @@ export default function TermsPage() {
             <section>
               <SectionHeading id="governing-law" number="14" title="Governing Law & Jurisdiction" />
               <div className="space-y-3">
-                <P>14.1 These Terms are governed by the laws of Victoria, Australia.</P>
-                <P>14.2 Each party submits to the exclusive jurisdiction of the courts of Victoria and the Federal Court of Australia for the resolution of any dispute arising out of or in connection with these Terms.</P>
+                <P>14.1 These Terms are governed by the laws of Western Australia, Australia.</P>
+                <P>14.2 Each party submits to the exclusive jurisdiction of the courts of Western Australia and the Federal Court of Australia for the resolution of any dispute arising out of or in connection with these Terms.</P>
                 <P>14.3 If any provision of these Terms is found to be invalid, unenforceable, or illegal, that provision will be severed and the remaining provisions will continue in full force and effect.</P>
               </div>
               <Divider />
@@ -429,13 +438,13 @@ export default function TermsPage() {
                   {/* TODO: Replace with company name, address, email, and phone before going live */}
                   {process.env.NODE_ENV === "development" && (
                     <p style={{ backgroundColor: "#fef08a", padding: "4px 6px", marginBottom: 8, fontWeight: 600 }}>
-                      ⚠ Contact details below are placeholders — fill in before launch
+                      ⚠ Contact details below are placeholders. Fill in before launch.
                     </p>
                   )}
                   <p>TrueBid Pty Ltd</p>
                   <p>Perth, Western Australia</p>
                   <p><a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a></p>
-                  <p>[INSERT PHONE — optional]</p>
+                  <p>[INSERT PHONE (optional)]</p>
                 </div>
               </div>
             </section>

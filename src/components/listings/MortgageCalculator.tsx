@@ -52,7 +52,7 @@ export function MortgageCalculator({ guidePriceCents }: Props) {
     rate <= 0
       ? "Please enter a rate above 0%."
       : rate > 25
-      ? "Rate seems very high — please double-check."
+      ? "Rate seems very high. Please double-check."
       : null;
 
   function switchDepositMode(newMode: DepositMode) {
@@ -133,7 +133,7 @@ export function MortgageCalculator({ guidePriceCents }: Props) {
                 <label className="text-xs font-medium text-text-muted">Deposit</label>
                 <div
                   className="flex text-xs rounded-[6px] overflow-hidden border border-border"
-                  style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+                  style={{ fontFamily: "var(--font-sans)" }}
                 >
                   <button
                     type="button"
@@ -294,12 +294,12 @@ export function MortgageCalculator({ guidePriceCents }: Props) {
             </div>
           </div>
 
-          {/* Disclaimer — collapsed footnote */}
+          {/* Disclaimer: collapsed footnote */}
           <button
             type="button"
             onClick={() => setDisclaimerOpen((prev) => !prev)}
             className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors"
-            style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+            style={{ fontFamily: "var(--font-sans)" }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />

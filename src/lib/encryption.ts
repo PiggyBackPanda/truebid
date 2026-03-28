@@ -64,7 +64,7 @@ export function decrypt(ciphertext: string): string {
 }
 
 /**
- * Safely decrypt — returns null if ENCRYPTION_KEY is not configured or
+ * Safely decrypt: returns null if ENCRYPTION_KEY is not configured or
  * the value is null/undefined (e.g., user has no verified name yet).
  */
 export function safeDecrypt(value: string | null | undefined): string | null {

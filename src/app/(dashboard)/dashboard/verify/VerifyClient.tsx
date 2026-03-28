@@ -85,7 +85,7 @@ export function VerifyClient({ status }: Props) {
         style={{
           background: loading ? "#d1a040" : "#f59e0b",
           color: "#1a0f00",
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "var(--font-sans)",
           fontSize: 14,
           fontWeight: 600,
           padding: "12px 28px",
@@ -125,7 +125,7 @@ export function VerifyClient({ status }: Props) {
             marginTop: 12,
             fontSize: 13,
             color: "#dc2626",
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
           }}
           role="alert"
         >
@@ -151,7 +151,7 @@ export function VerifyClient({ status }: Props) {
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: 10,
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             Development only
@@ -170,7 +170,7 @@ export function VerifyClient({ status }: Props) {
               fontSize: 13,
               fontWeight: 600,
               cursor: devBypassing ? "not-allowed" : "pointer",
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
             }}
           >
             {devBypassing ? "Setting verified…" : "Dev: Mark as Verified"}

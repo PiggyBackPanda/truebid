@@ -8,7 +8,7 @@ const MIN_LEAD_TIME_MS = 2 * 60 * 60 * 1000;   // 2 hours
 const MAX_DURATION_MS  = 4 * 60 * 60 * 1000;   // 4 hours
 
 // GET /api/listings/[id]/inspections
-// Public — returns upcoming slots with available spot counts.
+// Public: returns upcoming slots with available spot counts.
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -57,7 +57,7 @@ export async function GET(
 }
 
 // POST /api/listings/[id]/inspections
-// Seller only — create a new inspection slot.
+// Seller only: create a new inspection slot.
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

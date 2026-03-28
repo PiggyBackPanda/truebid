@@ -64,7 +64,7 @@ export function useSellerDashboard(listingId: string, initialOffers: SellerOffer
       const data = (await res.json()) as { offers: SellerOffer[] };
       setOffers(rankOffers(data.offers));
     } catch {
-      // ignore — stale data is acceptable
+      // ignore: stale data is acceptable
     }
   }
 

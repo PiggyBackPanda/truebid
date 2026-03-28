@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse } from "@/lib/api-helpers";
 import { notificationPrefsSchema } from "@/lib/validation";
 
-// PATCH /api/account/notifications — update notification preferences
+// PATCH /api/account/notifications: update notification preferences
 export async function PATCH(request: Request) {
   try {
     const user = await requireAuth();

@@ -125,7 +125,22 @@
       "Bash(findstr :3000)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/verify-identity\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/dashboard/verify\")",
-      "Bash(curl -s -w \"\\\\nHTTP %{http_code}\" \"http://localhost:3000/api/verify-identity/dev-bypass\" -X POST -H \"Content-Type: application/json\")"
+      "Bash(curl -s -w \"\\\\nHTTP %{http_code}\" \"http://localhost:3000/api/verify-identity/dev-bypass\" -X POST -H \"Content-Type: application/json\")",
+      "Bash(/tmp/arrow_buttons.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(find C:UsersjordaProjectstruebid -name *.ts -path */api/listings* -type f)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\jorda\\\\Projects\\\\truebid\\\\src\\\\app\\\\api\\\\listings\\\\[id]\\\\documents\\\\upload-url\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\jorda\\\\Projects\\\\truebid\\\\src\\\\app\\\\api\\\\listings\\\\[id]\\\\documents\\\\confirm\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\jorda\\\\Projects\\\\truebid\\\\src\\\\app\\\\api\\\\listings\\\\[id]\\\\documents\\\\[documentId]\")",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/documents/upload-url\")",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/documents/confirm\")",
+      "Bash(mkdir -p \"C:/Users/jorda/Projects/truebid/src/app/api/listings/[id]/documents/[documentId]\")",
+      "Bash(ls -la src/app/pricing src/app/contact src/app/verify-identity src/app/account src/app/\\\\\\(dashboard\\\\\\)/dashboard/messages)",
+      "Bash(while read:*)",
+      "Bash(do sed:*)",
+      "Bash(python3 -c \":*)",
+      "Bash(find C:UsersjordaProjectstruebidsrcappguides -type f -name *.tsx)"
     ]
   }
 }

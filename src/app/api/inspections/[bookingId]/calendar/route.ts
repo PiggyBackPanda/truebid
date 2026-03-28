@@ -26,7 +26,7 @@ function generateIcal(params: {
     "BEGIN:VEVENT",
     `DTSTART:${formatIcalDt(startTime)}`,
     `DTEND:${formatIcalDt(endTime)}`,
-    `SUMMARY:Property Inspection — ${address}`,
+    `SUMMARY:Property Inspection: ${address}`,
     `LOCATION:${address}`,
     `DESCRIPTION:Your inspection booking for ${address}.\\nBooking reference: ${bookingId}`,
     `UID:truebid-inspection-${bookingId}@truebid.com.au`,

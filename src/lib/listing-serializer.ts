@@ -1,5 +1,5 @@
 /**
- * Address serialisation — determines how much of a listing address to expose
+ * Address serialisation. Determines how much of a listing address to expose
  * based on the addressVisibility setting and who is viewing it.
  *
  * Address visibility rules:
@@ -11,7 +11,7 @@
  * | Logged in (verified, booking/attended) | full   | full      | full        |
  * | Listing's own seller                   | full   | full      | full        |
  *
- * "suburb" means: suburb, state, postcode only — no street address.
+ * "suburb" means suburb, state, postcode only (no street address).
  * Coordinates are fuzzed when the full address is hidden.
  */
 

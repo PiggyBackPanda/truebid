@@ -9,9 +9,10 @@ import {
 import { createOfferSchema } from "@/lib/validation";
 import { checkAntiSnipe } from "@/lib/offers";
 import { emitToListing } from "@/lib/socket";
-import { sendNewOfferEmail } from "@/lib/email";
+import { sendNewOfferEmail, sendHigherOfferEmail } from "@/lib/email";
+import { Redis } from "@upstash/redis";
 
-// GET /api/offers — list the authenticated buyer's own offers
+// GET /api/offers: list the authenticated buyer's own offers
 export async function GET() {
   try {
     const user = await requireAuth();
@@ -58,7 +59,7 @@ export async function GET() {
   }
 }
 
-// POST /api/offers — place a new offer
+// POST /api/offers: place a new offer
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth();
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "LISTING_NOT_YET_OPEN", "This listing is not yet accepting offers");
     }
     if (listing.status === "INSPECTIONS_OPEN") {
-      throw new ApiError(400, "OFFERS_NOT_YET_OPEN", "This listing is not yet open for offers — inspections are underway");
+      throw new ApiError(400, "OFFERS_NOT_YET_OPEN", "This listing is not yet open for offers. Inspections are underway");
     }
     if (listing.status !== "ACTIVE") {
       throw new ApiError(400, "LISTING_NOT_ACTIVE", "This listing is not accepting offers");
@@ -239,7 +240,64 @@ export async function POST(req: NextRequest) {
       sellerName: listing.seller.firstName,
       listingAddress: address,
       amountCents: data.amountCents,
-    }).catch(() => {/* non-critical — log handled inside sendEmail */});
+    }).catch(() => {/* non-critical, log handled inside sendEmail */});
+
+    // Notify buyers whose offers have been exceeded
+    ;(async () => {
+      const affectedOffers = await prisma.offer.findMany({
+        where: {
+          listingId: data.listingId,
+          status: "ACTIVE",
+          id: { not: offer.id },
+          amountCents: { lt: data.amountCents },
+        },
+        select: {
+          id: true,
+          amountCents: true,
+          buyerId: true,
+          buyer: { select: { email: true, firstName: true } },
+        },
+      });
+
+      if (affectedOffers.length === 0) return;
+
+      // Only notify while the offer window is still open
+      if (listing.closingDate !== null && listing.closingDate <= new Date()) return;
+
+      let redisClient: Redis | null = null;
+      if (
+        process.env.UPSTASH_REDIS_REST_URL &&
+        process.env.UPSTASH_REDIS_REST_TOKEN
+      ) {
+        redisClient = new Redis({
+          url: process.env.UPSTASH_REDIS_REST_URL,
+          token: process.env.UPSTASH_REDIS_REST_TOKEN,
+        });
+      }
+
+      for (const affectedOffer of affectedOffers) {
+        const rateLimitKey = `higher_offer_email:${listing.id}:${affectedOffer.buyerId}`;
+
+        if (redisClient) {
+          const existing = await redisClient.get(rateLimitKey);
+          if (existing !== null) continue;
+        }
+
+        await sendHigherOfferEmail({
+          buyerEmail: affectedOffer.buyer.email,
+          buyerName: affectedOffer.buyer.firstName,
+          listingAddress: address,
+          listingId: listing.id,
+          buyerOfferCents: affectedOffer.amountCents,
+          highestOfferCents: data.amountCents,
+          closingDate: listing.closingDate,
+        });
+
+        if (redisClient) {
+          await redisClient.setex(rateLimitKey, 600, "1");
+        }
+      }
+    })().catch(() => { /* non-critical */ });
 
     return Response.json(
       {

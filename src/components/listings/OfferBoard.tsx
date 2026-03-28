@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useOfferBoard } from "@/hooks/useOfferBoard";
 import { CountdownTimer } from "./CountdownTimer";
-import { offerStrengthScore } from "@/lib/offer-utils";
 import type { PublicOffer } from "@/lib/offer-utils";
 import { formatCurrency } from "@/lib/utils";
 
@@ -37,25 +36,6 @@ function timeAgo(date: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-function strengthDots(score: number) {
-  const filled = Math.round((score / 60) * 3);
-  return (
-    <span
-      className="flex items-center gap-0.5 ml-1"
-      title={`Offer strength: ${score}/60. Based on conditions and settlement speed.`}
-    >
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className={`w-1.5 h-1.5 rounded-full ${
-            i < filled ? "bg-green" : "bg-border"
-          }`}
-        />
-      ))}
-    </span>
-  );
-}
-
 // ── Offer row ────────────────────────────────────────────────────────────────
 
 function OfferRow({
@@ -69,7 +49,6 @@ function OfferRow({
 }) {
   const isWithdrawn = offer.status === "WITHDRAWN";
   const isAccepted = offer.status === "ACCEPTED";
-  const score = offerStrengthScore(offer);
 
   const dollars = new Intl.NumberFormat("en-AU", {
     style: "currency",
@@ -133,7 +112,6 @@ function OfferRow({
             {CONDITION_LABELS[offer.conditionType] ?? offer.conditionType}
           </span>
 
-          {!isWithdrawn && strengthDots(score)}
         </div>
 
         {/* Meta */}
@@ -199,7 +177,7 @@ export function OfferBoard({
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green animate-pulse-dot" />
             <span className="text-white text-xs font-semibold uppercase tracking-wide">
-              Open Offers · Live
+              Live Offers
             </span>
           </div>
           {viewerCount > 0 && (
@@ -286,6 +264,16 @@ export function OfferBoard({
                 })}
               </ol>
             )}
+          </div>
+
+          {/* Seller control notice + anti-snipe note */}
+          <div className="px-4 py-3 border-t border-border bg-bg space-y-1.5">
+            <p className="text-[10px] text-text-muted text-center leading-relaxed">
+              The seller reviews all offers and makes the final decision. They are not obligated to accept any offer, including the highest.
+            </p>
+            <p className="text-[10px] text-text-muted text-center leading-relaxed">
+              Anti-snipe protection is active: offers placed in the final 10 minutes automatically extend the offer period by 10 minutes.
+            </p>
           </div>
 
           {/* CTA */}

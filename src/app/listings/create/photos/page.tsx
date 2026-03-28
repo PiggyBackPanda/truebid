@@ -21,6 +21,22 @@ interface UploadingImage {
   error?: string;
 }
 
+interface UploadedDocument {
+  id: string;
+  name: string;
+  url: string;
+  mimeType?: string | null;
+  fileSize?: number | null;
+}
+
+interface PendingDocument {
+  localId: string;
+  file: File;
+  name: string;
+  progress: number;
+  error?: string;
+}
+
 function PhotosForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,6 +53,15 @@ function PhotosForm() {
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const floorplanInputRef = useRef<HTMLInputElement>(null);
+
+  // Documents
+  const [documents, setDocuments] = useState<UploadedDocument[]>([]);
+  const [pendingDocuments, setPendingDocuments] = useState<PendingDocument[]>([]);
+  const [showDocForm, setShowDocForm] = useState(false);
+  const [docFile, setDocFile] = useState<File | null>(null);
+  const [docName, setDocName] = useState("");
+  const [docNameError, setDocNameError] = useState("");
+  const docFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!listingId) router.replace("/listings/create/details");
@@ -103,7 +128,6 @@ function PhotosForm() {
     setUploading((prev) => [...prev, { localId, file, progress: 0 }]);
 
     try {
-      // Step 1: Get presigned URL
       const urlRes = await fetch(`/api/listings/${listingId}/images/upload-url`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,7 +137,6 @@ function PhotosForm() {
       if (!urlRes.ok) throw new Error("Failed to get upload URL");
       const { uploadUrl, s3Key } = await urlRes.json();
 
-      // Step 2: Upload to S3
       const xhr = new XMLHttpRequest();
       await new Promise<void>((resolve, reject) => {
         xhr.upload.onprogress = (e) => {
@@ -131,7 +154,6 @@ function PhotosForm() {
         xhr.send(file);
       });
 
-      // Step 3: Confirm upload
       setUploading((prev) =>
         prev.map((u) => u.localId === localId ? { ...u, progress: 95 } : u)
       );
@@ -182,6 +204,116 @@ function PhotosForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageIds: updated.map((img) => img.id) }),
     });
+  }
+
+  // Document upload
+  async function handleDocumentUpload() {
+    if (!docFile) return;
+    if (!docName.trim()) {
+      setDocNameError("Please enter a name for this document.");
+      return;
+    }
+    setDocNameError("");
+
+    const localId = `${Date.now()}-${Math.random()}`;
+    setPendingDocuments((prev) => [...prev, { localId, file: docFile, name: docName.trim(), progress: 0 }]);
+    setShowDocForm(false);
+    setDocFile(null);
+    setDocName("");
+
+    try {
+      const urlRes = await fetch(`/api/listings/${listingId}/documents/upload-url`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: docFile.name, contentType: docFile.type }),
+      });
+      if (!urlRes.ok) throw new Error("Failed to get upload URL");
+      const { uploadUrl, s3Key } = await urlRes.json();
+
+      const xhr = new XMLHttpRequest();
+      await new Promise<void>((resolve, reject) => {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 90);
+            setPendingDocuments((prev) =>
+              prev.map((d) => d.localId === localId ? { ...d, progress: pct } : d)
+            );
+          }
+        };
+        xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject());
+        xhr.onerror = reject;
+        xhr.open("PUT", uploadUrl);
+        xhr.setRequestHeader("Content-Type", docFile.type);
+        xhr.send(docFile);
+      });
+
+      setPendingDocuments((prev) =>
+        prev.map((d) => d.localId === localId ? { ...d, progress: 95 } : d)
+      );
+
+      const confirmRes = await fetch(`/api/listings/${listingId}/documents/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          s3Key,
+          name: docName.trim() || (pendingDocuments.find((d) => d.localId === localId)?.name ?? "Document"),
+          mimeType: docFile.type,
+          fileSize: docFile.size,
+        }),
+      });
+      if (!confirmRes.ok) throw new Error("Failed to confirm upload");
+      const { document } = await confirmRes.json();
+
+      setDocuments((prev) => [...prev, document]);
+      setPendingDocuments((prev) => prev.filter((d) => d.localId !== localId));
+    } catch {
+      setPendingDocuments((prev) =>
+        prev.map((d) => d.localId === localId ? { ...d, error: "Upload failed", progress: 0 } : d)
+      );
+    }
+  }
+
+  async function handleDeleteDocument(documentId: string) {
+    await fetch(`/api/listings/${listingId}/documents/${documentId}`, { method: "DELETE" });
+    setDocuments((prev) => prev.filter((d) => d.id !== documentId));
+  }
+
+  function getDocIcon(mimeType?: string | null) {
+    if (mimeType === "application/pdf") {
+      return (
+        <div className="w-9 h-9 rounded-[8px] bg-red/10 flex items-center justify-center flex-shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+        </div>
+      );
+    }
+    if (mimeType?.includes("word")) {
+      return (
+        <div className="w-9 h-9 rounded-[8px] bg-blue-50 flex items-center justify-center flex-shrink-0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-500">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+        </div>
+      );
+    }
+    return (
+      <div className="w-9 h-9 rounded-[8px] bg-bg flex items-center justify-center flex-shrink-0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-muted">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      </div>
+    );
+  }
+
+  function formatFileSize(bytes?: number | null) {
+    if (!bytes) return null;
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
 
   function handleContinue() {
@@ -333,7 +465,7 @@ function PhotosForm() {
         )}
 
         {/* Floor plan section */}
-        <div className="border border-border rounded-[12px] p-5 mb-8">
+        <div className="border border-border rounded-[12px] p-5 mb-6">
           <div className="flex items-center gap-2 mb-1">
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-navy flex-shrink-0">
               <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -345,7 +477,6 @@ function PhotosForm() {
             Upload a single floor plan: JPG, PNG, or PDF, max 20 MB.
           </p>
 
-          {/* Uploaded floor plan preview */}
           {floorplanImage && !floorplanUploading && (
             <div className="flex items-center gap-3 bg-bg border border-border rounded-[10px] p-3 mb-3">
               {floorplanImage.url.endsWith(".pdf") ? (
@@ -371,14 +502,13 @@ function PhotosForm() {
               <button
                 type="button"
                 onClick={handleDeleteFloorplan}
-                className="text-xs text-red hover:underline flex-shrink-0"
+                className="text-xs text-red hover:underline flex-shrink-0 cursor-pointer"
               >
                 Remove
               </button>
             </div>
           )}
 
-          {/* Upload progress */}
           {floorplanUploading && (
             <div className="flex items-center gap-3 bg-white border border-border rounded-[10px] p-3 mb-3">
               <div className="flex-1">
@@ -398,7 +528,7 @@ function PhotosForm() {
                 <button
                   type="button"
                   onClick={() => setFloorplanUploading(null)}
-                  className="text-xs text-text-muted hover:text-text"
+                  className="text-xs text-text-muted hover:text-text cursor-pointer"
                 >
                   Dismiss
                 </button>
@@ -406,7 +536,6 @@ function PhotosForm() {
             </div>
           )}
 
-          {/* Upload button — only show when no floor plan is set */}
           {!floorplanImage && !floorplanUploading && (
             <label className="inline-flex items-center gap-2 cursor-pointer bg-white border border-border rounded-[10px] px-4 py-2 text-sm text-text hover:border-slate transition-colors">
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -424,6 +553,166 @@ function PhotosForm() {
           )}
         </div>
 
+        {/* Supporting documents section */}
+        <div className="border border-border rounded-[12px] p-5 mb-8">
+          <div className="flex items-center gap-2 mb-1">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-navy flex-shrink-0">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            <h3 className="text-sm font-semibold text-navy">Supporting Documents <span className="text-text-muted font-normal">(optional)</span></h3>
+          </div>
+          <p className="text-xs text-text-muted mb-4 ml-6">
+            Upload any documents that may help buyers: building &amp; pest reports, strata documents, council rates notices, or anything else relevant. PDF, Word, JPG or PNG. Max 20 MB per file.
+          </p>
+
+          {/* Uploaded documents list */}
+          {documents.length > 0 && (
+            <div className="flex flex-col gap-2 mb-4">
+              {documents.map((doc) => (
+                <div key={doc.id} className="flex items-center gap-3 bg-bg border border-border rounded-[10px] p-3">
+                  {getDocIcon(doc.mimeType)}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-navy truncate">{doc.name}</p>
+                    {formatFileSize(doc.fileSize) && (
+                      <p className="text-xs text-text-muted">{formatFileSize(doc.fileSize)}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteDocument(doc.id)}
+                    className="text-xs text-red hover:underline flex-shrink-0 cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* In-progress uploads */}
+          {pendingDocuments.length > 0 && (
+            <div className="flex flex-col gap-2 mb-4">
+              {pendingDocuments.map((d) => (
+                <div key={d.localId} className="flex items-center gap-3 bg-white border border-border rounded-[10px] p-3">
+                  <div className="w-9 h-9 rounded-[8px] bg-bg flex items-center justify-center flex-shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-muted">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-text mb-1 truncate">{d.name}</p>
+                    {d.error ? (
+                      <p className="text-xs text-red">{d.error}</p>
+                    ) : (
+                      <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-amber transition-all duration-300 rounded-full"
+                          style={{ width: `${d.progress}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {d.error && (
+                    <button
+                      type="button"
+                      onClick={() => setPendingDocuments((prev) => prev.filter((x) => x.localId !== d.localId))}
+                      className="text-xs text-text-muted hover:text-text cursor-pointer"
+                    >
+                      Dismiss
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add document form */}
+          {showDocForm ? (
+            <div className="border border-border rounded-[10px] p-4 bg-bg">
+              <p className="text-xs font-semibold text-navy mb-3">Add a document</p>
+
+              {/* File picker */}
+              <div className="mb-3">
+                <label className="block text-xs text-text-muted mb-1.5">File</label>
+                <label className="inline-flex items-center gap-2 cursor-pointer bg-white border border-border rounded-[8px] px-3 py-2 text-sm text-text hover:border-slate transition-colors w-full">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="shrink-0 text-text-muted">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                  </svg>
+                  <span className="truncate text-sm">
+                    {docFile ? docFile.name : "Choose file…"}
+                  </span>
+                  <input
+                    ref={docFileInputRef}
+                    type="file"
+                    accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setDocFile(f);
+                    }}
+                  />
+                </label>
+              </div>
+
+              {/* Document name */}
+              <div className="mb-4">
+                <label className="block text-xs text-text-muted mb-1.5">
+                  Document name <span className="text-red">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={docName}
+                  onChange={(e) => { setDocName(e.target.value); setDocNameError(""); }}
+                  placeholder="e.g. Building &amp; Pest Report, Strata Plan, Council Rates Notice"
+                  maxLength={100}
+                  className={`w-full px-3 py-2 text-sm border rounded-[8px] outline-none transition-colors bg-white text-text placeholder:text-text-muted/60 ${
+                    docNameError ? "border-red" : "border-border focus:border-slate"
+                  }`}
+                />
+                {docNameError && (
+                  <p className="text-xs text-red mt-1">{docNameError}</p>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  size="sm"
+                  onClick={handleDocumentUpload}
+                  disabled={!docFile}
+                >
+                  Upload Document
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => { setShowDocForm(false); setDocFile(null); setDocName(""); setDocNameError(""); }}
+                  className="text-sm text-text-muted hover:text-text transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            documents.length < 10 && (
+              <button
+                type="button"
+                onClick={() => setShowDocForm(true)}
+                className="inline-flex items-center gap-2 cursor-pointer bg-white border border-border rounded-[10px] px-4 py-2 text-sm text-text hover:border-slate transition-colors"
+              >
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add a document
+              </button>
+            )
+          )}
+        </div>
+
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -433,7 +722,7 @@ function PhotosForm() {
             ← Back
           </button>
           <Button size="lg" onClick={handleContinue} loading={submitting}>
-            Continue to Sale Method →
+            Continue to Sale Method
           </Button>
         </div>
       </div>

@@ -44,7 +44,7 @@ const VALID_SETTLEMENT_DAYS = [14, 21, 30, 45, 60, 90, 120] as const;
 
 // ── Auth schemas ──────────────────────────────────────────────────────────────
 
-// API schema — what the register endpoint accepts
+// API schema: what the register endpoint accepts
 export const registerApiSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(50).trim(),
   lastName: z.string().min(1, "Last name is required").max(50).trim(),
@@ -62,7 +62,7 @@ export const registerApiSchema = z.object({
   role: UserRoleSchema,
 });
 
-// Form schema — includes confirmPassword and terms for client-side validation
+// Form schema: includes confirmPassword and terms for client-side validation
 export const registerFormSchema = registerApiSchema
   .extend({
     confirmPassword: z.string(),

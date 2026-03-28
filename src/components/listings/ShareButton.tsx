@@ -28,7 +28,7 @@ export function ShareButton({ title, address, url }: Props) {
       try {
         await navigator.share({ title, text: address, url });
       } catch {
-        // user cancelled — no action needed
+        // user cancelled, no action needed
       }
       return;
     }
@@ -41,12 +41,12 @@ export function ShareButton({ title, address, url }: Props) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard unavailable — silent fail
+      // clipboard unavailable: silent fail
     }
     setShowPopover(false);
   };
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${title}: ${url}`)}`;
 
   return (
     <div ref={containerRef} className="relative">

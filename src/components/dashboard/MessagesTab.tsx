@@ -67,7 +67,7 @@ function Avatar({ name }: { name: string }) {
         fontSize: 14,
         fontWeight: 600,
         flexShrink: 0,
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: "var(--font-sans)",
       }}
     >
       {initials}
@@ -260,7 +260,7 @@ export function MessagesTab({
                       fontWeight: 600,
                       fontSize: 14,
                       color: "#0f1623",
-                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily: "var(--font-sans)",
                     }}
                   >
                     {name}
@@ -278,7 +278,7 @@ export function MessagesTab({
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       maxWidth: 160,
-                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      fontFamily: "var(--font-sans)",
                     }}
                   >
                     {convo.lastMessage.isFromMe ? "You: " : ""}
@@ -331,7 +331,7 @@ export function MessagesTab({
                   fontWeight: 600,
                   fontSize: 15,
                   color: "#0f1623",
-                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily: "var(--font-sans)",
                 }}
               >
                 {selectedConvo.counterparty.firstName} {selectedConvo.counterparty.lastName}
@@ -442,7 +442,7 @@ export function MessagesTab({
                 borderRadius: 8,
                 padding: "10px 14px",
                 fontSize: 14,
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 outline: "none",
               }}
             />
@@ -456,7 +456,7 @@ export function MessagesTab({
                 borderRadius: 8,
                 padding: "10px 18px",
                 cursor: draftContent.trim() ? "pointer" : "not-allowed",
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: 14,
                 fontWeight: 500,
               }}

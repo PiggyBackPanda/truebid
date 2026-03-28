@@ -109,7 +109,7 @@ function DevBypassBlock({
           textTransform: "uppercase",
           letterSpacing: "0.08em",
           marginBottom: 10,
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "var(--font-sans)",
         }}
       >
         Development only
@@ -131,7 +131,7 @@ function DevBypassBlock({
           fontSize: 13,
           fontWeight: 600,
           cursor: busy ? "not-allowed" : "pointer",
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "var(--font-sans)",
         }}
       >
         {busy ? "Setting verified…" : "Dev: Mark as Verified"}
@@ -246,7 +246,7 @@ function VerifyIdentityContent() {
         <p style={{ ...cardBody, marginBottom: 28 }}>
           Your identity has been verified. You can list properties and place offers on TrueBid.
         </p>
-        <Link href={returnTo} style={primaryLink}>Continue →</Link>
+        <Link href={returnTo} style={primaryLink}>Continue</Link>
       </div>
     );
   }
@@ -286,7 +286,7 @@ function VerifyIdentityContent() {
           </div>
         )}
         <Button size="lg" onClick={handleStartVerification} loading={starting} className="w-full">
-          Try again →
+          Try Again
         </Button>
         {isDev && (
           <DevBypassBlock onBypass={handleDevBypass} busy={devBypassing} error={devError} />
@@ -295,7 +295,7 @@ function VerifyIdentityContent() {
     );
   }
 
-  // ── PENDING / REQUIRES_REVIEW — Stripe is processing ────────────────────────
+  // ── PENDING / REQUIRES_REVIEW: Stripe is processing ────────────────────────
 
   if (verificationStatus === "PENDING" || verificationStatus === "REQUIRES_REVIEW") {
     return (
@@ -310,7 +310,7 @@ function VerifyIdentityContent() {
           <strong style={{ color: "#0f1623" }}>{user?.email as string}</strong>{" "}
           once it&apos;s complete.
         </p>
-        <Link href="/dashboard" style={secondaryLink}>Go to dashboard</Link>
+        <Link href="/dashboard" style={secondaryLink}>Go to Dashboard</Link>
         {isDev && (
           <DevBypassBlock onBypass={handleDevBypass} busy={devBypassing} error={devError} />
         )}
@@ -448,7 +448,7 @@ function VerifyIdentityContent() {
                   color: "#0f1623",
                   marginBottom: 2,
                   fontFamily:
-                    "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    "var(--font-sans)",
                 }}
               >
                 {title}
@@ -475,7 +475,7 @@ function VerifyIdentityContent() {
         <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>🔒</span>
         <div>
           <p style={{ fontSize: 13, color: "#4c1d95", lineHeight: 1.6, marginBottom: 4 }}>
-            <strong>Powered by Stripe Identity</strong> — Verification is automated and typically
+            <strong>Powered by Stripe Identity</strong>. Verification is automated and typically
             takes less than 2 minutes. Your documents are encrypted and never stored on
             TrueBid&apos;s servers.
           </p>
@@ -503,7 +503,7 @@ function VerifyIdentityContent() {
       )}
 
       <Button size="lg" onClick={handleStartVerification} loading={starting} className="w-full">
-        Start Verification →
+        Start Verification
       </Button>
 
       <p style={{ textAlign: "center", fontSize: 12, color: "#6b7280", marginTop: 12 }}>
@@ -513,7 +513,7 @@ function VerifyIdentityContent() {
       <p style={{ textAlign: "center", fontSize: 12, color: "#9ca3af", marginTop: 8 }}>
         Already verified?{" "}
         <Link href="/dashboard" style={{ color: "#b45309", textDecoration: "none" }}>
-          Go to dashboard
+          Go to Dashboard
         </Link>
       </p>
 

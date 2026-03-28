@@ -75,7 +75,7 @@ export function CountdownTimer({ closingDate, onExpired }: CountdownTimerProps) 
     );
   }
 
-  // More than 7 days — just show a date string
+  // More than 7 days: just show a date string
   if (time.totalMs > SEVEN_DAYS_MS) {
     const formatted = new Intl.DateTimeFormat("en-AU", {
       day: "numeric",
@@ -88,13 +88,13 @@ export function CountdownTimer({ closingDate, onExpired }: CountdownTimerProps) 
     }).format(target);
 
     return (
-      <p className="text-sm text-text-muted">
-        Closes <strong className="text-navy">{formatted}</strong>
+      <p className="text-sm text-white/70">
+        Closes <strong className="text-white">{formatted}</strong>
       </p>
     );
   }
 
-  // Full countdown — colour shifts as closing approaches
+  // Full countdown: colour shifts as closing approaches
   const isClosingSoon = time.totalMs <= FIFTEEN_MIN_MS;
   const isLastHour    = time.totalMs <= ONE_HOUR_MS;
 

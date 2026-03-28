@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
 
-// GET /api/dashboard/seller/stats — aggregated stats for the current seller
+// GET /api/dashboard/seller/stats: aggregated stats for the current seller
 export async function GET() {
   try {
     const user = await requireAuth();

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { OfferWindowsTab } from "@/components/dashboard/OfferWindowsTab";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -61,14 +62,28 @@ type ThreadMessage = {
   isFromMe: boolean;
 };
 
+type SavedSearch = {
+  id: string;
+  name: string | null;
+  suburb: string | null;
+  propertyType: string | null;
+  saleMethod: string | null;
+  minPriceCents: number | null;
+  maxPriceCents: number | null;
+  minBeds: number | null;
+  minBaths: number | null;
+  createdAt: string;
+};
+
 type Props = {
   currentUserId: string;
   savedListings: SavedListing[];
   myOffers: MyOffer[];
   initialConversations: Conversation[];
+  savedSearches: SavedSearch[];
 };
 
-type Tab = "saved" | "offers" | "messages";
+type Tab = "saved" | "offers" | "messages" | "searches" | "offer-windows";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -128,6 +143,16 @@ const LISTING_STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   SOLD: { bg: "#f0fdf4", color: "#15803d" },
   WITHDRAWN: { bg: "#f3f4f6", color: "#9ca3af" },
   EXPIRED: { bg: "#f3f4f6", color: "#9ca3af" },
+};
+
+const LISTING_STATUS_LABEL: Record<string, string> = {
+  ACTIVE: "Active",
+  COMING_SOON: "Coming Soon",
+  DRAFT: "Draft",
+  UNDER_OFFER: "Under Offer",
+  SOLD: "Offer Accepted",
+  WITHDRAWN: "Withdrawn",
+  EXPIRED: "Expired",
 };
 
 // ─── Saved Tab ────────────────────────────────────────────────────────────────
@@ -192,7 +217,7 @@ function SavedTab({ initialItems }: { initialItems: SavedListing[] }) {
             fontSize: 14,
           }}
         >
-          Browse listings →
+          Browse Listings
         </Link>
       </div>
     );
@@ -283,7 +308,7 @@ function SavedTab({ initialItems }: { initialItems: SavedListing[] }) {
                   fontFamily: "Outfit, sans-serif",
                 }}
               >
-                {listing.status.replace(/_/g, " ")}
+                {LISTING_STATUS_LABEL[listing.status] ?? listing.status.replace(/_/g, " ")}
               </span>
               {listing.activeOfferCount > 0 && (
                 <span
@@ -388,7 +413,7 @@ function OffersTab({ offers }: { offers: MyOffer[] }) {
             fontSize: 14,
           }}
         >
-          Browse listings →
+          Browse Listings
         </Link>
       </div>
     );
@@ -468,7 +493,7 @@ function OffersTab({ offers }: { offers: MyOffer[] }) {
                   flexShrink: 0,
                 }}
               >
-                {offer.listing.status.replace(/_/g, " ")}
+                {LISTING_STATUS_LABEL[offer.listing.status] ?? offer.listing.status.replace(/_/g, " ")}
               </span>
             </div>
 
@@ -553,7 +578,7 @@ function OffersTab({ offers }: { offers: MyOffer[] }) {
                   whiteSpace: "nowrap",
                 }}
               >
-                View listing →
+                View Listing
               </Link>
             </div>
 
@@ -698,7 +723,7 @@ function BuyerMessagesTab({
             fontSize: 14,
           }}
         >
-          Browse listings →
+          Browse Listings
         </Link>
       </div>
     );
@@ -987,10 +1012,11 @@ export function BuyerDashboardClient({
   savedListings,
   myOffers,
   initialConversations,
+  savedSearches,
 }: Props) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as Tab | null;
-  const validTabs: Tab[] = ["offers", "saved", "messages"];
+  const validTabs: Tab[] = ["offers", "saved", "messages", "searches", "offer-windows"];
   const [activeTab, setActiveTab] = useState<Tab>(
     tabParam && validTabs.includes(tabParam) ? tabParam : "offers"
   );
@@ -1000,8 +1026,10 @@ export function BuyerDashboardClient({
 
   const tabs: { id: Tab; label: string; badge?: number }[] = [
     { id: "offers", label: "My Offers", badge: activeOffers.length || undefined },
+    { id: "offer-windows", label: "Offer Windows" },
     { id: "saved", label: "Saved", badge: savedListings.length || undefined },
     { id: "messages", label: "Messages", badge: totalUnread || undefined },
+    { id: "searches", label: "Saved Searches", badge: savedSearches.length || undefined },
   ];
 
   return (
@@ -1080,6 +1108,7 @@ export function BuyerDashboardClient({
 
       {/* Tab content */}
       {activeTab === "offers" && <OffersTab offers={myOffers} />}
+      {activeTab === "offer-windows" && <OfferWindowsTab userId={currentUserId} />}
       {activeTab === "saved" && <SavedTab initialItems={savedListings} />}
       {activeTab === "messages" && (
         <BuyerMessagesTab
@@ -1087,6 +1116,149 @@ export function BuyerDashboardClient({
           initialConversations={initialConversations}
         />
       )}
+      {activeTab === "searches" && <SavedSearchesTab initialSearches={savedSearches} />}
+    </div>
+  );
+}
+
+// ─── Saved Searches Tab ───────────────────────────────────────────────────────
+
+function buildSearchUrl(s: SavedSearch): string {
+  const params = new URLSearchParams();
+  if (s.suburb) params.set("suburb", s.suburb);
+  if (s.propertyType) params.set("propertyType", s.propertyType);
+  if (s.saleMethod) params.set("saleMethod", s.saleMethod);
+  if (s.minPriceCents) params.set("minPrice", String(s.minPriceCents));
+  if (s.maxPriceCents) params.set("maxPrice", String(s.maxPriceCents));
+  if (s.minBeds) params.set("minBeds", String(s.minBeds));
+  if (s.minBaths) params.set("minBaths", String(s.minBaths));
+  return `/listings?${params.toString()}`;
+}
+
+function formatSearchLabel(s: SavedSearch): string {
+  const parts: string[] = [];
+  if (s.suburb) parts.push(s.suburb);
+  if (s.propertyType) parts.push(s.propertyType.charAt(0) + s.propertyType.slice(1).toLowerCase());
+  if (s.minBeds) parts.push(`${s.minBeds}+ bed`);
+  if (s.minPriceCents || s.maxPriceCents) {
+    const fmt = (c: number) => `$${(c / 100 / 1000).toFixed(0)}k`;
+    if (s.minPriceCents && s.maxPriceCents) parts.push(`${fmt(s.minPriceCents)}-${fmt(s.maxPriceCents)}`);
+    else if (s.minPriceCents) parts.push(`${fmt(s.minPriceCents)}+`);
+    else if (s.maxPriceCents) parts.push(`under ${fmt(s.maxPriceCents)}`);
+  }
+  return parts.length > 0 ? parts.join(", ") : "All properties";
+}
+
+function SavedSearchesTab({ initialSearches }: { initialSearches: SavedSearch[] }) {
+  const [searches, setSearches] = useState(initialSearches);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setDeleting(id);
+    try {
+      await fetch(`/api/saved-searches/${id}`, { method: "DELETE" });
+      setSearches((prev) => prev.filter((s) => s.id !== id));
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  if (searches.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "Outfit, sans-serif", marginBottom: 12 }}>
+          No saved searches yet.
+        </p>
+        <Link
+          href="/listings"
+          style={{
+            display: "inline-block",
+            background: "#f59e0b",
+            color: "#1a0f00",
+            fontFamily: "Outfit, sans-serif",
+            fontWeight: 600,
+            fontSize: 14,
+            padding: "10px 20px",
+            borderRadius: 10,
+            textDecoration: "none",
+          }}
+        >
+          Browse listings
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {searches.map((s) => (
+        <div
+          key={s.id}
+          style={{
+            background: "#ffffff",
+            border: "1px solid #e5e2db",
+            borderRadius: 12,
+            padding: "14px 16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <a
+              href={buildSearchUrl(s)}
+              style={{
+                fontFamily: "Outfit, sans-serif",
+                fontWeight: 600,
+                fontSize: 14,
+                color: "#0f1a2e",
+                textDecoration: "none",
+              }}
+            >
+              {s.name ?? formatSearchLabel(s)}
+            </a>
+            <p style={{ fontFamily: "Outfit, sans-serif", fontSize: 12, color: "#9ca3af" }}>
+              {formatSearchLabel(s)}
+            </p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <a
+              href={buildSearchUrl(s)}
+              style={{
+                fontFamily: "Outfit, sans-serif",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#334766",
+                textDecoration: "underline",
+                whiteSpace: "nowrap",
+              }}
+            >
+              View results
+            </a>
+            <button
+              onClick={() => handleDelete(s.id)}
+              disabled={deleting === s.id}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#9ca3af",
+                cursor: "pointer",
+                padding: 4,
+                display: "flex",
+                alignItems: "center",
+                opacity: deleting === s.id ? 0.4 : 1,
+              }}
+              aria-label="Remove saved search"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

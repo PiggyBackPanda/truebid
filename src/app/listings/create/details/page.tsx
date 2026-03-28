@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, Suspense } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -88,6 +88,50 @@ async function uploadDocument(
   return publicUrl as string;
 }
 
+function SellerResponsibilitiesNotice() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="mb-8 rounded-[10px] border border-border bg-surface text-sm">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left text-text-muted hover:text-text transition-colors"
+        aria-expanded={open}
+      >
+        <span className="font-medium text-text-muted">Important: Your responsibilities as a seller</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        >
+          <path
+            fillRule="evenodd"
+            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+
+      {open && (
+        <ul className="px-4 pb-4 flex flex-col gap-2.5 text-text-muted leading-relaxed list-disc list-inside marker:text-text-muted">
+          <li>
+            You are responsible for complying with your state&apos;s vendor disclosure obligations (for example, a Section 10 notice in WA or Section 32 Vendor&apos;s Statement in VIC). TrueBid does not prepare these documents.
+          </li>
+          <li>
+            All information in your listing must be accurate and not misleading. You are responsible for its content.
+          </li>
+          <li>
+            You will need a licensed conveyancer or settlement agent to prepare and manage the Contract of Sale. TrueBid does not provide legal or conveyancing services.
+          </li>
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function DetailsForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -130,6 +174,40 @@ function DetailsForm() {
   const [floorplanFile, setFloorplanFile] = useState<File | null>(null);
   const pestReportInputRef = useRef<HTMLInputElement>(null);
   const floorplanInputRef = useRef<HTMLInputElement>(null);
+
+  const [loadingExisting, setLoadingExisting] = useState(false);
+
+  useEffect(() => {
+    if (!existingId) return;
+    setLoadingExisting(true);
+    fetch(`/api/listings/${existingId}`)
+      .then((r) => r.json())
+      .then((data: { listing?: Record<string, unknown> }) => {
+        const l = data.listing;
+        if (!l) return;
+        if (typeof l.streetAddress === "string") setStreetAddress(l.streetAddress);
+        if (typeof l.suburb === "string") setSuburb(l.suburb);
+        if (typeof l.state === "string") setState(l.state);
+        if (typeof l.postcode === "string") setPostcode(l.postcode);
+        if (typeof l.propertyType === "string") setPropertyType(l.propertyType);
+        if (typeof l.bedrooms === "number") setBedrooms(l.bedrooms);
+        if (typeof l.bathrooms === "number") setBathrooms(l.bathrooms);
+        if (typeof l.carSpaces === "number") setCarSpaces(l.carSpaces);
+        if (l.landSizeM2 != null) setLandSizeM2(String(l.landSizeM2));
+        if (l.buildingSizeM2 != null) setBuildingSizeM2(String(l.buildingSizeM2));
+        if (l.yearBuilt != null) setYearBuilt(String(l.yearBuilt));
+        if (typeof l.description === "string") setDescription(l.description);
+        if (Array.isArray(l.features)) setFeatures(l.features as string[]);
+        if (l.councilRates != null) setCouncilRates(String(l.councilRates));
+        if (l.waterRates != null) setWaterRates(String(l.waterRates));
+        if (typeof l.occupancyType === "string") setOccupancyType(l.occupancyType as "" | "owner_occupier" | "investment");
+        if (typeof l.reasonForSelling === "string") setReasonForSelling(l.reasonForSelling);
+        if (l.currentRentalAmount != null) setCurrentRentalAmount(String(l.currentRentalAmount));
+        if (typeof l.titleType === "string") setTitleType(l.titleType as "" | "own_title" | "survey_strata");
+        if (l.bodyCorporateFees != null) setBodyCorporateFees(String(l.bodyCorporateFees));
+      })
+      .finally(() => setLoadingExisting(false));
+  }, [existingId]);
 
   function addFeature(f: string) {
     const trimmed = f.trim();
@@ -213,8 +291,8 @@ function DetailsForm() {
             ? parseFloat(bodyCorporateFees)
             : undefined,
         inspectionTimes: validInspectionTimes.length > 0 ? validInspectionTimes : undefined,
-        // Temporary defaults for required fields — overridden in Step 3
-        saleMethod: "OPEN_OFFERS",
+        // Temporary default: overridden in Step 3 (Sale Method)
+        saleMethod: "FIXED_PRICE",
       };
 
       let listingId = existingId;
@@ -228,7 +306,9 @@ function DetailsForm() {
         });
         if (!res.ok) {
           const data = await res.json();
-          setErrors({ form: data.error ?? "Failed to save listing" });
+          const detail = data.details?.[0];
+          const fieldHint = detail ? ` (${detail.path?.join(".") ?? "unknown field"}: ${detail.message})` : "";
+          setErrors({ form: (data.error ?? "Failed to save listing") + fieldHint });
           return;
         }
       } else {
@@ -241,7 +321,9 @@ function DetailsForm() {
 
         if (!res.ok) {
           const data = await res.json();
-          setErrors({ form: data.error ?? "Failed to save listing" });
+          const detail = data.details?.[0];
+          const fieldHint = detail ? ` (${detail.path?.join(".") ?? "unknown field"}: ${detail.message})` : "";
+          setErrors({ form: (data.error ?? "Failed to save listing") + fieldHint });
           return;
         }
 
@@ -280,7 +362,7 @@ function DetailsForm() {
       }
 
       if (uploadErrors.length > 0) {
-        setErrors({ form: uploadErrors.join(". ") + ". Other details saved — you can re-upload on the next visit." });
+        setErrors({ form: uploadErrors.join(". ") + ". Other details saved. You can re-upload on the next visit." });
         // Still navigate forward
       }
 
@@ -297,9 +379,17 @@ function DetailsForm() {
       <CreateListingProgress />
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px 80px" }}>
         <h1 className="font-serif text-2xl text-navy mb-1">Property details</h1>
-        <p className="text-sm text-text-muted mb-8">Tell buyers about your property. You can edit this later.</p>
+        <p className="text-sm text-text-muted mb-4">Tell buyers about your property. You can edit this later.</p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+        <SellerResponsibilitiesNotice />
+
+        {loadingExisting && (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-2 border-amber border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8" style={{ display: loadingExisting ? "none" : undefined }}>
           {errors.form && (
             <div className="bg-red/10 border border-red/30 rounded-[10px] px-4 py-3 text-sm text-red">
               {errors.form}
@@ -426,7 +516,7 @@ function DetailsForm() {
                 ref={descRef}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your property — its features, lifestyle appeal, and what makes it special..."
+                placeholder="Describe your property: its features, lifestyle appeal, and what makes it special..."
                 rows={8}
                 maxLength={5000}
                 className={`w-full bg-white border rounded-[10px] px-4 py-3 text-sm text-text placeholder:text-text-light transition-colors focus:outline-none focus:ring-2 resize-y ${
@@ -555,7 +645,7 @@ function DetailsForm() {
                 </select>
               </div>
 
-              {/* Current Rental Amount — only shown for Investment */}
+              {/* Current Rental Amount: only shown for Investment */}
               {occupancyType === "investment" && (
                 <Input
                   label="Current Weekly Rent ($)"
@@ -596,7 +686,7 @@ function DetailsForm() {
                 </select>
               </div>
 
-              {/* Body Corporate Fees — only shown for Survey Strata */}
+              {/* Body Corporate Fees: only shown for Survey Strata */}
               {titleType === "survey_strata" && (
                 <Input
                   label="Quarterly Body Corporate Fees ($)"
@@ -743,7 +833,7 @@ function DetailsForm() {
 
           <div className="flex justify-end pt-4">
             <Button type="submit" size="lg" loading={submitting}>
-              Continue to Photos →
+              Continue to Photos
             </Button>
           </div>
         </form>

@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { Prisma } from "@prisma/client";
+import { Prisma, ListingStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireAuth, requireVerified, errorResponse, paginatedResponse } from "@/lib/api-helpers";
 import { createListingSchema, listingSearchSchema } from "@/lib/validation";
 
-// POST /api/listings — create a draft listing
+// POST /api/listings: create a draft listing
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth();
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
             }
           }
         } catch {
-          // Non-fatal — listing is created without coordinates
+          // Non-fatal: listing is created without coordinates
         }
       }
     }
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/listings — search/browse listings
+// GET /api/listings: search/browse listings
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
     const skip = (params.page - 1) * params.limit;
 
     const where = {
-      status: "ACTIVE" as const,
+      status: { in: [ListingStatus.ACTIVE, ListingStatus.COMING_SOON] },
       ...(params.suburb ? { suburb: { contains: params.suburb, mode: "insensitive" as const } } : {}),
       ...(params.postcode ? { postcode: params.postcode } : {}),
       ...(params.state ? { state: params.state } : {}),

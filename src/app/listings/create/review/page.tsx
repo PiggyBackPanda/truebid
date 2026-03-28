@@ -21,7 +21,7 @@ interface ListingData {
   buildingSizeM2: number | null;
   yearBuilt: number | null;
   description: string;
-  features: string | null;
+  features: string[] | null;
   guidePriceCents: number | null;
   guideRangeMaxCents: number | null;
   saleMethod: string;
@@ -55,7 +55,7 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 };
 
 const SALE_METHOD_LABELS: Record<string, string> = {
-  OPEN_OFFERS: "Open Offers",
+  OPEN_OFFERS: "Live Offers",
   PRIVATE_OFFERS: "Private Offers",
   FIXED_PRICE: "Fixed Price",
 };
@@ -75,7 +75,7 @@ function ReviewRow({ label, value }: { label: string; value: React.ReactNode }) 
   return (
     <div className="flex items-start gap-4 py-2 border-b border-border last:border-0">
       <span className="text-xs text-text-muted w-36 flex-shrink-0 pt-0.5">{label}</span>
-      <span className="text-sm text-text font-medium flex-1">{value || "—"}</span>
+      <span className="text-sm text-text font-medium flex-1">{value || "Not set"}</span>
     </div>
   );
 }
@@ -133,7 +133,7 @@ function ReviewForm() {
     }
   }
 
-  const features = listing?.features ? JSON.parse(listing.features) as string[] : [];
+  const features = Array.isArray(listing?.features) ? listing.features : [];
 
   return (
     <div>
@@ -188,7 +188,7 @@ function ReviewForm() {
                     .sort((a, b) => a.displayOrder - b.displayOrder)
                     .slice(0, 4)
                     .map((img, i) => (
-                      <div key={img.id} className={`aspect-square bg-bg ${i === 0 ? "col-span-2 row-span-2" : ""}`}>
+                      <div key={img.id} className={`relative aspect-square bg-bg ${i === 0 ? "col-span-2 row-span-2" : ""}`}>
                         <Image
                           src={img.url}
                           alt={`Photo ${i + 1}`}
@@ -274,76 +274,144 @@ function ReviewForm() {
               )}
             </ReviewSection>
 
-            {/* Legal agreement */}
-            <div className="bg-navy/5 border border-navy/15 rounded-[12px] p-5 mb-6">
-              <h3 className="text-sm font-semibold text-navy mb-3">Before you publish</h3>
-              <ul className="text-sm text-text-muted space-y-2 mb-4 list-none">
-                {[
-                  "All information provided is accurate and not misleading.",
-                  "You are the legal owner or authorised to sell this property.",
-                  "You understand that once published, offers may be placed immediately.",
-                  "You agree to TrueBid's Seller Terms of Service.",
-                  "Withdrawing the listing after offers are received may have legal consequences.",
-                ].map((point) => (
-                  <li key={point} className="flex items-start gap-2">
-                    <span className="text-amber mt-0.5 flex-shrink-0">✓</span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="w-4 h-4 accent-amber mt-0.5 flex-shrink-0"
-                />
-                <span className="text-sm text-text font-medium">
-                  I confirm the above statements are true and I agree to proceed.
-                </span>
-              </label>
-            </div>
+            {listing.status === "ACTIVE" ? (
+              /* Active listing: confirm changes before going live */
+              <>
+                <div className="bg-navy/5 border border-navy/15 rounded-[12px] p-5 mb-6">
+                  <h3 className="text-sm font-semibold text-navy mb-2">Confirm your changes</h3>
+                  <p className="text-sm text-text-muted mb-4">
+                    Your listing is currently live and accepting offers. Changes confirmed here will go live immediately and be visible to all buyers.
+                  </p>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="w-4 h-4 accent-amber mt-0.5 flex-shrink-0"
+                    />
+                    <span className="text-sm text-text font-medium">
+                      I confirm these changes are accurate and I&apos;m happy for them to go live immediately.
+                    </span>
+                  </label>
+                </div>
 
-            {publishError && (
-              <div className="bg-red/10 border border-red/30 rounded-[10px] px-4 py-3 text-sm text-red mb-4">
-                {publishError}
-              </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      size="lg"
+                      onClick={() => router.push(`/listings/${listingId}?updated=true`)}
+                      disabled={!agreed}
+                      className="flex-1"
+                    >
+                      Confirm &amp; Update Listing
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/listings/create/method?id=${listingId}`)}
+                      className="text-sm text-text-muted hover:text-text transition-colors"
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/listings/${listingId}`)}
+                      className="text-sm text-text-muted hover:text-text transition-colors"
+                    >
+                      Discard Changes
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* Draft / Coming Soon: publish flow */
+              <>
+                {/* Portal reach notice */}
+                <div className="bg-bg border border-border rounded-[10px] px-4 py-3 text-sm text-text-muted mb-6">
+                  Your listing will appear on TrueBid only. It will not be listed on realestate.com.au or Domain. Make sure you are comfortable with your marketing reach before publishing.
+                </div>
+
+                {/* Legal agreement */}
+                <div className="bg-navy/5 border border-navy/15 rounded-[12px] p-5 mb-6">
+                  <h3 className="text-sm font-semibold text-navy mb-3">Before you publish</h3>
+                  <ul className="text-sm text-text-muted space-y-2 mb-4 list-none">
+                    {[
+                      "TrueBid does not influence or guarantee the offers you receive. Your sale outcome depends on buyer demand, your pricing, and market conditions.",
+                      "All information provided is accurate and not misleading.",
+                      "You are the legal owner or authorised to sell this property.",
+                      "You understand that once published, offers may be placed immediately.",
+                      "You agree to TrueBid's Seller Terms of Service.",
+                      "Withdrawing the listing after offers are received may have legal consequences.",
+                    ].map((point) => (
+                      <li key={point} className="flex items-start gap-2">
+                        <span className="text-amber mt-0.5 flex-shrink-0">✓</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="w-4 h-4 accent-amber mt-0.5 flex-shrink-0"
+                    />
+                    <span className="text-sm text-text font-medium">
+                      I confirm the above statements are true and I agree to proceed.
+                    </span>
+                  </label>
+                </div>
+
+                {publishError && (
+                  <div className="bg-red/10 border border-red/30 rounded-[10px] px-4 py-3 text-sm text-red mb-4">
+                    {publishError}
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {listing.status === "DRAFT" && (
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={() => handlePublish("coming_soon")}
+                        disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0}
+                        loading={submitting}
+                        className="flex-1"
+                      >
+                        Publish as Coming Soon
+                      </Button>
+                    )}
+                    <Button
+                      size="lg"
+                      onClick={() => handlePublish("active")}
+                      disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0 || submitting}
+                      loading={listing.status !== "DRAFT" ? submitting : false}
+                      className="flex-1"
+                    >
+                      {listing.status === "COMING_SOON" ? "Go Live: Open for Offers Now" : "Publish as Active (Open for Offers Now)"}
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/listings/create/method?id=${listingId}`)}
+                      className="text-sm text-text-muted hover:text-text transition-colors"
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => router.push("/dashboard")}
+                      className="text-sm text-text-muted hover:text-text transition-colors"
+                    >
+                      Save as Draft
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
-
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => router.push(`/listings/create/method?id=${listingId}`)}
-                className="text-sm text-text-muted hover:text-text transition-colors"
-              >
-                ← Back
-              </button>
-              <div className="flex flex-col items-end gap-3">
-                <Button
-                  size="lg"
-                  onClick={() => handlePublish("coming_soon")}
-                  disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0}
-                  loading={submitting}
-                >
-                  Publish as Coming Soon
-                </Button>
-                <button
-                  type="button"
-                  onClick={() => handlePublish("active")}
-                  disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0 || submitting}
-                  className="text-sm font-medium text-navy underline hover:no-underline disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Go straight to Active (open for offers now)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/dashboard")}
-                  className="text-sm text-text-muted hover:text-text transition-colors"
-                >
-                  Save as draft
-                </button>
-              </div>
-            </div>
           </>
         )}
       </div>

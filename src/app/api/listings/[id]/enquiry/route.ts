@@ -94,7 +94,7 @@ export async function POST(
         <tr>
           <td style="padding:16px 32px 24px;border-top:1px solid #e5e1da;">
             <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.5;">
-              This email was sent by <a href="${baseUrl}" style="color:#f59e0b;text-decoration:none;">TrueBid</a> — free, transparent property sales for Australia.
+              This email was sent by <a href="${baseUrl}" style="color:#f59e0b;text-decoration:none;">TrueBid</a>, free, transparent property sales for Australia.
             </p>
           </td>
         </tr>

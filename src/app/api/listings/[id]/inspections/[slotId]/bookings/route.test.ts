@@ -18,7 +18,7 @@ const { mockPrisma, mockRequireAuth, mockRequireOwner, mockRequireVerified } = v
       favourite: createModelMock(), checklistProgress: createModelMock(),
       listingView: createModelMock(), inspectionSlot: createModelMock(),
       inspectionBooking: createModelMock(),
-      $queryRaw: vi.fn().mockResolvedValue([]), // FOR UPDATE lock — no-op in tests
+      $queryRaw: vi.fn().mockResolvedValue([]), // FOR UPDATE lock, no-op in tests
       $transaction: vi.fn((fn: (tx: typeof mockPrisma) => Promise<unknown>) => fn(mockPrisma)),
     },
     mockRequireAuth: vi.fn(),
@@ -140,7 +140,7 @@ function baseBooking(overrides: object = {}) {
 describe("POST /api/listings/[id]/inspections/[slotId]/bookings", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("creates a booking for a verified buyer — 201", async () => {
+  it("creates a booking for a verified buyer: 201", async () => {
     const buyer = mockBuyer();
     mockRequireAuth.mockResolvedValue(buyer);
     mockRequireVerified.mockReturnValue(undefined);
@@ -318,7 +318,7 @@ describe("GET /api/listings/[id]/inspections/[slotId]/bookings", () => {
 describe("DELETE /api/listings/[id]/inspections/[slotId]/bookings/[bookingId]", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("cancels booking when more than 2 hours before slot — 200", async () => {
+  it("cancels booking when more than 2 hours before slot: 200", async () => {
     const buyer = mockBuyer();
     mockRequireAuth.mockResolvedValue(buyer);
     mockPrisma.inspectionBooking.findUnique.mockResolvedValue(baseBooking());
@@ -401,7 +401,7 @@ describe("DELETE /api/listings/[id]/inspections/[slotId]/bookings/[bookingId]", 
 describe("PATCH /api/listings/[id]/inspections/[slotId]/bookings/[bookingId]/attendance", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("marks booking as ATTENDED after slot start time — 200", async () => {
+  it("marks booking as ATTENDED after slot start time: 200", async () => {
     const seller = mockUser({ id: "seller_1" });
     mockRequireAuth.mockResolvedValue(seller);
     mockRequireOwner.mockReturnValue(undefined);
@@ -452,7 +452,7 @@ describe("PATCH /api/listings/[id]/inspections/[slotId]/bookings/[bookingId]/att
     expect(body.code).toBe("INSPECTION_NOT_YET_STARTED");
   });
 
-  it("marks booking as NO_SHOW — 200", async () => {
+  it("marks booking as NO_SHOW: 200", async () => {
     const seller = mockUser({ id: "seller_1" });
     mockRequireAuth.mockResolvedValue(seller);
     mockRequireOwner.mockReturnValue(undefined);

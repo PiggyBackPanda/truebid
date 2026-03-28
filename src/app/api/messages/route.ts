@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
 const URL_PATTERN = /https?:\/\/|www\./i;
 const UNREAD_EMAIL_DELAY_MS = 15 * 60 * 1000; // 15 minutes
 
-// POST /api/messages — send a message to another user about a listing
+// POST /api/messages: send a message to another user about a listing
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth();

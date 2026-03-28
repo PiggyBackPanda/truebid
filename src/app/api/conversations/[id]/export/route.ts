@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
 
-// GET /api/conversations/[id]/export — return a printable HTML transcript
+// GET /api/conversations/[id]/export: return a printable HTML transcript
 // The client opens this in a new window; the page auto-triggers window.print()
 // so the user can Save as PDF from their browser's print dialog.
 export async function GET(
@@ -115,7 +115,7 @@ export async function GET(
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TrueBid Conversation Transcript — ${escapeHtml(listing.streetAddress)}</title>
+  <title>TrueBid Conversation Transcript: ${escapeHtml(listing.streetAddress)}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 

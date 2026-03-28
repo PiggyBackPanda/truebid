@@ -66,7 +66,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
           fontSize: 13,
           fontWeight: 500,
           color: "#334766",
-          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "var(--font-sans)",
         }}
       >
         {label}
@@ -81,7 +81,7 @@ const inputStyle: React.CSSProperties = {
   borderRadius: 10,
   padding: "11px 14px",
   fontSize: 14,
-  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  fontFamily: "var(--font-sans)",
   color: "#1a1a1a",
   background: "#ffffff",
   outline: "none",
@@ -109,7 +109,7 @@ function SaveButton({ loading, onClick }: { loading: boolean; onClick: () => voi
         padding: "11px 28px",
         fontSize: 14,
         fontWeight: 600,
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: "var(--font-sans)",
         cursor: loading ? "not-allowed" : "pointer",
         transition: "background 0.15s",
       }}
@@ -124,7 +124,7 @@ function FeedbackMessage({ type, text }: { type: "success" | "error"; text: stri
     <p
       style={{
         fontSize: 13,
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: "var(--font-sans)",
         color: type === "success" ? "#15803d" : "#dc2626",
         marginTop: 8,
       }}
@@ -335,7 +335,7 @@ function VerificationStatus({ status }: { status: string }) {
             padding: "6px 14px",
             fontSize: 13,
             fontWeight: 600,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             flexShrink: 0,
           }}
         >
@@ -345,7 +345,7 @@ function VerificationStatus({ status }: { status: string }) {
           style={{
             color: "#6b7280",
             fontSize: 14,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             lineHeight: 1.5,
             flex: 1,
           }}
@@ -362,12 +362,12 @@ function VerificationStatus({ status }: { status: string }) {
               padding: "10px 20px",
               fontSize: 14,
               fontWeight: 600,
-              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-sans)",
               textDecoration: "none",
               flexShrink: 0,
             }}
           >
-            {status === "FAILED" ? "Try again" : "Verify now"} →
+            {status === "FAILED" ? "Try Again" : "Verify Now"}
           </Link>
         )}
       </div>
@@ -452,13 +452,13 @@ function NotificationPreferences({ initial }: { initial: NotifPrefs }) {
                   fontWeight: 500,
                   fontSize: 14,
                   color: "#0f1623",
-                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily: "var(--font-sans)",
                   marginBottom: 2,
                 }}
               >
                 {t.label}
               </p>
-              <p style={{ fontSize: 13, color: "#6b7280", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+              <p style={{ fontSize: 13, color: "#6b7280", fontFamily: "var(--font-sans)" }}>
                 {t.desc}
               </p>
             </div>
@@ -561,7 +561,7 @@ function DeleteAccount() {
           style={{
             color: "#6b7280",
             fontSize: 14,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             lineHeight: 1.6,
             marginBottom: 20,
             maxWidth: 560,
@@ -580,7 +580,7 @@ function DeleteAccount() {
             padding: "11px 24px",
             fontSize: 14,
             fontWeight: 600,
-            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily: "var(--font-sans)",
             cursor: "pointer",
           }}
         >
@@ -627,7 +627,7 @@ function DeleteAccount() {
               style={{
                 color: "#6b7280",
                 fontSize: 14,
-                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "var(--font-sans)",
                 lineHeight: 1.6,
                 marginBottom: 20,
               }}
@@ -650,7 +650,7 @@ function DeleteAccount() {
                 style={{
                   color: "#dc2626",
                   fontSize: 13,
-                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily: "var(--font-sans)",
                   marginTop: 8,
                 }}
               >
@@ -673,7 +673,7 @@ function DeleteAccount() {
                   borderRadius: 10,
                   padding: "10px 20px",
                   fontSize: 14,
-                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily: "var(--font-sans)",
                   cursor: "pointer",
                   color: "#6b7280",
                   fontWeight: 500,
@@ -692,7 +692,7 @@ function DeleteAccount() {
                   padding: "10px 20px",
                   fontSize: 14,
                   fontWeight: 600,
-                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                  fontFamily: "var(--font-sans)",
                   cursor: confirmation === "DELETE" && !loading ? "pointer" : "not-allowed",
                   transition: "background 0.15s",
                 }}
@@ -726,7 +726,7 @@ export function AccountClient({ user, notificationPrefs }: Props) {
         >
           Account Settings
         </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "var(--font-sans)" }}>
           Manage your personal details, password, and preferences.
         </p>
       </div>
