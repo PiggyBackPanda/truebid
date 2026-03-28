@@ -6,7 +6,7 @@ function fmt(n: number) {
   return "$" + Math.round(n).toLocaleString("en-AU")
 }
 
-export default function SavingsCalculator() {
+export function SavingsCalculator() {
   const [price, setPrice] = useState(800000)
   const [inputValue, setInputValue] = useState("800,000")
   const [discOpen, setDiscOpen] = useState(false)

@@ -153,7 +153,7 @@ export function Footer() {
               fontFamily: "Outfit, sans-serif",
             }}
           >
-            © {year} TrueBid Pty Ltd · Australian owned and operated
+            &copy; {year} TrueBid Pty Ltd &middot; Australian owned and operated
           </p>
           <p
             style={{

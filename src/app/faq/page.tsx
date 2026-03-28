@@ -46,7 +46,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What is an Open Offer?",
-        a: "An Open Offer is TrueBid\u2019s core feature. When a property is listed with Open Offers enabled, all registered buyers can see every offer submitted \u2014 including the amount and timing \u2014 in real time. There are no secret bids.",
+        a: "An Open Offer is TrueBid\u2019s core feature. When a property is listed with Open Offers enabled, all registered buyers can see every offer\u2019s amount and submission time in real time. Buyer identities and offer conditions are kept private. There are no secret bids.",
       },
       {
         q: "How long does an Open Offer period last?",
@@ -54,11 +54,11 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Can buyers see who else is bidding?",
-        a: "Buyers can see offer amounts and timing but not the personal details of other buyers. Identity privacy is protected while price transparency is maintained.",
+        a: "Buyers can see offer amounts and submission times only. Personal details and offer conditions are kept private \u2014 only prices and timing are visible to other buyers.",
       },
       {
         q: "What is anti-snipe protection?",
-        a: "Anti-snipe protection automatically extends the offer period if a new offer comes in close to the deadline. This prevents buyers from waiting until the last second to swoop in, giving all parties a fair chance to respond.",
+        a: "Anti-snipe protection automatically extends the offer period if a new offer is submitted within 15 minutes of the closing time. The closing time extends by 15 minutes, giving all buyers a fair chance to respond. This prevents anyone from swooping in at the last second.",
       },
       {
         q: "Can I change or withdraw my offer?",
@@ -124,7 +124,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does it cost to list on TrueBid?",
-        a: "Listing on TrueBid is free. [Update this answer with your actual fee/commission model before launch.]",
+        a: "Listing on TrueBid is completely free. There is no commission, no listing fee, and no marketing fee. TrueBid generates revenue through optional premium services such as conveyancer referrals and property inspections — these are never required to list or sell.",
       },
       {
         q: "Can I set a reserve price?",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HowItWorksToggle } from "./HowItWorksClient";
 
 export const metadata: Metadata = {
   title: "How It Works — TrueBid",
@@ -9,48 +10,10 @@ export const metadata: Metadata = {
 
 // ── Content ───────────────────────────────────────────────────────────────────
 
-const SELLER_STEPS = [
-  {
-    title: "Create your listing (15 minutes)",
-    body: "Sign up and verify your identity, then enter your property details — address, bedrooms, bathrooms, land size, and a description of your home. Upload your best photos (your phone camera is fine — good lighting makes a big difference). Choose your sale method: Open Offers for transparent bidding, Private Offers if you prefer discretion, or Fixed Price if you know exactly what you want.",
-  },
-  {
-    title: "Go live and attract buyers",
-    body: "Hit publish and your listing is live on TrueBid immediately. Buyers can find your property through our search, browse the details, and — for Open Offers — see the live offer board. You manage everything from your seller dashboard: track views, respond to questions, and watch offers come in.",
-  },
-  {
-    title: "Review offers and accept",
-    body: "When your Open Offers closing date arrives, review all offers in your dashboard. You'll see each buyer's offer amount, their conditions, and their preferred settlement timeline. You choose the offer that suits you best — it doesn't have to be the highest. An unconditional offer with a quick settlement might be worth more to you than a higher offer subject to finance.",
-  },
-  {
-    title: "Settle with your conveyancer",
-    body: "Once you accept an offer, your settlement agent prepares the Contract of Sale. The buyer arranges their deposit, inspections, and finance. Both parties sign, and your settlement agent handles the transfer of title. We provide a checklist to guide you through every step.",
-  },
-];
-
-const BUYER_STEPS = [
-  {
-    title: "Browse and search",
-    body: "Find properties by suburb, postcode, or address. Filter by price, bedrooms, property type, and sale method. No sign-up needed to browse — see every listing, every photo, and every offer on the board.",
-  },
-  {
-    title: "Verify and place an offer",
-    body: "When you find a property you love, verify your identity (takes 2 minutes with your driver's licence) and place your offer. For Open Offers listings, you'll see exactly where your offer ranks against other buyers — no guesswork, no phantom offers, no games.",
-  },
-  {
-    title: "Compete transparently",
-    body: "You can see every other offer: the amount, the conditions, and the timing. If you're outbid, you'll be notified instantly so you can decide whether to raise your offer. You compete on both price and terms — an unconditional offer might win over a higher offer with conditions attached.",
-  },
-  {
-    title: "Win and settle",
-    body: "If the seller accepts your offer, you'll be notified immediately. From there, engage your own settlement agent, arrange your building and pest inspection (if conditional), finalise your finance, and proceed to exchange and settlement. We guide you through every step.",
-  },
-];
-
 const OPEN_OFFERS_QA = [
   {
     q: "How does it work?",
-    a: 'When a seller lists with Open Offers, they set a closing date (typically 2–4 weeks away). During that time, any verified buyer can place an offer. Every offer appears on a live, public board showing the amount, the conditions, and when it was placed. Buyers are identified by anonymous aliases — "Buyer_7a3k" — so your identity is protected, but the offer is transparent.',
+    a: 'When a seller lists with Open Offers, they set a closing date (typically 2–4 weeks away). During that time, any verified buyer can place an offer. Every offer appears on a live, public board showing the amount and when it was placed. Buyer identities, personal details, and offer conditions are kept private — buyers are identified only by anonymous aliases such as "Buyer_7a3k". Amounts and timing are fully transparent.',
   },
   {
     q: "What makes it different from a traditional auction?",
@@ -69,33 +32,6 @@ const OPEN_OFFERS_QA = [
     a: "Yes. Listing on TrueBid and using Open Offers is completely free. No commission, no listing fee, no hidden charges. We make money through optional premium services and referral partnerships with conveyancers and inspectors — services you'd use regardless of how you sell.",
   },
 ];
-
-// ── Components ────────────────────────────────────────────────────────────────
-
-function StepCard({
-  number,
-  title,
-  body,
-}: {
-  number: number;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="flex gap-4">
-      <div
-        className="flex-shrink-0 flex items-center justify-center rounded-full bg-navy text-white font-bold text-sm"
-        style={{ width: 32, height: 32, marginTop: 2 }}
-      >
-        {number}
-      </div>
-      <div>
-        <h3 className="font-semibold text-navy text-base mb-1.5">{title}</h3>
-        <p className="text-sm text-text-muted leading-relaxed">{body}</p>
-      </div>
-    </div>
-  );
-}
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -133,103 +69,8 @@ export default function HowItWorksPage() {
         </div>
       </div>
 
-      {/* Section 1: For Sellers */}
-      <section className="py-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h2
-            className="text-navy text-center mb-10"
-            style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 28,
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            How to sell your home on TrueBid
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {SELLER_STEPS.map((step, i) => (
-              <StepCard key={i} number={i + 1} title={step.title} body={step.body} />
-            ))}
-          </div>
-
-          {/* Savings callout */}
-          <div
-            className="mt-12 rounded-lg p-6"
-            style={{
-              background: "rgba(232,168,56,0.08)",
-              border: "1px solid rgba(232,168,56,0.3)",
-            }}
-          >
-            <p
-              className="font-semibold mb-1"
-              style={{
-                color: "#92650a",
-                fontSize: 13,
-                fontFamily: "Outfit, sans-serif",
-              }}
-            >
-              How much will you save?
-            </p>
-            <p
-              style={{
-                color: "#1a1a1a",
-                fontSize: 14,
-                lineHeight: 1.6,
-                fontFamily: "Outfit, sans-serif",
-              }}
-            >
-              On the average Australian home ($800,000), you&apos;d save{" "}
-              <strong>$15,000–$25,000</strong> in agent commissions and marketing
-              fees. That money stays in your pocket.
-            </p>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              href="/register"
-              className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
-            >
-              List your home — free →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-border" />
-
-      {/* Section 2: For Buyers */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2
-            className="text-navy text-center mb-10"
-            style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 28,
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            How to buy on TrueBid
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {BUYER_STEPS.map((step, i) => (
-              <StepCard key={i} number={i + 1} title={step.title} body={step.body} />
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              href="/listings"
-              className="inline-block bg-navy text-white font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-navy-light transition-colors"
-            >
-              Browse properties →
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Seller / Buyer toggle + steps */}
+      <HowItWorksToggle />
 
       <div className="border-t border-border" />
 

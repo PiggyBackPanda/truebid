@@ -34,6 +34,7 @@ const config: Config = {
       fontFamily: {
         serif: ["DM Serif Display", "Georgia", "serif"],
         sans: ["Outfit", "-apple-system", "sans-serif"],
+        heading: ["var(--font-fraunces)", "serif"],
       },
       fontSize: {
         hero: ["56px", { lineHeight: "1.1", letterSpacing: "-0.03em" }],

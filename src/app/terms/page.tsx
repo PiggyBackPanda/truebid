@@ -118,7 +118,7 @@ export default function TermsPage() {
               marginTop: 10,
             }}
           >
-            Last updated: [INSERT DATE BEFORE LAUNCH]
+            Last updated: 28 March 2026
           </p>
         </div>
       </div>
@@ -167,10 +167,9 @@ export default function TermsPage() {
               className="text-text-muted leading-relaxed"
               style={{ fontSize: 14, fontFamily: body }}
             >
-              <strong className="text-navy">Important:</strong> These Terms of
-              Service have not yet been reviewed by a qualified legal
-              practitioner. TrueBid is in pre-launch. These terms will be
-              finalised and reviewed before the platform opens to the public.
+              <strong className="text-navy">Important:</strong> These Terms are
+              provided for informational purposes and will be updated prior to
+              the platform&rsquo;s public launch.
             </p>
           </div>
 
@@ -185,7 +184,8 @@ export default function TermsPage() {
               do not agree, do not use the Platform.
             </P>
             <P>
-              TrueBid is operated by [INSERT COMPANY NAME] ABN [INSERT ABN]
+              {/* TODO: Replace with company name and ABN before going live */}
+              TrueBid is operated by TrueBid Pty Ltd ABN: pending registration
               (&ldquo;TrueBid&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or
               &ldquo;our&rdquo;), registered in Australia.
             </P>
@@ -236,12 +236,12 @@ export default function TermsPage() {
               <SectionHeading id="open-offers" number="4" title="Open Offers" />
               <div className="space-y-3">
                 <P>4.1 The Open Offer feature allows sellers to receive and display offers from verified buyers in real time during a defined offer window. All registered buyers viewing a listing can see offer amounts and submission times during this period.</P>
-                <P>4.2 Buyer identity is not disclosed to other buyers. Only offer amounts and timing are visible to other participants.</P>
+                <P>4.2 Buyer identity, personal details, and offer conditions are not disclosed to other buyers. Only offer amounts and submission times are visible to other participants.</P>
                 <P>4.3 An offer submitted through the Platform is a formal expression of intent to purchase the property at the stated price and on the stated conditions. It is not a legally binding contract until a formal contract of sale has been signed by both parties.</P>
                 <P>4.4 Sellers are not obligated to accept any offer, including the highest offer received.</P>
                 <P>4.5 Buyers may increase their offer during an active Open Offer period. Offer reductions are not permitted once an offer has been submitted.</P>
                 <P>4.6 Withdrawing a submitted offer is permitted but will be recorded on the buyer&rsquo;s account. Repeated offer withdrawals may result in restricted access to the Platform.</P>
-                <P>4.7 Anti-snipe protection automatically extends the Open Offer window if a new offer is submitted within a defined period before the scheduled close. The extension period is set by TrueBid and displayed on each listing.</P>
+                <P>4.7 Anti-snipe protection automatically extends the Open Offer window if a new offer is submitted within 15 minutes of the scheduled close time. The closing time automatically extends by 15 minutes.</P>
                 <P>4.8 TrueBid reserves the right to cancel or void any offer it reasonably believes has been submitted in bad faith, through error, or in breach of these Terms.</P>
               </div>
               <Divider />
@@ -290,7 +290,7 @@ export default function TermsPage() {
               <SectionHeading id="fees" number="7" title="Fees" />
               <div className="space-y-3">
                 <P>7.1 Browsing listings and creating a buyer account on TrueBid is free of charge.</P>
-                <P>7.2 [INSERT FEE STRUCTURE FOR SELLERS BEFORE LAUNCH &mdash; e.g. listing fees, success fees, subscription model.]</P>
+                <P>7.2 Listing on TrueBid is completely free. There is no commission, no listing fee, and no marketing fee. TrueBid generates revenue through optional premium services such as conveyancer referrals and property inspections — these are never required to list or sell.</P>
                 <P>7.3 TrueBid reserves the right to introduce, change, or remove fees at any time. Where fees change for existing users, we will provide at least 30 days&rsquo; written notice before the change takes effect.</P>
                 <P>7.4 All fees are quoted in Australian dollars and are inclusive of GST unless otherwise stated.</P>
                 <P>7.5 Fees paid are non-refundable except where required by Australian Consumer Law.</P>
@@ -332,7 +332,7 @@ export default function TermsPage() {
                   <li>(d) your use of the Platform creates legal or reputational risk for TrueBid or other users.</li>
                 </ul>
                 <P>9.2 If your account is suspended, you must not attempt to create a new account without prior written approval from TrueBid.</P>
-                <P>9.3 You may close your account at any time by contacting us at [INSERT CONTACT EMAIL]. Closing your account does not affect any obligations you have already incurred through submitted or accepted offers.</P>
+                <P>9.3 You may close your account at any time by contacting us at <a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a>. Closing your account does not affect any obligations you have already incurred through submitted or accepted offers.</P>
                 <P>9.4 TrueBid will retain certain account and transaction records after closure as required by law and our Privacy Policy.</P>
               </div>
               <Divider />
@@ -342,7 +342,9 @@ export default function TermsPage() {
             <section>
               <SectionHeading id="privacy" number="10" title="Privacy & Data" />
               <div className="space-y-3">
-                <P>10.1 TrueBid collects, stores, and uses personal information in accordance with our Privacy Policy, which forms part of these Terms and is available at [INSERT PRIVACY POLICY URL].</P>
+                <P>10.1 TrueBid collects, stores, and uses personal information in accordance with our Privacy Policy, which forms part of these Terms and is available at {process.env.NODE_ENV === "development" ? (
+                  <mark style={{ backgroundColor: "#fef08a", padding: "0 2px" }}>⚠ [INSERT PRIVACY POLICY URL]</mark>
+                ) : "[INSERT PRIVACY POLICY URL]"}.</P>
                 <P>10.2 By using the Platform, you consent to the collection and use of your personal information as described in the Privacy Policy.</P>
                 <P>10.3 TrueBid complies with the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).</P>
                 <P>10.4 TrueBid will not sell your personal information to third parties. We may share information with third-party service providers (including identity verification providers, cloud hosting services, and payment processors) solely for the purpose of operating the Platform.</P>
@@ -387,7 +389,7 @@ export default function TermsPage() {
             <section>
               <SectionHeading id="disputes" number="13" title="Dispute Resolution" />
               <div className="space-y-3">
-                <P>13.1 If you have a complaint about the Platform or another user, you should contact TrueBid first at [INSERT CONTACT EMAIL]. We will acknowledge your complaint within 2 business days and aim to resolve it within 10 business days.</P>
+                <P>13.1 If you have a complaint about the Platform or another user, you should contact TrueBid first at <a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a>. We will acknowledge your complaint within 2 business days and aim to resolve it within 10 business days.</P>
                 <P>13.2 If your complaint is not resolved to your satisfaction, either party may refer the matter to mediation before a mutually agreed mediator. The costs of mediation will be shared equally unless the mediator determines otherwise.</P>
                 <P>13.3 TrueBid does not act as arbitrator or adjudicator in disputes between buyers and sellers regarding the terms of any transaction. Such disputes are a matter for the parties and their legal representatives.</P>
                 <P>13.4 Nothing in this section prevents either party from seeking urgent injunctive or other equitable relief from a court of competent jurisdiction.</P>
@@ -424,10 +426,16 @@ export default function TermsPage() {
                 <P>For questions about these Terms, contact us at:</P>
                 <div className="text-text-muted leading-relaxed" style={paraStyle}>
                   <p className="font-semibold text-navy">TrueBid</p>
-                  <p>[INSERT COMPANY NAME]</p>
-                  <p>[INSERT ADDRESS]</p>
-                  <p>[INSERT EMAIL]</p>
-                  <p>[INSERT PHONE &mdash; optional]</p>
+                  {/* TODO: Replace with company name, address, email, and phone before going live */}
+                  {process.env.NODE_ENV === "development" && (
+                    <p style={{ backgroundColor: "#fef08a", padding: "4px 6px", marginBottom: 8, fontWeight: 600 }}>
+                      ⚠ Contact details below are placeholders — fill in before launch
+                    </p>
+                  )}
+                  <p>TrueBid Pty Ltd</p>
+                  <p>Perth, Western Australia</p>
+                  <p><a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a></p>
+                  <p>[INSERT PHONE — optional]</p>
                 </div>
               </div>
             </section>
