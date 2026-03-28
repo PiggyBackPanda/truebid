@@ -22,8 +22,8 @@ const TOC_ITEMS = [
   { id: "contact",      label: "12. Contact" },
 ];
 
-const serif = "DM Serif Display, Georgia, serif";
-const body  = "Outfit, sans-serif";
+const serif = "Georgia, 'Times New Roman', serif";
+const body  = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 const headingStyle: React.CSSProperties = {
   fontFamily: serif,
@@ -144,7 +144,7 @@ export default function PrivacyPage() {
         <div className="max-w-3xl flex-1 min-w-0">
 
           {/* Pre-launch notice */}
-          <div className="rounded-lg p-5 mb-10" style={{ background: "rgba(232,168,56,0.07)", border: "1px solid rgba(232,168,56,0.25)" }}>
+          <div className="rounded-lg p-5 mb-10" style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.25)" }}>
             <p className="text-text-muted leading-relaxed" style={{ fontSize: 14, fontFamily: body }}>
               <strong className="text-navy">Notice:</strong> This Privacy Policy is
               provided for informational purposes and will be updated prior to the
@@ -209,7 +209,7 @@ export default function PrivacyPage() {
                   Content is stored in our database and transmitted over TLS.
                 </DefRow>
                 <DefRow label="Account settings">
-                  Password (stored as a bcrypt hash — we cannot recover your password),
+                  Password (stored as a bcrypt hash; we cannot recover your password),
                   notification preferences, and any avatar image you upload.
                 </DefRow>
               </div>
@@ -259,7 +259,7 @@ export default function PrivacyPage() {
                 </Bullet>
                 <Bullet>Facilitate communication between buyers and sellers</Bullet>
                 <Bullet>
-                  Send transactional notifications — new offers, offer acceptance or
+                  Send transactional notifications: new offers, offer acceptance or
                   rejection, unread message reminders, and listing status updates
                 </Bullet>
                 <Bullet>
@@ -275,8 +275,8 @@ export default function PrivacyPage() {
                   Platform
                 </Bullet>
                 <Bullet>
-                  Improve the Platform using aggregated, anonymised analytics — no
-                  individual user is identifiable in this analysis
+                  Improve the Platform using aggregated, anonymised analytics. No
+                  individual user is identifiable in this analysis.
                 </Bullet>
                 <Bullet>
                   Comply with our legal obligations under Australian law
@@ -379,11 +379,11 @@ export default function PrivacyPage() {
               </P>
               <ul className="space-y-2 mt-3 mb-4">
                 <Bullet>
-                  <strong className="text-navy">Verification status</strong> — one of
+                  <strong className="text-navy">Verification status</strong>: one of
                   VERIFIED, REQUIRES_REVIEW, or a failure state. Stored in our database.
                 </Bullet>
                 <Bullet>
-                  <strong className="text-navy">Verified full name</strong> — the name
+                  <strong className="text-navy">Verified full name</strong>: the name
                   extracted from your identity document by Stripe. Encrypted with
                   AES-256-GCM before being written to our database (see Section 4.3).
                   Used only for internal dispute resolution and fraud detection.
@@ -648,7 +648,7 @@ export default function PrivacyPage() {
                 </DefRow>
                 <DefRow label="Unread email queue">
                   Message data queued for unread email notifications (via Upstash QStash)
-                  is retained for a maximum of 15 minutes — the delivery delay period —
+                  is retained for a maximum of 15 minutes (the delivery delay period),
                   then deleted by the queue system automatically.
                 </DefRow>
               </div>
@@ -722,20 +722,20 @@ export default function PrivacyPage() {
                 </Bullet>
                 <Bullet>
                   <strong className="text-navy">Assessment (30-day window):</strong> We
-                  will assess whether the breach meets the threshold for notification —
+                  will assess whether the breach meets the threshold for notification,
                   namely, whether it is likely to result in serious harm to one or more
                   individuals whose personal information is involved. This assessment will
                   be completed within 30 days of becoming aware of the suspected breach,
                   as required by law.
                 </Bullet>
                 <Bullet>
-                  <strong className="text-navy">Notification — OAIC:</strong> If the breach
+                  <strong className="text-navy">Notification to OAIC:</strong> If the breach
                   meets the notification threshold, we will lodge a statement with the OAIC
                   as soon as practicable and no later than 30 days after becoming aware of
                   the breach.
                 </Bullet>
                 <Bullet>
-                  <strong className="text-navy">Notification — affected individuals:</strong>{" "}
+                  <strong className="text-navy">Notification to affected individuals:</strong>{" "}
                   We will notify each affected individual whose personal information was
                   involved in the breach and who is at risk of serious harm, providing
                   details of the breach and the steps they should take to protect

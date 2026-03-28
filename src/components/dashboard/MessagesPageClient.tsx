@@ -54,7 +54,7 @@ function Avatar({ name, size = 40 }: { name: string; size?: number }) {
   return (
     <div
       className="flex items-center justify-center rounded-full bg-navy text-white font-semibold shrink-0"
-      style={{ width: size, height: size, fontSize: size * 0.35, fontFamily: "Outfit, sans-serif" }}
+      style={{ width: size, height: size, fontSize: size * 0.35, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
     >
       {initials}
     </div>
@@ -77,7 +77,7 @@ function ConversationList({
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
         <p
           className="text-navy mb-2"
-          style={{ fontFamily: "DM Serif Display, Georgia, serif", fontSize: 18 }}
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 18 }}
         >
           No conversations yet
         </p>
@@ -100,7 +100,7 @@ function ConversationList({
             className="w-full text-left flex gap-3 items-start p-4 border-b border-border transition-colors"
             style={{
               background: isSelected ? "#f0f4ff" : "#ffffff",
-              borderLeft: `3px solid ${isSelected ? "#0f1a2e" : "transparent"}`,
+              borderLeft: `3px solid ${isSelected ? "#0f1623" : "transparent"}`,
             }}
           >
             <Avatar name={name} />
@@ -108,7 +108,7 @@ function ConversationList({
               <div className="flex justify-between items-baseline mb-0.5">
                 <p
                   className="font-semibold text-navy text-sm truncate"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
+                  style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
                 >
                   {name}
                 </p>
@@ -118,14 +118,14 @@ function ConversationList({
               </div>
               <p
                 className="text-xs text-text-muted truncate mb-1"
-                style={{ fontFamily: "Outfit, sans-serif" }}
+                style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
               >
                 {conv.listing.streetAddress}
               </p>
               <div className="flex items-center justify-between">
                 <p
                   className="text-xs text-text-muted truncate max-w-[160px]"
-                  style={{ fontFamily: "Outfit, sans-serif" }}
+                  style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
                 >
                   {conv.lastMessage
                     ? `${conv.lastMessage.isFromMe ? "You: " : ""}${conv.lastMessage.body}`
@@ -133,13 +133,14 @@ function ConversationList({
                 </p>
                 {conv.unreadCount > 0 && (
                   <span
-                    className="ml-2 shrink-0 rounded-full text-white text-xs font-bold flex items-center justify-center"
+                    className="ml-2 shrink-0 rounded-full text-xs font-bold flex items-center justify-center"
                     style={{
-                      background: "#2563eb",
+                      background: "#f59e0b",
+                      color: "#1a0f00",
                       minWidth: 18,
                       height: 18,
                       padding: "0 5px",
-                      fontFamily: "Outfit, sans-serif",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     }}
                   >
                     {conv.unreadCount}
@@ -271,7 +272,7 @@ function MessageThread({
         <div className="flex-1 min-w-0">
           <p
             className="font-semibold text-navy text-sm"
-            style={{ fontFamily: "Outfit, sans-serif" }}
+            style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
           >
             {otherName}
           </p>
@@ -287,7 +288,7 @@ function MessageThread({
         <button
           onClick={handleExport}
           className="flex items-center gap-1.5 text-xs font-medium text-slate border border-border rounded-lg px-3 py-2 hover:bg-bg transition-colors shrink-0"
-          style={{ fontFamily: "Outfit, sans-serif" }}
+          style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
           title="Download conversation transcript"
         >
           <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2">
@@ -307,7 +308,7 @@ function MessageThread({
           <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
             <p
               className="text-navy mb-2"
-              style={{ fontFamily: "DM Serif Display, Georgia, serif", fontSize: 18 }}
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 18 }}
             >
               Start the conversation
             </p>
@@ -327,8 +328,8 @@ function MessageThread({
                 <div
                   style={{
                     maxWidth: "70%",
-                    background: isMe ? "#0f1a2e" : "#f3f4f6",
-                    color: isMe ? "#ffffff" : "#0f1a2e",
+                    background: isMe ? "#0f1623" : "#f3f4f6",
+                    color: isMe ? "#ffffff" : "#0f1623",
                     borderRadius: isMe ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
                     padding: "10px 14px",
                   }}
@@ -339,7 +340,7 @@ function MessageThread({
                       style={{
                         fontSize: 11,
                         color: "#6b7280",
-                        fontFamily: "Outfit, sans-serif",
+                        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       }}
                     >
                       {msg.senderId === detail.buyer.id
@@ -349,7 +350,7 @@ function MessageThread({
                   )}
                   <p
                     className="text-sm leading-relaxed"
-                    style={{ fontFamily: "Outfit, sans-serif", whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                    style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", whiteSpace: "pre-wrap", wordBreak: "break-word" }}
                   >
                     {msg.body}
                   </p>
@@ -358,7 +359,7 @@ function MessageThread({
                       fontSize: 11,
                       marginTop: 4,
                       color: isMe ? "rgba(255,255,255,0.55)" : "#9ca3af",
-                      fontFamily: "Outfit, sans-serif",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     }}
                   >
                     {formatDateTime(msg.sentAt)}
@@ -422,7 +423,7 @@ function MessageThread({
             style={{
               minHeight: 40,
               maxHeight: 120,
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               lineHeight: 1.5,
             }}
           />
@@ -431,9 +432,9 @@ function MessageThread({
             disabled={!draft.trim() || sending}
             className="shrink-0 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors"
             style={{
-              background: draft.trim() && !sending ? "#0f1a2e" : "#e5e2db",
+              background: draft.trim() && !sending ? "#0f1623" : "#e5e2db",
               cursor: draft.trim() && !sending ? "pointer" : "not-allowed",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               height: 40,
             }}
           >
@@ -481,7 +482,7 @@ export function MessagesPageClient({
           <h1
             className="text-navy mb-1.5"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: 32,
               fontWeight: 400,
               letterSpacing: "-0.02em",
@@ -498,8 +499,8 @@ export function MessagesPageClient({
             className="text-xs font-bold rounded-full px-3 py-1"
             style={{
               background: "#eff6ff",
-              color: "#1d4ed8",
-              fontFamily: "Outfit, sans-serif",
+              color: "#d97706",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}
           >
             {totalUnread} unread
@@ -515,7 +516,7 @@ export function MessagesPageClient({
           gridTemplateColumns: conversations.length === 0 ? "1fr" : "300px 1fr",
           height: "calc(100vh - 220px)",
           minHeight: 480,
-          boxShadow: "0 1px 3px rgba(15,26,46,0.06), 0 4px 12px rgba(15,26,46,0.04)",
+          boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
         }}
       >
         {/* Left panel */}
@@ -523,7 +524,7 @@ export function MessagesPageClient({
           <div className="px-4 py-3 border-b border-border bg-bg shrink-0">
             <p
               className="text-xs font-semibold text-text-muted uppercase tracking-wider"
-              style={{ fontFamily: "Outfit, sans-serif", letterSpacing: "0.08em" }}
+              style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", letterSpacing: "0.08em" }}
             >
               Conversations ({conversations.length})
             </p>
@@ -560,7 +561,7 @@ export function MessagesPageClient({
             </div>
             <p
               className="text-navy mb-2"
-              style={{ fontFamily: "DM Serif Display, Georgia, serif", fontSize: 18 }}
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 18 }}
             >
               {conversations.length === 0
                 ? "No conversations yet"

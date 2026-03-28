@@ -23,6 +23,8 @@ enum VerificationStatus {
 
 enum ListingStatus {
   DRAFT
+  COMING_SOON
+  INSPECTIONS_OPEN
   ACTIVE
   UNDER_OFFER
   SOLD
@@ -86,6 +88,24 @@ enum ChecklistItemStatus {
   COMPLETED
 }
 
+enum InspectionType {
+  OPEN_HOUSE
+  SCHEDULED
+}
+
+enum InspectionSlotStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AddressVisibility {
+  PUBLIC
+  LOGGED_IN
+  BOOKED_ONLY
+}
+
 model User {
   id                 String             @id @default(cuid())
   email              String             @unique
@@ -122,6 +142,7 @@ model User {
   sentConvMessages    ConversationMessage[] @relation("SentConversationMessages")
   favourites          Favourite[]
   verificationEvents  VerificationEvent[]
+  inspectionBookings  InspectionBooking[]
 
   @@index([email])
   @@index([verificationStatus])
@@ -178,11 +199,16 @@ model Listing {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
-  images        ListingImage[]
-  offers        Offer[]
-  messages      Message[]
-  conversations Conversation[]
-  favourites    Favourite[]
+  // Inspection gating (Task 02–04)
+  requireInspection  Boolean           @default(false)
+  addressVisibility  AddressVisibility @default(LOGGED_IN)
+
+  images            ListingImage[]
+  offers            Offer[]
+  messages          Message[]
+  conversations     Conversation[]
+  favourites        Favourite[]
+  inspectionSlots   InspectionSlot[]
 
   @@index([sellerId])
   @@index([status])
@@ -408,4 +434,76 @@ model ConversationMessage {
   @@index([senderId])
   @@index([conversationId, readAt])
   @@index([readAt])
+}
+
+// ── Inspection Slots & Bookings ───────────────────────────────────────────────
+
+model InspectionSlot {
+  id        String               @id @default(cuid())
+  listingId String
+  listing   Listing              @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  type      InspectionType       @default(SCHEDULED)
+  status    InspectionSlotStatus @default(SCHEDULED)
+
+  startTime DateTime
+  endTime   DateTime
+  maxGroups Int                  @default(4)
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings              InspectionBooking[]
+  pendingAttendances    PendingInspectionAttendance[]
+
+  @@index([listingId])
+  @@index([listingId, startTime])
+  @@index([startTime])
+  @@index([status])
+}
+
+model InspectionBooking {
+  id      String                  @id @default(cuid())
+  slotId  String
+  slot    InspectionSlot          @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  buyerId String
+  buyer   User                    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  status InspectionBookingStatus @default(CONFIRMED)
+  note   String?
+
+  attendedAt       DateTime?
+  markedNoShowAt   DateTime?
+  cancelledAt      DateTime?
+  cancelledBy      String?
+
+  reminder24hSentAt DateTime?
+  reminder2hSentAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([slotId, buyerId])
+  @@index([slotId])
+  @@index([buyerId])
+  @@index([status])
+}
+
+enum InspectionBookingStatus {
+  CONFIRMED
+  CANCELLED
+  ATTENDED
+  NO_SHOW
+}
+
+model PendingInspectionAttendance {
+  id        String         @id @default(cuid())
+  slotId    String
+  slot      InspectionSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  email     String
+  createdAt DateTime       @default(now())
+
+  @@unique([slotId, email])
+  @@index([email])
 }

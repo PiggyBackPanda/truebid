@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
+import { Logo } from "@/components/Logo";
+
+const SYS = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 export function Nav() {
   const { data: session, status } = useSession();
@@ -23,7 +26,6 @@ export function Nav() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
 
-  // Fetch unread conversation message count when signed in
   useEffect(() => {
     if (status !== "authenticated") return;
     fetch("/api/conversations")
@@ -41,8 +43,8 @@ export function Nav() {
   return (
     <nav
       style={{
-        background: "#0f1a2e",
-        borderBottom: "1px solid #243656",
+        background: "#0f1623",
+        borderBottom: "1px solid #243456",
         height: 64,
         position: "sticky",
         top: 0,
@@ -61,42 +63,10 @@ export function Nav() {
         }}
       >
         {/* Logo */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: "#e8a838",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#0f1a2e",
-              flexShrink: 0,
-            }}
-          >
-            T
-          </div>
-          <span
-            style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 20,
-              color: "#ffffff",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            TrueBid
-          </span>
-        </Link>
+        <Logo variant="light" linked className="text-xl" />
 
         {/* Desktop nav links */}
-        <div
-          className="hidden md:flex"
-          style={{ alignItems: "center", gap: 8 }}
-        >
+        <div className="hidden md:flex" style={{ alignItems: "center", gap: 8 }}>
           <NavLink href="/listings">Browse</NavLink>
           <NavLink href="/how-it-works">How it works</NavLink>
           <NavLink href="/about">About</NavLink>
@@ -104,7 +74,7 @@ export function Nav() {
 
           {status === "loading" ? null : session ? (
             <>
-              <div style={{ width: 1, height: 20, background: "#243656", margin: "0 4px" }} />
+              <div style={{ width: 1, height: 20, background: "#243456", margin: "0 4px" }} />
               {/* Favourites link */}
               <Link
                 href="/favourites"
@@ -118,7 +88,7 @@ export function Nav() {
                   textDecoration: "none",
                   padding: "6px 12px",
                   borderRadius: 6,
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: SYS,
                 }}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -134,14 +104,14 @@ export function Nav() {
                     display: "flex",
                     alignItems: "center",
                     gap: 6,
-                    background: dropdownOpen ? "#1a2a45" : "transparent",
+                    background: dropdownOpen ? "#1b2640" : "transparent",
                     border: "1px solid",
                     borderColor: dropdownOpen ? "#334766" : "transparent",
                     color: "rgba(255,255,255,0.85)",
                     borderRadius: 8,
                     padding: "6px 12px",
                     fontSize: 14,
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: SYS,
                     fontWeight: 500,
                     cursor: "pointer",
                     transition: "background 0.15s, border-color 0.15s",
@@ -153,8 +123,8 @@ export function Nav() {
                   {unreadCount > 0 && (
                     <span
                       style={{
-                        background: "#2563eb",
-                        color: "#ffffff",
+                        background: "#f59e0b",
+                        color: "#1a0f00",
                         borderRadius: 10,
                         padding: "1px 6px",
                         fontSize: 11,
@@ -191,7 +161,7 @@ export function Nav() {
                       background: "#ffffff",
                       border: "1px solid #e5e2db",
                       borderRadius: 12,
-                      boxShadow: "0 4px 6px rgba(15,26,46,0.04), 0 12px 32px rgba(15,26,46,0.10)",
+                      boxShadow: "0 4px 6px rgba(15,22,35,0.04), 0 12px 32px rgba(15,22,35,0.10)",
                       minWidth: 200,
                       overflow: "hidden",
                       zIndex: 200,
@@ -211,10 +181,7 @@ export function Nav() {
                         Seller Dashboard
                       </DropdownLink>
                     )}
-                    <DropdownLink
-                      href="/favourites"
-                      onClick={() => setDropdownOpen(false)}
-                    >
+                    <DropdownLink href="/favourites" onClick={() => setDropdownOpen(false)}>
                       Favourites
                     </DropdownLink>
                     <div style={{ position: "relative" }}>
@@ -231,8 +198,8 @@ export function Nav() {
                             top: "50%",
                             right: 16,
                             transform: "translateY(-50%)",
-                            background: "#2563eb",
-                            color: "#ffffff",
+                            background: "#f59e0b",
+                            color: "#1a0f00",
                             borderRadius: 10,
                             padding: "1px 6px",
                             fontSize: 11,
@@ -258,7 +225,7 @@ export function Nav() {
                         background: "transparent",
                         border: "none",
                         fontSize: 14,
-                        fontFamily: "Outfit, sans-serif",
+                        fontFamily: SYS,
                         color: "#e05252",
                         fontWeight: 500,
                         cursor: "pointer",
@@ -281,7 +248,7 @@ export function Nav() {
                   textDecoration: "none",
                   padding: "6px 14px",
                   borderRadius: 8,
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: SYS,
                 }}
               >
                 Sign in
@@ -289,14 +256,14 @@ export function Nav() {
               <Link
                 href="/register"
                 style={{
-                  background: "#e8a838",
-                  color: "#0f1a2e",
+                  background: "#f59e0b",
+                  color: "#1a0f00",
                   fontSize: 14,
                   fontWeight: 600,
                   textDecoration: "none",
                   padding: "8px 18px",
                   borderRadius: 8,
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: SYS,
                 }}
               >
                 Get started
@@ -343,8 +310,8 @@ export function Nav() {
       {menuOpen && (
         <div
           style={{
-            background: "#0f1a2e",
-            borderTop: "1px solid #243656",
+            background: "#0f1623",
+            borderTop: "1px solid #243456",
             padding: "12px 24px 20px",
           }}
         >
@@ -375,7 +342,7 @@ export function Nav() {
                     border: "none",
                     color: "#e05252",
                     fontSize: 15,
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: SYS,
                     textAlign: "left",
                     padding: "10px 0",
                     cursor: "pointer",
@@ -409,7 +376,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
         textDecoration: "none",
         padding: "6px 12px",
         borderRadius: 6,
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: SYS,
         transition: "color 0.15s, background 0.15s",
       }}
     >
@@ -438,10 +405,10 @@ function MobileNavLink({
         textDecoration: "none",
         padding: "12px 0",
         minHeight: 44,
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: SYS,
         display: "flex",
         alignItems: "center",
-        borderBottom: "1px solid #1a2a45",
+        borderBottom: "1px solid #1b2640",
       }}
     >
       {children}
@@ -466,9 +433,9 @@ function DropdownLink({
         display: "block",
         padding: "10px 16px",
         fontSize: 14,
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: SYS,
         fontWeight: 500,
-        color: "#0f1a2e",
+        color: "#0f1623",
         textDecoration: "none",
         transition: "background 0.1s",
       }}

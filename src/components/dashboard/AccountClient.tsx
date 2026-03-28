@@ -38,15 +38,15 @@ function SectionCard({ title, children }: { title: string; children: React.React
         border: "1px solid #e5e2db",
         borderRadius: 12,
         padding: "28px 32px",
-        boxShadow: "0 1px 3px rgba(15,26,46,0.06), 0 4px 12px rgba(15,26,46,0.04)",
+        boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
       }}
     >
       <h2
         style={{
-          fontFamily: "DM Serif Display, Georgia, serif",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: 20,
           fontWeight: 400,
-          color: "#0f1a2e",
+          color: "#0f1623",
           letterSpacing: "-0.01em",
           marginBottom: 24,
         }}
@@ -66,7 +66,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
           fontSize: 13,
           fontWeight: 500,
           color: "#334766",
-          fontFamily: "Outfit, sans-serif",
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         }}
       >
         {label}
@@ -81,7 +81,7 @@ const inputStyle: React.CSSProperties = {
   borderRadius: 10,
   padding: "11px 14px",
   fontSize: 14,
-  fontFamily: "Outfit, sans-serif",
+  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   color: "#1a1a1a",
   background: "#ffffff",
   outline: "none",
@@ -102,14 +102,14 @@ function SaveButton({ loading, onClick }: { loading: boolean; onClick: () => voi
       onClick={onClick}
       disabled={loading}
       style={{
-        background: loading ? "#e5e2db" : "#0f1a2e",
+        background: loading ? "#e5e2db" : "#0f1623",
         color: "#ffffff",
         border: "none",
         borderRadius: 10,
         padding: "11px 28px",
         fontSize: 14,
         fontWeight: 600,
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         cursor: loading ? "not-allowed" : "pointer",
         transition: "background 0.15s",
       }}
@@ -124,7 +124,7 @@ function FeedbackMessage({ type, text }: { type: "success" | "error"; text: stri
     <p
       style={{
         fontSize: 13,
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         color: type === "success" ? "#15803d" : "#dc2626",
         marginTop: 8,
       }}
@@ -335,7 +335,7 @@ function VerificationStatus({ status }: { status: string }) {
             padding: "6px 14px",
             fontSize: 13,
             fontWeight: 600,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             flexShrink: 0,
           }}
         >
@@ -345,7 +345,7 @@ function VerificationStatus({ status }: { status: string }) {
           style={{
             color: "#6b7280",
             fontSize: 14,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             lineHeight: 1.5,
             flex: 1,
           }}
@@ -356,13 +356,13 @@ function VerificationStatus({ status }: { status: string }) {
           <Link
             href="/verify-identity"
             style={{
-              background: "#e8a838",
-              color: "#0f1a2e",
+              background: "#f59e0b",
+              color: "#1a0f00",
               borderRadius: 10,
               padding: "10px 20px",
               fontSize: 14,
               fontWeight: 600,
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               textDecoration: "none",
               flexShrink: 0,
             }}
@@ -451,14 +451,14 @@ function NotificationPreferences({ initial }: { initial: NotifPrefs }) {
                 style={{
                   fontWeight: 500,
                   fontSize: 14,
-                  color: "#0f1a2e",
-                  fontFamily: "Outfit, sans-serif",
+                  color: "#0f1623",
+                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   marginBottom: 2,
                 }}
               >
                 {t.label}
               </p>
-              <p style={{ fontSize: 13, color: "#6b7280", fontFamily: "Outfit, sans-serif" }}>
+              <p style={{ fontSize: 13, color: "#6b7280", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
                 {t.desc}
               </p>
             </div>
@@ -470,7 +470,7 @@ function NotificationPreferences({ initial }: { initial: NotifPrefs }) {
                 width: 44,
                 height: 24,
                 borderRadius: 12,
-                background: prefs[t.key] ? "#0f1a2e" : "#e5e2db",
+                background: prefs[t.key] ? "#0f1623" : "#e5e2db",
                 border: "none",
                 cursor: "pointer",
                 position: "relative",
@@ -547,7 +547,7 @@ function DeleteAccount() {
       >
         <h2
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 20,
             fontWeight: 400,
             color: "#dc2626",
@@ -561,7 +561,7 @@ function DeleteAccount() {
           style={{
             color: "#6b7280",
             fontSize: 14,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             lineHeight: 1.6,
             marginBottom: 20,
             maxWidth: 560,
@@ -580,7 +580,7 @@ function DeleteAccount() {
             padding: "11px 24px",
             fontSize: 14,
             fontWeight: 600,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             cursor: "pointer",
           }}
         >
@@ -594,7 +594,7 @@ function DeleteAccount() {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(15,26,46,0.6)",
+            background: "rgba(15,22,35,0.6)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -610,14 +610,14 @@ function DeleteAccount() {
               padding: "32px",
               width: "100%",
               maxWidth: 440,
-              boxShadow: "0 4px 6px rgba(15,26,46,0.04), 0 12px 32px rgba(15,26,46,0.12)",
+              boxShadow: "0 4px 6px rgba(15,22,35,0.04), 0 12px 32px rgba(15,22,35,0.12)",
             }}
           >
             <h3
               style={{
-                fontFamily: "DM Serif Display, Georgia, serif",
+                fontFamily: "Georgia, 'Times New Roman', serif",
                 fontSize: 22,
-                color: "#0f1a2e",
+                color: "#0f1623",
                 marginBottom: 12,
               }}
             >
@@ -627,7 +627,7 @@ function DeleteAccount() {
               style={{
                 color: "#6b7280",
                 fontSize: 14,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 lineHeight: 1.6,
                 marginBottom: 20,
               }}
@@ -650,7 +650,7 @@ function DeleteAccount() {
                 style={{
                   color: "#dc2626",
                   fontSize: 13,
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   marginTop: 8,
                 }}
               >
@@ -673,7 +673,7 @@ function DeleteAccount() {
                   borderRadius: 10,
                   padding: "10px 20px",
                   fontSize: 14,
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   cursor: "pointer",
                   color: "#6b7280",
                   fontWeight: 500,
@@ -692,7 +692,7 @@ function DeleteAccount() {
                   padding: "10px 20px",
                   fontSize: 14,
                   fontWeight: 600,
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   cursor: confirmation === "DELETE" && !loading ? "pointer" : "not-allowed",
                   transition: "background 0.15s",
                 }}
@@ -716,17 +716,17 @@ export function AccountClient({ user, notificationPrefs }: Props) {
       <div style={{ marginBottom: 32 }}>
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 32,
             fontWeight: 400,
-            color: "#0f1a2e",
+            color: "#0f1623",
             letterSpacing: "-0.02em",
             marginBottom: 6,
           }}
         >
           Account Settings
         </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "Outfit, sans-serif" }}>
+        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
           Manage your personal details, password, and preferences.
         </p>
       </div>

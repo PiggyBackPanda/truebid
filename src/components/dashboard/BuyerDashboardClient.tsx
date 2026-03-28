@@ -116,7 +116,7 @@ function Avatar({ name }: { name: string }) {
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
   ACTIVE: { bg: "#dcfce7", color: "#15803d", label: "Active" },
   WITHDRAWN: { bg: "#f3f4f6", color: "#374151", label: "Withdrawn" },
-  ACCEPTED: { bg: "#dbeafe", color: "#1d4ed8", label: "Accepted" },
+  ACCEPTED: { bg: "#dbeafe", color: "#d97706", label: "Accepted" },
   REJECTED: { bg: "#fee2e2", color: "#dc2626", label: "Rejected" },
   EXPIRED: { bg: "#f3f4f6", color: "#9ca3af", label: "Expired" },
 };
@@ -124,7 +124,7 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }>
 const LISTING_STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   ACTIVE: { bg: "#dcfce7", color: "#15803d" },
   DRAFT: { bg: "#f3f4f6", color: "#374151" },
-  UNDER_OFFER: { bg: "#dbeafe", color: "#1d4ed8" },
+  UNDER_OFFER: { bg: "#dbeafe", color: "#d97706" },
   SOLD: { bg: "#e0e7ff", color: "#4338ca" },
   WITHDRAWN: { bg: "#f3f4f6", color: "#9ca3af" },
   EXPIRED: { bg: "#f3f4f6", color: "#9ca3af" },
@@ -182,7 +182,7 @@ function SavedTab({ initialItems }: { initialItems: SavedListing[] }) {
         <Link
           href="/listings"
           style={{
-            background: "#e8a838",
+            background: "#f59e0b",
             color: "#0f1a2e",
             fontWeight: 600,
             padding: "11px 24px",
@@ -378,7 +378,7 @@ function OffersTab({ offers }: { offers: MyOffer[] }) {
         <Link
           href="/listings"
           style={{
-            background: "#e8a838",
+            background: "#f59e0b",
             color: "#0f1a2e",
             fontWeight: 600,
             padding: "11px 24px",
@@ -688,7 +688,7 @@ function BuyerMessagesTab({
         <Link
           href="/listings"
           style={{
-            background: "#e8a838",
+            background: "#f59e0b",
             color: "#0f1a2e",
             fontWeight: 600,
             padding: "11px 24px",
@@ -726,7 +726,7 @@ function BuyerMessagesTab({
               background: "#eff6ff",
               borderBottom: "1px solid #dbeafe",
               fontSize: 12,
-              color: "#1d4ed8",
+              color: "#d97706",
               fontFamily: "Outfit, sans-serif",
               fontWeight: 500,
             }}
@@ -808,7 +808,7 @@ function BuyerMessagesTab({
                         width: 8,
                         height: 8,
                         borderRadius: "50%",
-                        background: "#2563eb",
+                        background: "#f59e0b",
                         flexShrink: 0,
                       }}
                     />
@@ -1061,8 +1061,8 @@ export function BuyerDashboardClient({
             {tab.badge !== undefined && tab.badge > 0 && (
               <span
                 style={{
-                  background: tab.id === "messages" ? "#2563eb" : "#e8a838",
-                  color: tab.id === "messages" ? "#ffffff" : "#0f1a2e",
+                  background: "#f59e0b",
+                  color: tab.id === "messages" ? "#1a0f00" : "#0f1a2e",
                   borderRadius: 10,
                   padding: "1px 7px",
                   fontSize: 11,

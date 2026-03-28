@@ -23,7 +23,7 @@ function emailLayout(body: string): string {
         <!-- Header -->
         <tr>
           <td style="background:#0f1a2e;padding:24px 32px;text-align:center;">
-            <span style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#e8a838;letter-spacing:0.5px;">TrueBid</span>
+            <span style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#f59e0b;letter-spacing:0.5px;">TrueBid</span>
           </td>
         </tr>
         <!-- Body -->
@@ -36,7 +36,7 @@ function emailLayout(body: string): string {
         <tr>
           <td style="padding:16px 32px 24px;border-top:1px solid #e5e1da;">
             <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.5;">
-              This email was sent by <a href="${BASE_URL()}" style="color:#e8a838;text-decoration:none;">TrueBid</a> — free, transparent property sales for Australia.
+              This email was sent by <a href="${BASE_URL()}" style="color:#f59e0b;text-decoration:none;">TrueBid</a> — free, transparent property sales for Australia.
             </p>
             <p style="font-size:11px;color:#c0bdb6;margin:8px 0 0;">
               <a href="${BASE_URL()}/account" style="color:#c0bdb6;text-decoration:underline;">Manage email preferences</a>
@@ -52,7 +52,7 @@ function emailLayout(body: string): string {
 
 function ctaButton(href: string, label: string): string {
   return `<p style="margin:24px 0 8px;text-align:center;">
-  <a href="${href}" style="display:inline-block;background:#e8a838;color:#0f1a2e;padding:12px 28px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px;">${label}</a>
+  <a href="${href}" style="display:inline-block;background:#f59e0b;color:#0f1a2e;padding:12px 28px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px;">${label}</a>
 </p>`;
 }
 
@@ -198,13 +198,152 @@ export async function sendUnreadMessageEmail({
       <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
         You have a new message from <strong>${senderName}</strong> regarding <strong>${listingAddress}</strong>.
       </p>
-      <blockquote style="border-left:3px solid #e8a838;padding-left:12px;color:#334766;margin:16px 0;font-style:italic;">
+      <blockquote style="border-left:3px solid #f59e0b;padding-left:12px;color:#334766;margin:16px 0;font-style:italic;">
         "${preview}${messagePreview.length > 100 ? "..." : ""}"
       </blockquote>
       ${ctaButton(link, "View Conversation")}
       <p style="font-size:11px;color:#c0bdb6;margin:16px 0 0;">
         This notification was sent because the message was unread for 15 minutes.
       </p>
+    `),
+  });
+}
+
+// ── Inspection email helpers ───────────────────────────────────────────────────
+
+function formatInspectionTime(startIso: string, endIso: string): string {
+  const start = new Date(startIso);
+  const end = new Date(endIso);
+  const date = start.toLocaleDateString("en-AU", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Australia/Perth",
+  });
+  const startT = start.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Australia/Perth" });
+  const endT = end.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Australia/Perth" });
+  return `${date}, ${startT} – ${endT}`;
+}
+
+export async function sendInspectionBookingConfirmedEmail({
+  buyerEmail, buyerName, address, startTime, endTime, listingId,
+}: {
+  buyerEmail: string; buyerName: string; address: string;
+  startTime: string; endTime: string; listingId: string;
+}) {
+  const timeStr = formatInspectionTime(startTime, endTime);
+  await sendEmail({
+    to: buyerEmail,
+    subject: `Inspection confirmed — ${address}`,
+    html: emailLayout(`
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Inspection Confirmed</h1>
+      <p style="color:#334766;font-size:15px;margin:0 0 20px;">Your inspection booking has been confirmed.</p>
+      <table style="background:#f7f5f0;border-radius:10px;padding:16px 20px;width:100%;margin-bottom:24px;">
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Property</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${address}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Date &amp; Time</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${timeStr}</td></tr>
+      </table>
+      <p style="font-size:13px;color:#6b7280;">Hi ${buyerName}, we look forward to seeing you at the inspection.</p>
+      ${ctaButton(`${BASE_URL()}/listings/${listingId}`, "View Listing")}
+    `),
+  });
+}
+
+export async function sendInspectionNewBookingEmail({
+  sellerEmail, sellerName, buyerName, address, startTime, endTime, listingId, confirmedCount, maxGroups,
+}: {
+  sellerEmail: string; sellerName: string; buyerName: string; address: string;
+  startTime: string; endTime: string; listingId: string; confirmedCount: number; maxGroups: number;
+}) {
+  const timeStr = formatInspectionTime(startTime, endTime);
+  await sendEmail({
+    to: sellerEmail,
+    subject: `New inspection booking — ${address}`,
+    html: emailLayout(`
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">New Booking</h1>
+      <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${sellerName}, a buyer has booked your inspection.</p>
+      <table style="background:#f7f5f0;border-radius:10px;padding:16px 20px;width:100%;margin-bottom:24px;">
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Buyer (identity verified)</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${buyerName}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Inspection time</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${timeStr}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Bookings</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${confirmedCount} / ${maxGroups} spots filled</td></tr>
+      </table>
+      ${ctaButton(`${BASE_URL()}/dashboard/listings/${listingId}/inspections`, "View All Bookings")}
+    `),
+  });
+}
+
+export async function sendInspectionCancelledEmail({
+  buyerEmail, buyerName, address, startTime, endTime, listingId,
+}: {
+  buyerEmail: string; buyerName: string; address: string;
+  startTime: string; endTime: string; listingId: string;
+}) {
+  const timeStr = formatInspectionTime(startTime, endTime);
+  await sendEmail({
+    to: buyerEmail,
+    subject: `Inspection cancelled — ${address}`,
+    html: emailLayout(`
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Inspection Cancelled</h1>
+      <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${buyerName}, your inspection at the following property has been cancelled by the seller.</p>
+      <table style="background:#f7f5f0;border-radius:10px;padding:16px 20px;width:100%;margin-bottom:24px;">
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Property</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${address}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Was scheduled for</td></tr>
+        <tr><td style="font-size:15px;color:#0f1a2e;">${timeStr}</td></tr>
+      </table>
+      <p style="font-size:13px;color:#6b7280;">Please check the listing for alternative inspection times.</p>
+      ${ctaButton(`${BASE_URL()}/listings/${listingId}`, "View Listing")}
+    `),
+  });
+}
+
+export async function sendInspectionReminderEmail({
+  buyerEmail, buyerName, address, startTime, endTime, listingId, hoursAway,
+}: {
+  buyerEmail: string; buyerName: string; address: string;
+  startTime: string; endTime: string; listingId: string; hoursAway: number;
+}) {
+  const timeStr = formatInspectionTime(startTime, endTime);
+  const when = hoursAway <= 2 ? "in 2 hours" : "tomorrow";
+  await sendEmail({
+    to: buyerEmail,
+    subject: `Inspection reminder — ${address} (${when})`,
+    html: emailLayout(`
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Inspection Reminder</h1>
+      <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${buyerName}, you have an inspection ${when}.</p>
+      <table style="background:#f7f5f0;border-radius:10px;padding:16px 20px;width:100%;margin-bottom:24px;">
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Property</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${address}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Date &amp; Time</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${timeStr}</td></tr>
+      </table>
+      ${ctaButton(`${BASE_URL()}/listings/${listingId}`, "View Listing")}
+    `),
+  });
+}
+
+export async function sendBuyerCancelledBookingEmail({
+  sellerEmail, sellerName, buyerName, address, startTime, endTime, spotsRemaining,
+}: {
+  sellerEmail: string; sellerName: string; buyerName: string; address: string;
+  startTime: string; endTime: string; spotsRemaining: number;
+}) {
+  const timeStr = formatInspectionTime(startTime, endTime);
+  await sendEmail({
+    to: sellerEmail,
+    subject: `Booking cancelled — ${address}`,
+    html: emailLayout(`
+      <h1 style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:#0f1a2e;margin:0 0 8px;">Booking Cancelled</h1>
+      <p style="color:#334766;font-size:15px;margin:0 0 20px;">Hi ${sellerName}, a buyer has cancelled their inspection booking.</p>
+      <table style="background:#f7f5f0;border-radius:10px;padding:16px 20px;width:100%;margin-bottom:24px;">
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Buyer</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${buyerName}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Inspection time</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;padding-bottom:12px;">${timeStr}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Available spots</td></tr>
+        <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${spotsRemaining} spot${spotsRemaining !== 1 ? "s" : ""} now available</td></tr>
+      </table>
     `),
   });
 }

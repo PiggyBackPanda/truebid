@@ -46,7 +46,7 @@ describe("POST /api/listings/[id]/publish", () => {
     return { params: Promise.resolve({ id }) };
   }
 
-  it("publishes a draft listing with images", async () => {
+  it("publishes a draft listing as COMING_SOON by default", async () => {
     const user = mockUser();
     mockRequireAuth.mockResolvedValue(user);
     mockRequireVerified.mockReturnValue(undefined);
@@ -64,6 +64,41 @@ describe("POST /api/listings/[id]/publish", () => {
 
     mockPrisma.listing.update.mockResolvedValue({
       id: "listing_1",
+      status: "COMING_SOON",
+      publishedAt: new Date(),
+      streetAddress: "1 Main St",
+      suburb: "Perth",
+    });
+
+    const req = new Request("http://localhost/api/listings/listing_1/publish", {
+      method: "POST",
+    });
+
+    const res = await POST(req as never, makeParams("listing_1") as never);
+    const { status, body } = await parseResponse(res);
+
+    expect(status).toBe(200);
+    expect(body.listing.status).toBe("COMING_SOON");
+  });
+
+  it("publishes a draft listing as ACTIVE when mode=active", async () => {
+    const user = mockUser();
+    mockRequireAuth.mockResolvedValue(user);
+    mockRequireVerified.mockReturnValue(undefined);
+    mockRequireOwner.mockReturnValue(undefined);
+
+    mockPrisma.listing.findUnique.mockResolvedValue({
+      id: "listing_1",
+      sellerId: user.id,
+      status: "DRAFT",
+      saleMethod: "FIXED_PRICE",
+      closingDate: null,
+      description: "A house",
+      images: [{ id: "img_1" }],
+    });
+
+    mockPrisma.listing.update.mockResolvedValue({
+      id: "listing_1",
       status: "ACTIVE",
       publishedAt: new Date(),
       streetAddress: "1 Main St",
@@ -72,6 +107,8 @@ describe("POST /api/listings/[id]/publish", () => {
 
     const req = new Request("http://localhost/api/listings/listing_1/publish", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "active" }),
     });
 
     const res = await POST(req as never, makeParams("listing_1") as never);
@@ -108,7 +145,7 @@ describe("POST /api/listings/[id]/publish", () => {
     expect(body.code).toBe("NO_IMAGES");
   });
 
-  it("returns 400 if OPEN_OFFERS listing has no closing date", async () => {
+  it("returns 400 if OPEN_OFFERS listing has no closing date when mode=active", async () => {
     const user = mockUser();
     mockRequireAuth.mockResolvedValue(user);
     mockRequireVerified.mockReturnValue(undefined);
@@ -126,6 +163,8 @@ describe("POST /api/listings/[id]/publish", () => {
 
     const req = new Request("http://localhost/api/listings/listing_1/publish", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "active" }),
     });
 
     const res = await POST(req as never, makeParams("listing_1") as never);
@@ -133,6 +172,41 @@ describe("POST /api/listings/[id]/publish", () => {
 
     expect(status).toBe(400);
     expect(body.code).toBe("MISSING_CLOSING_DATE");
+  });
+
+  it("allows COMING_SOON publish for OPEN_OFFERS without a closing date", async () => {
+    const user = mockUser();
+    mockRequireAuth.mockResolvedValue(user);
+    mockRequireVerified.mockReturnValue(undefined);
+    mockRequireOwner.mockReturnValue(undefined);
+
+    mockPrisma.listing.findUnique.mockResolvedValue({
+      id: "listing_1",
+      sellerId: user.id,
+      status: "DRAFT",
+      saleMethod: "OPEN_OFFERS",
+      closingDate: null,
+      description: "A house",
+      images: [{ id: "img_1" }],
+    });
+
+    mockPrisma.listing.update.mockResolvedValue({
+      id: "listing_1",
+      status: "COMING_SOON",
+      publishedAt: new Date(),
+      streetAddress: "1 Main St",
+      suburb: "Perth",
+    });
+
+    const req = new Request("http://localhost/api/listings/listing_1/publish", {
+      method: "POST",
+    });
+
+    const res = await POST(req as never, makeParams("listing_1") as never);
+    const { status, body } = await parseResponse(res);
+
+    expect(status).toBe(200);
+    expect(body.listing.status).toBe("COMING_SOON");
   });
 
   it("returns 400 if status is not DRAFT", async () => {

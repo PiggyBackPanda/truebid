@@ -174,6 +174,8 @@ export const updateListingSchema = z.object({
   requireDeposit: z.boolean().optional(),
   depositAmountCents: z.number().int().positive().optional(),
   features: z.array(z.string()).optional(),
+  requireInspection: z.boolean().optional(),
+  addressVisibility: z.enum(["PUBLIC", "LOGGED_IN", "BOOKED_ONLY"]).optional(),
 });
 
 // ── Offer schemas ─────────────────────────────────────────────────────────────
@@ -304,4 +306,22 @@ export const listingSearchSchema = paginationSchema.extend({
     .enum(["newest", "price_asc", "price_desc", "closing_soon"])
     .default("newest"),
   q: z.string().optional(),
+});
+
+// ── Inspection slot schemas ───────────────────────────────────────────────────
+
+export const createInspectionSlotSchema = z.object({
+  type: z.enum(["OPEN_HOUSE", "SCHEDULED"]),
+  startTime: z.string().datetime(),
+  endTime: z.string().datetime(),
+  maxGroups: z.number().int().min(1).max(20).optional(),
+  notes: z.string().max(300).optional(),
+});
+
+export const updateInspectionSlotSchema = z.object({
+  notes: z.string().max(300).optional(),
+  maxGroups: z.number().int().min(1).max(20).optional(),
+  startTime: z.string().datetime().optional(),
+  endTime: z.string().datetime().optional(),
+  status: z.enum(["CANCELLED"]).optional(),
 });

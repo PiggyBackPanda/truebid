@@ -162,6 +162,7 @@ interface OfferBoardProps {
   guidePriceCents?: number | null;
   isOwner?: boolean;
   isClosed?: boolean;
+  requireInspection?: boolean;
 }
 
 export function OfferBoard({
@@ -171,6 +172,7 @@ export function OfferBoard({
   guidePriceCents,
   isOwner = false,
   isClosed = false,
+  requireInspection = false,
 }: OfferBoardProps) {
   const { offers, closingDate, viewerCount } = useOfferBoard(
     listingId,
@@ -197,7 +199,7 @@ export function OfferBoard({
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green animate-pulse-dot" />
             <span className="text-white text-xs font-semibold uppercase tracking-wide">
-              Open Offers — Live
+              Open Offers · Live
             </span>
           </div>
           {viewerCount > 0 && (
@@ -237,7 +239,7 @@ export function OfferBoard({
                     CLOSED
                   </p>
                   <p className="text-text-muted text-[11px] mt-1">
-                    Closing period ended — awaiting seller decision
+                    Closing period ended. Awaiting seller decision.
                   </p>
                 </div>
               ) : (
@@ -246,6 +248,16 @@ export function OfferBoard({
                   onExpired={() => setExpired(true)}
                 />
               )}
+            </div>
+          )}
+
+          {/* Inspection required notice */}
+          {requireInspection && (
+            <div className="bg-amber/5 border-b border-amber/20 px-4 py-2">
+              <p className="text-[11px] text-amber-900 flex items-center gap-1.5">
+                <span aria-hidden="true">ℹ</span>
+                Inspection required to offer on this property
+              </p>
             </div>
           )}
 

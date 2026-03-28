@@ -31,22 +31,22 @@ function StatCard({ label, value, sub, subColor = "#6b7280" }: StatCardProps) {
         padding: "20px 24px",
       }}
     >
-      <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 6, fontFamily: "Outfit, sans-serif" }}>
+      <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 6, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
         {label}
       </p>
       <p
         style={{
           fontSize: 28,
           fontWeight: 700,
-          color: "#0f1a2e",
-          fontFamily: "DM Serif Display, Georgia, serif",
+          color: "#0f1623",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           lineHeight: 1.1,
           marginBottom: 4,
         }}
       >
         {value}
       </p>
-      <p style={{ fontSize: 12, color: subColor, fontFamily: "Outfit, sans-serif" }}>{sub}</p>
+      <p style={{ fontSize: 12, color: subColor, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>{sub}</p>
     </div>
   );
 }
@@ -103,7 +103,7 @@ export function StatsRow({ initialStats }: { initialStats: Stats }) {
         label="Unread Messages"
         value={String(stats.unreadMessages)}
         sub={stats.unreadMessages > 0 ? `${stats.unreadMessages} unread` : "All caught up"}
-        subColor={stats.unreadMessages > 0 ? "#2563eb" : "#6b7280"}
+        subColor={stats.unreadMessages > 0 ? "#f59e0b" : "#6b7280"}
       />
     </div>
   );

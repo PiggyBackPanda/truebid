@@ -37,17 +37,19 @@ export function SavingsCalculator() {
     setInputValue(val.toLocaleString("en-AU"))
   }
 
+  const sliderPercent = ((price - 200000) / (4000000 - 200000)) * 100
+
   return (
-    <div className="w-full max-w-xl mx-auto">
+    <div className="w-full max-w-xl mx-auto bg-[#F7F4EE]">
 
       {/* Price input */}
       <div className="mb-4">
         <p className="text-sm text-gray-500 mb-2">Your estimated property sale price</p>
         <div className="flex items-center">
-          <span className="bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg px-3 h-11 flex items-center text-gray-500 font-medium">$</span>
+          <span className="bg-white border border-r-0 border-[#D1C9B8] rounded-l-lg px-3 h-11 flex items-center text-[#8B7355] font-medium">$</span>
           <input
             type="text"
-            className="border border-gray-300 rounded-r-lg h-11 px-3 text-lg font-medium w-full focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+            className="bg-white border border-[#D1C9B8] rounded-r-lg h-11 px-3 text-lg font-medium w-full text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
             value={inputValue}
             onChange={e => handleInput(e.target.value)}
             onBlur={e => handleBlur(e.target.value)}
@@ -61,38 +63,39 @@ export function SavingsCalculator() {
           step={10000}
           value={price}
           onChange={e => handleSlider(Number(e.target.value))}
-          className="w-full mt-3 accent-amber-500"
+          className="w-full mt-3 accent-[#D4900A]"
+          style={{ background: `linear-gradient(to right, #D4900A ${sliderPercent}%, #D1C9B8 ${sliderPercent}%)` }}
         />
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
+        <div className="flex justify-between text-xs text-[#8B7355] mt-1">
           <span>$200k</span><span>$4m</span>
         </div>
       </div>
 
       {/* Hero result */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl px-6 py-5 text-center mb-4">
-        <p className="text-sm text-amber-700 mb-1">Estimated savings with TrueBid</p>
-        <p className="text-3xl font-medium text-amber-900 tracking-tight">
+      <div className="bg-[#0D1B2A] rounded-xl px-6 py-5 text-center mb-4">
+        <p className="text-sm text-[#C8B99A] mb-1">Estimated savings with TrueBid</p>
+        <p className="text-3xl font-medium text-[#D4900A] tracking-tight">
           {fmt(savLow)} – {fmt(savHigh)}
         </p>
-        <p className="text-sm text-amber-700 mt-1">Based on a {fmt(price)} sale</p>
+        <p className="text-sm text-[#C8B99A] mt-1">Based on a {fmt(price)} sale</p>
       </div>
 
       {/* Breakdown */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs text-gray-400 mb-1">Agent commission</p>
-          <p className="text-base font-medium text-gray-800">{fmt(commLow)} – {fmt(commHigh)}</p>
-          <p className="text-xs text-gray-400 mt-1">2.0% – 3.5% of sale price</p>
+        <div className="bg-white border border-[#E8E2D8] rounded-lg p-3">
+          <p className="text-xs text-[#8B7355] mb-1">Agent commission</p>
+          <p className="text-base font-medium text-[#0D1B2A]">{fmt(commLow)} – {fmt(commHigh)}</p>
+          <p className="text-xs text-[#8B7355] mt-1">2.0% – 3.5% of sale price</p>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <p className="text-xs text-gray-400 mb-1">Marketing fees</p>
-          <p className="text-base font-medium text-gray-800">{fmt(mktLow)} – {fmt(mktHigh)}</p>
-          <p className="text-xs text-gray-400 mt-1">0.5% – 0.7% of sale price</p>
+        <div className="bg-white border border-[#E8E2D8] rounded-lg p-3">
+          <p className="text-xs text-[#8B7355] mb-1">Marketing fees</p>
+          <p className="text-base font-medium text-[#0D1B2A]">{fmt(mktLow)} – {fmt(mktHigh)}</p>
+          <p className="text-xs text-[#8B7355] mt-1">0.5% – 0.7% of sale price</p>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-5 col-span-2 text-center">
-          <p className="text-xs text-green-700 mb-1">TrueBid listing cost</p>
-          <p className="text-3xl font-medium text-green-900 tracking-tight">$0</p>
-          <p className="text-xs text-green-700 mt-1">Free to list. No commission. No marketing fees.</p>
+        <div className="bg-white border-2 border-[#D4900A] rounded-lg p-5 col-span-2 text-center">
+          <p className="text-xs text-[#D4900A] mb-1">TrueBid listing cost</p>
+          <p className="text-3xl font-medium text-[#0D1B2A] tracking-tight">$0</p>
+          <p className="text-xs text-[#8B7355] mt-1">Free to list during our launch period. No commission. No marketing fees.</p>
         </div>
       </div>
 
@@ -131,7 +134,7 @@ export function SavingsCalculator() {
               online portal listings, and print — typically add 0.5% to 0.7% of the sale
               price. Figures are indicative only and will vary by state, agent, property
               type, and campaign. TrueBid charges no commission and no marketing fees. This
-              calculator is a guide only — always obtain independent financial advice before
+              calculator is a guide only. Always obtain independent financial advice before
               making decisions.
             </p>
           </div>
@@ -143,7 +146,7 @@ export function SavingsCalculator() {
         href="/register"
         className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 rounded-lg transition-colors"
       >
-        List your home — free →
+        List your home free during launch →
       </Link>
 
     </div>

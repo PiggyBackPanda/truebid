@@ -9,6 +9,7 @@ import { rankOffers } from "@/lib/offer-utils";
 import { OfferBoard } from "@/components/listings/OfferBoard";
 import { FavouriteButton } from "@/components/FavouriteButton";
 import { WatchButton } from "@/components/listings/WatchButton";
+import { InspectionSlotList } from "@/components/listings/InspectionSlotList";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -316,6 +317,35 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
     listing.status !== "ACTIVE" ||
     (listing.closingDate !== null && listing.closingDate < new Date());
 
+  // Fetch upcoming inspection slots for public display
+  const upcomingSlots = await prisma.inspectionSlot.findMany({
+    where: {
+      listingId: id,
+      status: "SCHEDULED",
+      startTime: { gt: new Date() },
+    },
+    orderBy: { startTime: "asc" },
+    select: {
+      id: true,
+      type: true,
+      startTime: true,
+      endTime: true,
+      maxGroups: true,
+      notes: true,
+      _count: { select: { bookings: { where: { status: "CONFIRMED" } } } },
+    },
+  });
+
+  const publicSlots = upcomingSlots.map((s) => ({
+    id: s.id,
+    type: s.type as "OPEN_HOUSE" | "SCHEDULED",
+    startTime: s.startTime.toISOString(),
+    endTime: s.endTime.toISOString(),
+    availableSpots: s.type === "OPEN_HOUSE" ? null : s.maxGroups - s._count.bookings,
+    isFull: s.type === "SCHEDULED" && s._count.bookings >= s.maxGroups,
+    notes: s.notes ?? null,
+  }));
+
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? null;
   const mapCentroid = await getSuburbCentroid(listing.suburb, listing.state, listing.postcode);
   const staticMapUrl =
@@ -396,10 +426,46 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       {/* Draft banner */}
       {listing.status === "DRAFT" && isOwner && (
         <div className="bg-amber/10 border-b border-amber/30 text-sm font-medium text-amber-900 text-center py-3 px-4">
-          This listing is a draft — only you can see it.{" "}
+          This listing is a draft. Only you can see it.{" "}
           <a href={`/listings/create/review?id=${id}`} className="underline hover:no-underline">
             Continue editing
           </a>
+        </div>
+      )}
+
+      {/* Coming Soon banner */}
+      {listing.status === "COMING_SOON" && (
+        <div className="bg-navy text-white text-sm text-center py-3 px-4">
+          Coming Soon — This property is not yet accepting offers.{" "}
+          <span className="opacity-75">Save it to get notified when it opens.</span>
+        </div>
+      )}
+
+      {/* Inspections Open banner */}
+      {listing.status === "INSPECTIONS_OPEN" && (
+        <div className="bg-amber text-navy font-medium text-sm text-center py-3 px-4">
+          Inspections Open — Book an inspection below. Offers will open once the seller is ready.
+        </div>
+      )}
+
+      {/* Under Offer banner */}
+      {listing.status === "UNDER_OFFER" && (
+        <div className="text-sm font-medium text-center py-3 px-4" style={{ background: "#334766", color: "#ffffff" }}>
+          Under Offer — This property has a conditional offer accepted.
+        </div>
+      )}
+
+      {/* Withdrawn banner */}
+      {listing.status === "WITHDRAWN" && (
+        <div className="bg-red-50 border-b border-red-200 text-sm font-medium text-red-700 text-center py-3 px-4">
+          This listing has been withdrawn by the seller.
+        </div>
+      )}
+
+      {/* Expired banner */}
+      {listing.status === "EXPIRED" && (
+        <div className="bg-gray-100 border-b border-gray-200 text-sm font-medium text-gray-600 text-center py-3 px-4">
+          This listing&apos;s offer period has ended.
         </div>
       )}
 
@@ -414,7 +480,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
             >
               <PropertyImage
                 src={photos[0].url}
-                alt={`${listing.streetAddress} — cover photo`}
+                alt={`${listing.streetAddress}, cover photo`}
                 className="object-cover"
                 priority
               />
@@ -428,7 +494,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               <div className="relative col-span-2 row-span-2">
                 <PropertyImage
                   src={photos[0].url}
-                  alt={`${listing.streetAddress} — cover photo`}
+                  alt={`${listing.streetAddress}, cover photo`}
                   className="object-cover"
                   priority
                 />
@@ -437,7 +503,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 <div key={img.id} className="relative overflow-hidden">
                   <PropertyImage
                     src={img.thumbnailUrl || img.url}
-                    alt={`${listing.streetAddress} — photo ${i + 2}`}
+                    alt={`${listing.streetAddress}, photo ${i + 2}`}
                     className="object-cover"
                   />
                 </div>
@@ -451,7 +517,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
           >
             <PropertyImage
               src={getListingFallbackImage(id)}
-              alt={`${listing.streetAddress} — cover photo`}
+              alt={`${listing.streetAddress}, cover photo`}
               className="object-cover"
               priority
             />
@@ -495,7 +561,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 </div>
                 <div>
                   <p className="text-sm font-medium text-navy">View floor plan</p>
-                  <p className="text-xs text-text-muted">PDF — opens in new tab</p>
+                  <p className="text-xs text-text-muted">PDF (opens in new tab)</p>
                 </div>
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ color: "#9ca3af", marginLeft: 4 }}>
                   <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
@@ -505,7 +571,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               <div className="rounded-[12px] overflow-hidden border border-border bg-white">
                 <img
                   src={floorplan.url}
-                  alt={`Floor plan — ${listing.streetAddress}`}
+                  alt={`Floor plan, ${listing.streetAddress}`}
                   style={{ width: "100%", display: "block", maxHeight: 480, objectFit: "contain", background: "#f7f5f0" }}
                 />
               </div>
@@ -585,8 +651,13 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     href={`/listings/${id}/offer`}
                     className="flex-1 block text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors shadow-sm"
                   >
-                    Place an Offer — Free
+                    Place an Offer (Free)
                   </a>
+                )}
+                {(listing.status === "COMING_SOON" || listing.status === "INSPECTIONS_OPEN") && (
+                  <div className="flex-1 block text-center bg-navy/5 border border-navy/15 text-navy/50 font-bold text-base py-4 rounded-[12px] cursor-not-allowed select-none">
+                    {listing.status === "COMING_SOON" ? "Not yet open for offers" : "Offers not yet open"}
+                  </div>
                 )}
                 <WatchButton
                   listingId={id}
@@ -601,6 +672,15 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               <h2 className="text-base font-semibold text-navy mb-3">About this property</h2>
               <p className="text-sm text-text leading-relaxed whitespace-pre-line">{listing.description}</p>
             </div>
+
+            {/* Inspection slots — shown for all pre-offer and active states */}
+            {publicSlots.length > 0 && (
+              <InspectionSlotList
+                slots={publicSlots}
+                listingId={id}
+                isLoggedIn={!!currentUser}
+              />
+            )}
 
             {/* Location map */}
             {staticMapUrl && (
@@ -753,8 +833,8 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
-              {/* Open Offers board */}
-              {listing.saleMethod === "OPEN_OFFERS" && (
+              {/* Open Offers board — only shown when listing is ACTIVE or past */}
+              {listing.saleMethod === "OPEN_OFFERS" && listing.status !== "COMING_SOON" && listing.status !== "INSPECTIONS_OPEN" && (
                 <OfferBoard
                   listingId={id}
                   initialOffers={publicOffers}
@@ -763,6 +843,25 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                   isOwner={isOwner}
                   isClosed={isClosed}
                 />
+              )}
+
+              {/* Save CTA for pre-launch states */}
+              {!isOwner && (listing.status === "COMING_SOON" || listing.status === "INSPECTIONS_OPEN") && (
+                <div className="bg-white border border-border rounded-[16px] p-5 shadow-sm">
+                  <p className="text-xs text-text-muted mb-1 uppercase tracking-wide font-semibold">
+                    {listing.status === "COMING_SOON" ? "Coming Soon" : "Inspections Open"}
+                  </p>
+                  <p className="text-sm text-text mb-4">
+                    {listing.status === "COMING_SOON"
+                      ? "Save this listing to be notified when it opens for offers."
+                      : "Offers will open once the seller is ready. Save to get notified."}
+                  </p>
+                  <WatchButton
+                    listingId={id}
+                    isLoggedIn={!!currentUser}
+                    initialWatched={initialFavourited}
+                  />
+                </div>
               )}
 
               {/* Price card for non-OPEN_OFFERS or owner view */}
@@ -860,7 +959,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               href={`/listings/${id}/offer`}
               className="block w-full text-center bg-amber text-navy font-bold text-base py-4 rounded-[12px] hover:bg-amber-light transition-colors"
             >
-              Place an Offer — Free
+              Place an Offer (Free)
             </a>
           </div>
         </div>

@@ -16,7 +16,7 @@ const CONDITION_LABELS: Record<string, string> = {
 
 const CONDITION_COLORS: Record<string, { bg: string; color: string }> = {
   UNCONDITIONAL: { bg: "#dcfce7", color: "#15803d" },
-  SUBJECT_TO_FINANCE: { bg: "#dbeafe", color: "#1d4ed8" },
+  SUBJECT_TO_FINANCE: { bg: "#dbeafe", color: "#d97706" },
   SUBJECT_TO_BUILDING_PEST: { bg: "#fef9c3", color: "#a16207" },
   SUBJECT_TO_BOTH: { bg: "#fef3c7", color: "#d97706" },
   SUBJECT_TO_SALE: { bg: "#fce7f3", color: "#be185d" },
@@ -89,9 +89,9 @@ export function OfferTable({
         <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
         <h2
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 24,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 8,
           }}
         >
@@ -121,9 +121,9 @@ export function OfferTable({
           <p
             style={{
               fontWeight: 600,
-              color: "#0f1a2e",
+              color: "#0f1623",
               marginBottom: 12,
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}
           >
             Next Steps:
@@ -133,7 +133,7 @@ export function OfferTable({
             "Provide the buyer with the contract for review",
             "Arrange for the buyer's deposit to be held in your settlement agent's trust account",
             "The buyer may arrange building and pest inspections (if conditional)",
-            "Both parties sign the contract — congratulations!",
+            "Both parties sign the contract. Congratulations!",
           ].map((step, i) => (
             <div
               key={i}
@@ -170,13 +170,13 @@ export function OfferTable({
             )
           }
           style={{
-            background: "#0f1a2e",
+            background: "#0f1623",
             color: "#ffffff",
             border: "none",
             borderRadius: 8,
             padding: "12px 24px",
             cursor: "pointer",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontSize: 14,
             fontWeight: 500,
           }}
@@ -201,9 +201,9 @@ export function OfferTable({
       >
         <p
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 20,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 8,
           }}
         >
@@ -246,7 +246,7 @@ export function OfferTable({
                       fontSize: 12,
                       fontWeight: 600,
                       color: "#6b7280",
-                      fontFamily: "Outfit, sans-serif",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       whiteSpace: "nowrap",
                     }}
                   >
@@ -288,8 +288,8 @@ export function OfferTable({
                             width: 24,
                             height: 24,
                             borderRadius: "50%",
-                            background: rank === 1 ? "#e8a838" : "#f3f4f6",
-                            color: rank === 1 ? "#0f1a2e" : "#6b7280",
+                            background: rank === 1 ? "#f59e0b" : "#f3f4f6",
+                            color: rank === 1 ? "#0f1623" : "#6b7280",
                             fontSize: 12,
                             fontWeight: 700,
                           }}
@@ -312,7 +312,7 @@ export function OfferTable({
                     {/* Buyer */}
                     <td style={{ padding: "14px 12px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                        <p style={{ fontWeight: 600, color: "#0f1a2e" }}>
+                        <p style={{ fontWeight: 600, color: "#0f1623" }}>
                           {offer.buyer.firstName} {offer.buyer.lastName}
                         </p>
                         {offer.buyer.verificationStatus === "VERIFIED" && (
@@ -341,7 +341,7 @@ export function OfferTable({
 
                     {/* Offer amount */}
                     <td style={{ padding: "14px 12px", whiteSpace: "nowrap" }}>
-                      <p style={{ fontWeight: 700, color: "#0f1a2e" }}>
+                      <p style={{ fontWeight: 700, color: "#0f1623" }}>
                         {formatCurrency(offer.amountCents)}
                       </p>
                       {prevAmount !== null && (
@@ -448,7 +448,7 @@ export function OfferTable({
                         {offer.personalNote && (
                           <blockquote
                             style={{
-                              borderLeft: "3px solid #e8a838",
+                              borderLeft: "3px solid #f59e0b",
                               paddingLeft: 16,
                               margin: "12px 0",
                               color: "#334766",
@@ -517,7 +517,7 @@ export function OfferTable({
                               cursor: "pointer",
                               fontSize: 14,
                               fontWeight: 600,
-                              fontFamily: "Outfit, sans-serif",
+                              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                             }}
                           >
                             Accept This Offer

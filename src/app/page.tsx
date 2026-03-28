@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { SavingsCalculator } from "@/components/SavingsCalculator";
+import { Logo } from "@/components/Logo";
 
 const HERO_IMAGE_URL =
   "https://plus.unsplash.com/premium_photo-1661963657305-f52dcaeef418?w=1600&q=80";
@@ -25,7 +26,7 @@ export default function HomePage() {
           {/* Navy overlay at 60% opacity to keep text legible */}
           <div
             className="absolute inset-0"
-            style={{ background: "rgba(15, 26, 46, 0.60)" }}
+            style={{ background: "rgba(15, 22, 35, 0.60)" }}
           />
         </div>
 
@@ -35,39 +36,13 @@ export default function HomePage() {
           style={{ paddingTop: 80, paddingBottom: 96 }}
         >
           {/* Wordmark */}
-          <div className="inline-flex items-center gap-3 mb-12">
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 8,
-                background: "#e8a838",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "DM Serif Display, Georgia, serif",
-                fontSize: 16,
-                fontWeight: 700,
-                color: "#0f1a2e",
-              }}
-            >
-              T
-            </div>
-            <span
-              style={{
-                fontFamily: "DM Serif Display, Georgia, serif",
-                fontSize: 20,
-                color: "#ffffff",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              TrueBid
-            </span>
+          <div className="mb-12">
+            <Logo variant="light" className="text-2xl" />
           </div>
 
           <h1
             style={{
-              fontFamily: "var(--font-fraunces), serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(36px, 6vw, 64px)",
               lineHeight: 1.08,
               letterSpacing: "-0.03em",
@@ -78,34 +53,39 @@ export default function HomePage() {
           >
             Property sales.
             <br />
-            Transparent. Free.
+            Transparent.
+            <br />
+            On your terms.
           </h1>
 
           <p
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily:
+                "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 18,
               lineHeight: 1.6,
               color: "rgba(255,255,255,0.72)",
             }}
             className="max-w-xl mx-auto mb-10"
           >
-            Sellers list for free. Buyers bid openly. No agent commissions.
-            No middleman. Just honest property sales.
+            Sellers list Free during our launch period. Buyers bid openly.{" "}
+            <span className="whitespace-nowrap">No agent commissions.</span> No
+            middleman. Just honest property sales.
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
               href="/listings"
               style={{
-                background: "#e8a838",
-                color: "#0f1a2e",
-                fontFamily: "Outfit, sans-serif",
+                background: "#f59e0b",
+                color: "#1a0f00",
+                fontFamily:
+                  "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 fontWeight: 600,
                 fontSize: 15,
                 padding: "14px 32px",
                 borderRadius: 10,
-                boxShadow: "0 4px 16px rgba(232, 168, 56, 0.35)",
+                boxShadow: "0 4px 16px rgba(245, 158, 11, 0.35)",
                 textDecoration: "none",
               }}
             >
@@ -113,11 +93,14 @@ export default function HomePage() {
             </Link>
             {status !== "loading" && (
               <Link
-                href={status === "authenticated" ? "/listings/create" : "/register"}
+                href={
+                  status === "authenticated" ? "/listings/create" : "/register"
+                }
                 style={{
                   background: "rgba(255,255,255,0.12)",
                   color: "#ffffff",
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily:
+                    "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   fontWeight: 500,
                   fontSize: 15,
                   padding: "14px 28px",
@@ -137,11 +120,11 @@ export default function HomePage() {
       <div className="max-w-4xl mx-auto px-6 py-20 text-center">
         <h2
           style={{
-            fontFamily: "var(--font-fraunces), serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: "clamp(24px, 4vw, 36px)",
             fontWeight: 700,
             letterSpacing: "-0.02em",
-            color: "#0f1a2e",
+            color: "#0f1623",
           }}
           className="mb-8"
         >

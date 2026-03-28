@@ -63,9 +63,9 @@ export function VerifyClient({ status }: Props) {
         onClick={handleVerify}
         disabled={loading}
         style={{
-          background: loading ? "#d1a040" : "#e8a838",
-          color: "#0f1a2e",
-          fontFamily: "Outfit, sans-serif",
+          background: loading ? "#d1a040" : "#f59e0b",
+          color: "#1a0f00",
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           fontSize: 14,
           fontWeight: 600,
           padding: "12px 28px",
@@ -105,7 +105,7 @@ export function VerifyClient({ status }: Props) {
             marginTop: 12,
             fontSize: 13,
             color: "#dc2626",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           }}
           role="alert"
         >

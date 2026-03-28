@@ -107,14 +107,18 @@ function ReviewForm() {
       .finally(() => setLoading(false));
   }, [listingId, router]);
 
-  async function handlePublish() {
+  async function handlePublish(mode: "coming_soon" | "active") {
     if (!agreed) return;
     setSubmitting(true);
     setPublishError("");
 
     try {
-      const res = await fetch(`/api/listings/${listingId}/publish`, { method: "POST" });
-      const data = await res.json();
+      const res = await fetch(`/api/listings/${listingId}/publish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode }),
+      });
+      const data = await res.json() as { error?: string };
 
       if (!res.ok) {
         setPublishError(data.error ?? "Failed to publish listing.");
@@ -314,14 +318,31 @@ function ReviewForm() {
               >
                 ← Back
               </button>
-              <Button
-                size="lg"
-                onClick={handlePublish}
-                disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0}
-                loading={submitting}
-              >
-                Publish listing
-              </Button>
+              <div className="flex flex-col items-end gap-3">
+                <Button
+                  size="lg"
+                  onClick={() => handlePublish("coming_soon")}
+                  disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0}
+                  loading={submitting}
+                >
+                  Publish as Coming Soon
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => handlePublish("active")}
+                  disabled={!agreed || listing.seller.verificationStatus !== "VERIFIED" || listing.images.length === 0 || submitting}
+                  className="text-sm font-medium text-navy underline hover:no-underline disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Go straight to Active (open for offers now)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push("/dashboard")}
+                  className="text-sm text-text-muted hover:text-text transition-colors"
+                >
+                  Save as draft
+                </button>
+              </div>
             </div>
           </>
         )}

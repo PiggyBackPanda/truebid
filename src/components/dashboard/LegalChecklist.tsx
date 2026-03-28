@@ -58,7 +58,7 @@ export function LegalChecklist({ initialProgress }: Props) {
           marginBottom: 20,
         }}
       >
-        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "Outfit, sans-serif" }}>
+        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
           {completedCount} of {WA_CHECKLIST.length} items completed
         </p>
         {/* Progress bar */}
@@ -135,8 +135,8 @@ export function LegalChecklist({ initialProgress }: Props) {
                     style={{
                       fontWeight: 600,
                       fontSize: 15,
-                      color: "#0f1a2e",
-                      fontFamily: "Outfit, sans-serif",
+                      color: "#0f1623",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       textDecoration: completed ? "line-through" : "none",
                     }}
                   >
@@ -152,7 +152,7 @@ export function LegalChecklist({ initialProgress }: Props) {
                         border: "1px solid #fca5a5",
                         borderRadius: 4,
                         padding: "1px 6px",
-                        fontFamily: "Outfit, sans-serif",
+                        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                       }}
                     >
                       Required
@@ -166,7 +166,7 @@ export function LegalChecklist({ initialProgress }: Props) {
                     color: "#334766",
                     lineHeight: 1.5,
                     marginBottom: 8,
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {item.description}
@@ -178,7 +178,7 @@ export function LegalChecklist({ initialProgress }: Props) {
                     color: "#6b7280",
                     lineHeight: 1.5,
                     fontStyle: "italic",
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {item.helpText}
@@ -189,14 +189,14 @@ export function LegalChecklist({ initialProgress }: Props) {
                     style={{
                       marginTop: 12,
                       background: "transparent",
-                      border: "1px solid #e8a838",
-                      color: "#0f1a2e",
+                      border: "1px solid #f59e0b",
+                      color: "#0f1623",
                       borderRadius: 6,
                       padding: "6px 14px",
                       fontSize: 13,
                       fontWeight: 500,
                       cursor: "pointer",
-                      fontFamily: "Outfit, sans-serif",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     }}
                   >
                     {item.ctaLabel} →

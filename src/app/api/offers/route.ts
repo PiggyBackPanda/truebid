@@ -80,6 +80,7 @@ export async function POST(req: NextRequest) {
         streetAddress: true,
         suburb: true,
         state: true,
+        requireInspection: true,
         seller: {
           select: { email: true, firstName: true },
         },
@@ -90,6 +91,12 @@ export async function POST(req: NextRequest) {
       throw new ApiError(404, "NOT_FOUND", "Listing not found");
     }
 
+    if (listing.status === "COMING_SOON") {
+      throw new ApiError(400, "LISTING_NOT_YET_OPEN", "This listing is not yet accepting offers");
+    }
+    if (listing.status === "INSPECTIONS_OPEN") {
+      throw new ApiError(400, "OFFERS_NOT_YET_OPEN", "This listing is not yet open for offers — inspections are underway");
+    }
     if (listing.status !== "ACTIVE") {
       throw new ApiError(400, "LISTING_NOT_ACTIVE", "This listing is not accepting offers");
     }
@@ -100,6 +107,52 @@ export async function POST(req: NextRequest) {
 
     if (listing.sellerId === user.id) {
       throw new ApiError(403, "CANNOT_BID_OWN_LISTING", "You cannot place an offer on your own listing");
+    }
+
+    // Inspection gate: buyer must have attended an inspection if seller requires it
+    if (listing.requireInspection) {
+      const attendedBooking = await prisma.inspectionBooking.findFirst({
+        where: {
+          buyerId: user.id,
+          status: "ATTENDED",
+          slot: { listingId: data.listingId },
+        },
+        select: { id: true },
+      });
+
+      if (!attendedBooking) {
+        // Include next 3 upcoming slots so the client can show booking options
+        const upcomingSlots = await prisma.inspectionSlot.findMany({
+          where: {
+            listingId: data.listingId,
+            status: "SCHEDULED",
+            startTime: { gt: new Date() },
+          },
+          orderBy: { startTime: "asc" },
+          take: 3,
+          select: {
+            id: true,
+            startTime: true,
+            endTime: true,
+            maxGroups: true,
+            _count: { select: { bookings: { where: { status: "CONFIRMED" } } } },
+          },
+        });
+
+        throw new ApiError(
+          403,
+          "INSPECTION_REQUIRED",
+          "You must attend an inspection before placing an offer on this property.",
+          {
+            slots: upcomingSlots.map((s) => ({
+              id: s.id,
+              startTime: s.startTime.toISOString(),
+              endTime: s.endTime.toISOString(),
+              spotsRemaining: s.maxGroups - s._count.bookings,
+            })),
+          }
+        );
+      }
     }
 
     // Check for existing offer

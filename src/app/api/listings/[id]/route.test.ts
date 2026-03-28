@@ -32,6 +32,10 @@ vi.mock("@/lib/api-helpers", async (importOriginal) => {
     requireOwner: mockRequireOwner,
   };
 });
+vi.mock("next-auth", () => ({
+  getServerSession: vi.fn().mockResolvedValue(null),
+}));
+vi.mock("@/lib/auth", () => ({ authOptions: {} }));
 
 import { GET, PATCH, DELETE } from "./route";
 
@@ -77,6 +81,9 @@ describe("GET /api/listings/[id]", () => {
       depositAmountCents: null,
       createdAt: now,
       publishedAt: now,
+      requireInspection: false,
+      addressVisibility: "LOGGED_IN",
+      _count: { inspectionSlots: 0 },
       images: [],
       seller: { id: "seller_1", firstName: "Jane", publicAlias: "Buyer_ab12", verificationStatus: "VERIFIED" },
       offers: [

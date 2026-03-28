@@ -52,7 +52,7 @@ export function CreateListingProgress({ listingId }: CreateListingProgressProps)
                       <div
                         className="flex-1 h-0.5"
                         style={{
-                          background: index <= currentIndex ? "#e8a838" : "#e2ddd6",
+                          background: index <= currentIndex ? "#f59e0b" : "#e2ddd6",
                         }}
                       />
                     )}
@@ -68,9 +68,9 @@ export function CreateListingProgress({ listingId }: CreateListingProgressProps)
                         justifyContent: "center",
                         flexShrink: 0,
                         background: isCurrent
-                          ? "#e8a838"
+                          ? "#f59e0b"
                           : isCompleted
-                          ? "#e8a838"
+                          ? "#f59e0b"
                           : "#e2ddd6",
                         color: isCurrent || isCompleted ? "#0f1a2e" : "#9c8f83",
                         fontSize: 12,
@@ -91,7 +91,7 @@ export function CreateListingProgress({ listingId }: CreateListingProgressProps)
                       <div
                         className="flex-1 h-0.5"
                         style={{
-                          background: index < currentIndex ? "#e8a838" : "#e2ddd6",
+                          background: index < currentIndex ? "#f59e0b" : "#e2ddd6",
                         }}
                       />
                     )}

@@ -6,7 +6,7 @@ import Link from "next/link";
 const SELLER_STEPS = [
   {
     title: "Create your listing (15 minutes)",
-    body: "Sign up and verify your identity, then enter your property details — address, bedrooms, bathrooms, land size, and a description of your home. Upload your best photos (your phone camera is fine — good lighting makes a big difference). Choose your sale method: Open Offers for transparent bidding, Private Offers if you prefer discretion, or Fixed Price if you know exactly what you want.",
+    body: "Sign up and verify your identity, then enter your property details: address, bedrooms, bathrooms, land size, and a description of your home. Upload your best photos (your phone camera is fine; good lighting makes a big difference). Choose your sale method: Open Offers for transparent bidding, Private Offers if you prefer discretion, or Fixed Price if you know exactly what you want.",
   },
   {
     title: "Go live and attract buyers",
@@ -14,7 +14,7 @@ const SELLER_STEPS = [
   },
   {
     title: "Review offers and accept",
-    body: "When your Open Offers closing date arrives, review all offers in your dashboard. You'll see each buyer's offer amount, their conditions, and their preferred settlement timeline. You choose the offer that suits you best — it doesn't have to be the highest. An unconditional offer with a quick settlement might be worth more to you than a higher offer subject to finance.",
+    body: "When your Open Offers closing date arrives, review all offers in your dashboard. You'll see each buyer's offer amount, their conditions, and their preferred settlement timeline. You choose the offer that suits you best. It doesn't have to be the highest. An unconditional offer with a quick settlement might be worth more to you than a higher offer subject to finance.",
   },
   {
     title: "Settle with your conveyancer",
@@ -25,15 +25,15 @@ const SELLER_STEPS = [
 const BUYER_STEPS = [
   {
     title: "Browse and search",
-    body: "Find properties by suburb, postcode, or address. Filter by price, bedrooms, property type, and sale method. No sign-up needed to browse — see every listing, every photo, and every offer on the board.",
+    body: "Find properties by suburb, postcode, or address. Filter by price, bedrooms, property type, and sale method. No sign-up needed to browse listings and photos. Create a free account to view the live offer board and place offers. It takes less than a minute.",
   },
   {
     title: "Verify and place an offer",
-    body: "When you find a property you love, verify your identity (takes 2 minutes with your driver's licence) and place your offer. For Open Offers listings, you'll see exactly where your offer ranks against other buyers — no guesswork, no phantom offers, no games.",
+    body: "When you find a property you love, verify your identity (takes 2 minutes with your driver's licence) and place your offer. For Open Offers listings, you'll see exactly where your offer ranks against other buyers: no guesswork, no phantom offers, no games.",
   },
   {
     title: "Compete transparently",
-    body: "You can see every other offer's amount and submission time. Personal details and offer conditions are kept private. If you're outbid, you'll be notified instantly so you can decide whether to raise your offer. Sellers consider both price and terms when choosing — an unconditional offer might win over a higher offer with conditions attached.",
+    body: "You can see every other offer's amount and submission time. Personal details and offer conditions are kept private. If you're outbid, you'll be notified instantly so you can decide whether to raise your offer. Sellers consider both price and terms when choosing: an unconditional offer might win over a higher offer with conditions attached.",
   },
   {
     title: "Win and settle",
@@ -89,8 +89,8 @@ export function HowItWorksToggle() {
               onClick={() => setTab("seller")}
               className="px-6 py-2 rounded-md text-sm font-semibold transition-colors"
               style={{
-                fontFamily: "Outfit, sans-serif",
-                background: tab === "seller" ? "#0f1a2e" : "transparent",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                background: tab === "seller" ? "#0f1623" : "transparent",
                 color: tab === "seller" ? "#ffffff" : "#334766",
               }}
             >
@@ -102,8 +102,8 @@ export function HowItWorksToggle() {
               onClick={() => setTab("buyer")}
               className="px-6 py-2 rounded-md text-sm font-semibold transition-colors"
               style={{
-                fontFamily: "Outfit, sans-serif",
-                background: tab === "buyer" ? "#0f1a2e" : "transparent",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                background: tab === "buyer" ? "#0f1623" : "transparent",
                 color: tab === "buyer" ? "#ffffff" : "#334766",
               }}
             >
@@ -126,7 +126,7 @@ export function HowItWorksToggle() {
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
             >
-              List your home — free →
+              List your home for free →
             </Link>
           ) : (
             <Link

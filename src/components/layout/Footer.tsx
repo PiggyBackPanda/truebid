@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
+
+const SYS = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer style={{ background: "#0f1a2e", borderTop: "1px solid #1a2a45" }}>
+    <footer style={{ background: "#0f1623", borderTop: "1px solid #1b2640" }}>
       <div
         style={{
           maxWidth: 1200,
@@ -16,51 +19,15 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link
-              href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                textDecoration: "none",
-                marginBottom: 16,
-              }}
-            >
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 7,
-                  background: "#e8a838",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontFamily: "DM Serif Display, Georgia, serif",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "#0f1a2e",
-                  flexShrink: 0,
-                }}
-              >
-                T
-              </div>
-              <span
-                style={{
-                  fontFamily: "DM Serif Display, Georgia, serif",
-                  fontSize: 18,
-                  color: "#ffffff",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                TrueBid
-              </span>
-            </Link>
+            <div style={{ marginBottom: 16 }}>
+              <Logo variant="light" linked className="text-lg" />
+            </div>
             <p
               style={{
                 color: "rgba(255,255,255,0.4)",
                 fontSize: 13,
                 lineHeight: 1.6,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: SYS,
                 maxWidth: 220,
               }}
             >
@@ -78,7 +45,7 @@ export function Footer() {
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 marginBottom: 14,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: SYS,
               }}
             >
               Platform
@@ -101,7 +68,7 @@ export function Footer() {
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 marginBottom: 14,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: SYS,
               }}
             >
               Legal
@@ -122,7 +89,7 @@ export function Footer() {
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 marginBottom: 14,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: SYS,
               }}
             >
               Contact
@@ -137,7 +104,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div
           style={{
-            borderTop: "1px solid #1a2a45",
+            borderTop: "1px solid #1b2640",
             paddingTop: 24,
             display: "flex",
             flexWrap: "wrap",
@@ -146,22 +113,10 @@ export function Footer() {
             gap: 12,
           }}
         >
-          <p
-            style={{
-              color: "rgba(255,255,255,0.25)",
-              fontSize: 12,
-              fontFamily: "Outfit, sans-serif",
-            }}
-          >
+          <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: SYS }}>
             &copy; {year} TrueBid Pty Ltd &middot; Australian owned and operated
           </p>
-          <p
-            style={{
-              color: "rgba(255,255,255,0.25)",
-              fontSize: 12,
-              fontFamily: "Outfit, sans-serif",
-            }}
-          >
+          <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: SYS }}>
             Launching in Western Australia · 2026
           </p>
         </div>
@@ -172,32 +127,14 @@ export function Footer() {
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   const isExternal = href.startsWith("mailto:");
+  const style = {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 14,
+    textDecoration: "none",
+    fontFamily: SYS,
+  };
   if (isExternal) {
-    return (
-      <a
-        href={href}
-        style={{
-          color: "rgba(255,255,255,0.5)",
-          fontSize: 14,
-          textDecoration: "none",
-          fontFamily: "Outfit, sans-serif",
-        }}
-      >
-        {children}
-      </a>
-    );
+    return <a href={href} style={style}>{children}</a>;
   }
-  return (
-    <Link
-      href={href}
-      style={{
-        color: "rgba(255,255,255,0.5)",
-        fontSize: 14,
-        textDecoration: "none",
-        fontFamily: "Outfit, sans-serif",
-      }}
-    >
-      {children}
-    </Link>
-  );
+  return <Link href={href} style={style}>{children}</Link>;
 }

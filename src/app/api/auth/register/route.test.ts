@@ -16,7 +16,10 @@ const { mockPrisma } = vi.hoisted(() => {
       offerHistory: createModelMock(), message: createModelMock(),
       conversation: createModelMock(), conversationMessage: createModelMock(),
       favourite: createModelMock(), checklistProgress: createModelMock(),
-      listingView: createModelMock(), $transaction: vi.fn(),
+      listingView: createModelMock(),
+      inspectionBooking: createModelMock(),
+      pendingInspectionAttendance: createModelMock(),
+      $transaction: vi.fn(),
     },
   };
 });
@@ -49,6 +52,7 @@ describe("POST /api/auth/register", () => {
 
   it("creates a user and returns 201", async () => {
     mockPrisma.user.findUnique.mockResolvedValue(null);
+    mockPrisma.pendingInspectionAttendance.findMany.mockResolvedValue([]); // no pending attendances
     mockPrisma.user.create.mockResolvedValue({
       id: "user_1",
       email: "jane@example.com",

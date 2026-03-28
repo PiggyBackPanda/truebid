@@ -42,7 +42,7 @@ function DocumentUpload({
 
   return (
     <div>
-      <p style={{ fontSize: 13, fontWeight: 600, color: "#0f1a2e", marginBottom: 6, fontFamily: "Outfit, sans-serif" }}>
+      <p style={{ fontSize: 13, fontWeight: 600, color: "#0f1623", marginBottom: 6, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
         {label}
       </p>
       <p style={{ fontSize: 12, color: "#6b7280", marginBottom: 10 }}>{hint}</p>
@@ -122,7 +122,7 @@ function DocumentUpload({
           }}
         >
           <span style={{ fontSize: 28 }}>📷</span>
-          <span style={{ fontSize: 13, color: "#6b7280", fontFamily: "Outfit, sans-serif" }}>
+          <span style={{ fontSize: 13, color: "#6b7280", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
             Tap to choose a photo
           </span>
           <span style={{ fontSize: 11, color: "#9ca3af" }}>JPEG, PNG, WebP or HEIC</span>
@@ -190,7 +190,7 @@ function VerifyIdentityContent() {
   if (status === "loading") {
     return (
       <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
-        <div style={{ width: 32, height: 32, border: "3px solid #e8a838", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <div style={{ width: 32, height: 32, border: "3px solid #f59e0b", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
       </div>
     );
   }
@@ -206,7 +206,7 @@ function VerifyIdentityContent() {
           border: "1px solid #e5e2db",
           borderRadius: 16,
           padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,26,46,0.06)",
+          boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
           textAlign: "center",
         }}
       >
@@ -227,9 +227,9 @@ function VerifyIdentityContent() {
         </div>
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 26,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 10,
             letterSpacing: "-0.02em",
           }}
@@ -243,8 +243,8 @@ function VerifyIdentityContent() {
           href={returnTo}
           style={{
             display: "inline-block",
-            background: "#e8a838",
-            color: "#0f1a2e",
+            background: "#f59e0b",
+            color: "#1a0f00",
             fontWeight: 600,
             fontSize: 14,
             padding: "12px 28px",
@@ -269,7 +269,7 @@ function VerifyIdentityContent() {
           border: "1px solid #e5e2db",
           borderRadius: 16,
           padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,26,46,0.06)",
+          boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
           textAlign: "center",
         }}
       >
@@ -290,9 +290,9 @@ function VerifyIdentityContent() {
         </div>
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 26,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 10,
             letterSpacing: "-0.02em",
           }}
@@ -303,13 +303,13 @@ function VerifyIdentityContent() {
           Your documents are being reviewed by our team. This usually takes less than 24 hours.
         </p>
         <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 28 }}>
-          We&apos;ll email you at <strong style={{ color: "#0f1a2e" }}>{user?.email as string}</strong> once approved.
+          We&apos;ll email you at <strong style={{ color: "#0f1623" }}>{user?.email as string}</strong> once approved.
         </p>
         <Link
           href="/dashboard"
           style={{
             display: "inline-block",
-            background: "#0f1a2e",
+            background: "#0f1623",
             color: "#ffffff",
             fontWeight: 500,
             fontSize: 14,
@@ -335,7 +335,7 @@ function VerifyIdentityContent() {
           border: "1px solid #e5e2db",
           borderRadius: 16,
           padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,26,46,0.06)",
+          boxShadow: "0 1px 3px rgba(15,22,35,0.06)",
           textAlign: "center",
         }}
       >
@@ -356,9 +356,9 @@ function VerifyIdentityContent() {
         </div>
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 26,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 10,
             letterSpacing: "-0.02em",
           }}
@@ -369,14 +369,14 @@ function VerifyIdentityContent() {
           Thanks! Our team will review your identity documents, usually within 24 hours.
         </p>
         <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 28 }}>
-          We&apos;ll email you at <strong style={{ color: "#0f1a2e" }}>{user?.email as string}</strong> once approved.
+          We&apos;ll email you at <strong style={{ color: "#0f1623" }}>{user?.email as string}</strong> once approved.
         </p>
         <Link
           href={returnTo}
           style={{
             display: "inline-block",
-            background: "#e8a838",
-            color: "#0f1a2e",
+            background: "#f59e0b",
+            color: "#1a0f00",
             fontWeight: 600,
             fontSize: 14,
             padding: "12px 28px",
@@ -402,7 +402,7 @@ function VerifyIdentityContent() {
           border: "1px solid #e5e2db",
           borderRadius: 16,
           padding: "40px",
-          boxShadow: "0 1px 3px rgba(15,26,46,0.06), 0 4px 12px rgba(15,26,46,0.04)",
+          boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
         }}
       >
         {/* Logo */}
@@ -413,23 +413,23 @@ function VerifyIdentityContent() {
                 width: 32,
                 height: 32,
                 borderRadius: 8,
-                background: "#e8a838",
+                background: "#f59e0b",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontFamily: "DM Serif Display, Georgia, serif",
+                fontFamily: "Georgia, 'Times New Roman', serif",
                 fontSize: 16,
                 fontWeight: 700,
-                color: "#0f1a2e",
+                color: "#0f1623",
               }}
             >
               T
             </div>
             <span
               style={{
-                fontFamily: "DM Serif Display, Georgia, serif",
+                fontFamily: "Georgia, 'Times New Roman', serif",
                 fontSize: 20,
-                color: "#0f1a2e",
+                color: "#0f1623",
                 letterSpacing: "-0.02em",
               }}
             >
@@ -457,10 +457,10 @@ function VerifyIdentityContent() {
 
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 28,
             fontWeight: 400,
-            color: "#0f1a2e",
+            color: "#0f1623",
             textAlign: "center",
             marginBottom: 8,
             letterSpacing: "-0.02em",
@@ -501,7 +501,7 @@ function VerifyIdentityContent() {
             <div key={title} style={{ display: "flex", gap: 14, marginBottom: 14, alignItems: "flex-start" }}>
               <span style={{ fontSize: 22, flexShrink: 0 }}>{icon}</span>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#0f1a2e", marginBottom: 2, fontFamily: "Outfit, sans-serif" }}>{title}</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "#0f1623", marginBottom: 2, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>{title}</p>
                 <p style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.5 }}>{desc}</p>
               </div>
             </div>
@@ -573,7 +573,7 @@ function VerifyIdentityContent() {
                 textTransform: "uppercase",
                 letterSpacing: "0.08em",
                 marginBottom: 10,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               }}
             >
               Development only
@@ -592,7 +592,7 @@ function VerifyIdentityContent() {
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: devBypassing ? "not-allowed" : "pointer",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               }}
             >
               {devBypassing ? "Setting verified…" : "Dev: Mark as Verified"}
@@ -686,7 +686,7 @@ function VerifyIdentityContent() {
         border: "1px solid #e5e2db",
         borderRadius: 16,
         padding: "40px",
-        boxShadow: "0 1px 3px rgba(15,26,46,0.06), 0 4px 12px rgba(15,26,46,0.04)",
+        boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
       }}
     >
       {/* Header */}
@@ -710,9 +710,9 @@ function VerifyIdentityContent() {
         <div>
           <h1
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: 22,
-              color: "#0f1a2e",
+              color: "#0f1623",
               marginBottom: 2,
               letterSpacing: "-0.02em",
             }}

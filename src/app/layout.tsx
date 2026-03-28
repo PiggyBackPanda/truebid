@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Fraunces } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: ["700"],
-  variable: "--font-fraunces",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full antialiased ${fraunces.variable}`}>
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-bg text-text font-sans">
         <Providers>
           <Nav />

@@ -1,23 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* ── Design Tokens ─────────────────────────────────────────────────────────── */
 @theme {
   /* Colours — Primary */
-  --color-navy: #0f1a2e;
-  --color-navy-light: #1a2a45;
-  --color-navy-mid: #243656;
+  --color-navy: #0f1623;
+  --color-navy-light: #1b2640;
+  --color-navy-mid: #243456;
   --color-slate: #334766;
+  --color-surface: #1a2b40;
 
-  /* Colours — Accent */
-  --color-amber: #e8a838;
-  --color-amber-light: #f5c563;
+  /* Colours — Amber (single primary accent) */
+  --color-amber: #f59e0b;
+  --color-amber-light: #fbbf24;
+  --color-amber-dark: #b45309;
 
   /* Colours — Semantic */
-  --color-green: #3db87a;
-  --color-green-bg: #e8f5e9;
-  --color-red: #e05252;
-  --color-sky: #4a90d9;
+  --color-green: #10b981;
+  --color-green-bg: #d1fae5;
+  --color-red: #ef4444;
 
   /* Colours — Neutrals */
   --color-bg: #f7f5f0;
@@ -28,9 +28,9 @@
   --color-border: #e5e2db;
 
   /* Typography */
-  --font-serif: "DM Serif Display", Georgia, serif;
-  --font-sans: "Outfit", -apple-system, sans-serif;
-  --font-heading: var(--font-fraunces), serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: Georgia, "Times New Roman", serif;
 
   /* Border Radius */
   --radius-sm: 8px;
@@ -39,10 +39,10 @@
 
   /* Shadows */
   --shadow:
-    0 1px 3px rgba(15, 26, 46, 0.06), 0 4px 12px rgba(15, 26, 46, 0.04);
+    0 1px 3px rgba(15, 22, 35, 0.06), 0 4px 12px rgba(15, 22, 35, 0.04);
   --shadow-lg:
-    0 4px 6px rgba(15, 26, 46, 0.04), 0 12px 32px rgba(15, 26, 46, 0.08);
-  --shadow-amber: 0 4px 16px rgba(232, 168, 56, 0.3);
+    0 4px 6px rgba(15, 22, 35, 0.04), 0 12px 32px rgba(15, 22, 35, 0.08);
+  --shadow-amber: 0 4px 16px rgba(245, 158, 11, 0.35);
 
   /* Animations */
   --animate-fade-in: fadeIn 0.4s ease-out both;
@@ -74,7 +74,7 @@
 
 @keyframes highlightNew {
   0% {
-    background-color: rgba(232, 168, 56, 0.15);
+    background-color: rgba(245, 158, 11, 0.15);
   }
   100% {
     background-color: transparent;
@@ -89,7 +89,7 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-heading);
 }
 
 /* ── Utility Classes ───────────────────────────────────────────────────────── */

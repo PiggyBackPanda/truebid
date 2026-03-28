@@ -26,10 +26,10 @@ export default async function DashboardPage() {
       <div style={{ marginBottom: 32 }}>
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 32,
             fontWeight: 400,
-            color: "#0f1a2e",
+            color: "#0f1623",
             letterSpacing: "-0.02em",
             marginBottom: 6,
           }}
@@ -67,15 +67,15 @@ export default async function DashboardPage() {
           <Link
             href="/verify-identity"
             style={{
-              background: "#e8a838",
-              color: "#0f1a2e",
+              background: "#f59e0b",
+              color: "#1a0f00",
               fontWeight: 600,
               fontSize: 13,
               padding: "8px 16px",
               borderRadius: 8,
               textDecoration: "none",
               whiteSpace: "nowrap",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}
           >
             Verify now
@@ -137,8 +137,8 @@ function DashboardCard({
       href={href}
       style={{
         display: "block",
-        background: highlight ? "rgba(232,168,56,0.06)" : "#ffffff",
-        border: `1px solid ${highlight ? "#e8a838" : "#e5e2db"}`,
+        background: highlight ? "rgba(245,158,11,0.06)" : "#ffffff",
+        border: `1px solid ${highlight ? "#f59e0b" : "#e5e2db"}`,
         borderRadius: 12,
         padding: "24px",
         textDecoration: "none",
@@ -150,15 +150,15 @@ function DashboardCard({
       <p
         style={{
           fontWeight: 600,
-          color: "#0f1a2e",
+          color: "#0f1623",
           fontSize: 15,
           marginBottom: 6,
-          fontFamily: "Outfit, sans-serif",
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         }}
       >
         {title}
       </p>
-      <p style={{ color: "#6b7280", fontSize: 13, lineHeight: 1.5, fontFamily: "Outfit, sans-serif" }}>
+      <p style={{ color: "#6b7280", fontSize: 13, lineHeight: 1.5, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
         {description}
       </p>
     </Link>

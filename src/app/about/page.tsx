@@ -15,21 +15,21 @@ export default function AboutPage() {
         <div className="max-w-3xl mx-auto">
           <p
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 13,
               fontWeight: 600,
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: "#e8a838",
+              color: "#f59e0b",
               marginBottom: 16,
             }}
           >
-            Our mission
+            What we're here for
           </p>
           <h1
             className="text-white mb-6"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(30px, 5vw, 52px)",
               lineHeight: 1.15,
               letterSpacing: "-0.02em",
@@ -42,7 +42,7 @@ export default function AboutPage() {
           <p
             className="text-white/65 max-w-2xl mx-auto"
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 17,
               lineHeight: 1.7,
             }}
@@ -61,7 +61,7 @@ export default function AboutPage() {
           <h2
             className="text-navy mb-6"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(24px, 3.5vw, 36px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
@@ -71,7 +71,7 @@ export default function AboutPage() {
           </h2>
           <div
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 16,
               lineHeight: 1.8,
               color: "#4a5568",
@@ -90,8 +90,8 @@ export default function AboutPage() {
               truly traded for until weeks later, if at all.
             </p>
             <p>
-              We believed the internet had already solved this problem in every
-              other industry. Travel, finance, accommodation — all disintermediated.
+              The internet fixed this in every other industry.
+              Travel, finance, accommodation — all disintermediated.
               Property was the last holdout, protected by inertia and the fact that
               most people only sell a few times in their lives.
             </p>
@@ -133,7 +133,7 @@ export default function AboutPage() {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                  fill="#e8a838"
+                  fill="#f59e0b"
                 />
                 <circle cx="12" cy="9" r="2.5" fill="#0f1a2e" />
               </svg>
@@ -142,7 +142,7 @@ export default function AboutPage() {
               <h2
                 className="text-navy mb-2"
                 style={{
-                  fontFamily: "DM Serif Display, Georgia, serif",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
                   fontSize: "clamp(22px, 3vw, 32px)",
                   fontWeight: 400,
                   letterSpacing: "-0.02em",
@@ -152,7 +152,7 @@ export default function AboutPage() {
               </h2>
               <p
                 style={{
-                  fontFamily: "Outfit, sans-serif",
+                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   fontSize: 16,
                   lineHeight: 1.7,
                   color: "#4a5568",
@@ -161,14 +161,14 @@ export default function AboutPage() {
                 TrueBid is an Australian company, built by Australians who have
                 navigated the local property market firsthand. We understand the
                 nuances of selling in Perth, Sydney, Melbourne, and everywhere in
-                between — the different settlement periods, the varying market
+                between: the different settlement periods, the varying market
                 conditions, the regulatory landscape.
               </p>
             </div>
           </div>
           <p
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 16,
               lineHeight: 1.7,
               color: "#4a5568",
@@ -191,7 +191,7 @@ export default function AboutPage() {
           <h2
             className="text-navy text-center mb-3"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(24px, 3.5vw, 36px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
@@ -201,24 +201,18 @@ export default function AboutPage() {
           </h2>
           <p
             className="text-center text-text-muted text-sm mb-12"
-            style={{ fontFamily: "Outfit, sans-serif" }}
+            style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
           >
             Three principles that shape every decision we make.
           </p>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: 24,
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <ValueCard
               icon={
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                    stroke="#e8a838"
+                    stroke="#f59e0b"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -227,7 +221,7 @@ export default function AboutPage() {
                     cx="12"
                     cy="12"
                     r="3"
-                    stroke="#e8a838"
+                    stroke="#f59e0b"
                     strokeWidth="2"
                   />
                 </svg>
@@ -243,13 +237,13 @@ export default function AboutPage() {
                     y1="1"
                     x2="12"
                     y2="23"
-                    stroke="#e8a838"
+                    stroke="#f59e0b"
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
                   <path
                     d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
-                    stroke="#e8a838"
+                    stroke="#f59e0b"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -257,14 +251,14 @@ export default function AboutPage() {
                 </svg>
               }
               title="No commissions"
-              body="Listing is free. Placing offers is free. The core transaction never costs you a cent. We believe that the value of the transaction belongs to the buyer and seller — not the platform facilitating it."
+              body="Placing offers is always free. During our launch period, listing is also free. We'll give you at least 30 days notice before any listing fee is introduced. The core transaction will never carry a commission."
             />
             <ValueCard
               icon={
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                    stroke="#e8a838"
+                    stroke="#f59e0b"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -284,7 +278,7 @@ export default function AboutPage() {
           <h2
             className="text-white mb-4"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(24px, 4vw, 36px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
@@ -295,20 +289,20 @@ export default function AboutPage() {
           <p
             className="text-white/60 mb-8"
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 16,
               lineHeight: 1.6,
             }}
           >
-            Join thousands of Australians who have chosen transparency over
-            tradition.
+            Built for Australians who believe property sales should be open,
+            fair, and free of hidden costs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
             >
-              List your home — free →
+              List your home for free →
             </Link>
             <Link
               href="/how-it-works"
@@ -323,10 +317,10 @@ export default function AboutPage() {
             style={{
               color: "rgba(255,255,255,0.3)",
               fontSize: 12,
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}
           >
-            Australian owned and operated · No commissions, ever · Identity
+            Australian owned and operated · No commissions on transactions · Identity
             verified participants · Real-time transparent offers
           </p>
         </div>
@@ -365,7 +359,7 @@ function ValueCard({
       <h3
         className="text-navy"
         style={{
-          fontFamily: "DM Serif Display, Georgia, serif",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: 20,
           fontWeight: 400,
           letterSpacing: "-0.01em",
@@ -375,7 +369,7 @@ function ValueCard({
       </h3>
       <p
         className="text-text-muted leading-relaxed"
-        style={{ fontFamily: "Outfit, sans-serif", fontSize: 14 }}
+        style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 14 }}
       >
         {body}
       </p>

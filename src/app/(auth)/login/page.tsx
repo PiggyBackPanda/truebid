@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
   return (
@@ -57,48 +58,20 @@ function LoginForm() {
         border: "1px solid #e5e2db",
         borderRadius: 16,
         padding: "40px 40px 36px",
-        boxShadow: "0 1px 3px rgba(15,26,46,0.06), 0 4px 12px rgba(15,26,46,0.04)",
+        boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
       }}
     >
       {/* Logo */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: "#e8a838",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#0f1a2e",
-            }}
-          >
-            T
-          </div>
-          <span
-            style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 20,
-              color: "#0f1a2e",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            TrueBid
-          </span>
-        </Link>
+        <Logo variant="dark" linked className="text-2xl" />
       </div>
 
       <h1
         style={{
-          fontFamily: "DM Serif Display, Georgia, serif",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: 28,
           fontWeight: 400,
-          color: "#0f1a2e",
+          color: "#0f1623",
           textAlign: "center",
           marginBottom: 8,
           letterSpacing: "-0.02em",
@@ -155,7 +128,7 @@ function LoginForm() {
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              style={{ accentColor: "#e8a838", width: 15, height: 15 }}
+              style={{ accentColor: "#f59e0b", width: 15, height: 15 }}
             />
             <span style={{ fontSize: 13, color: "#6b7280" }}>Remember me</span>
           </label>

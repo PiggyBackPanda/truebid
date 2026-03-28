@@ -5,6 +5,7 @@ import { StatsRow } from "./StatsRow";
 import { OfferTable } from "./OfferTable";
 import { MessagesTab } from "./MessagesTab";
 import { LegalChecklist } from "./LegalChecklist";
+import { ListingStatusBadge, ListingStatusProgress } from "./ListingStatusProgress";
 import { useSellerDashboard, type SellerOffer } from "@/hooks/useSellerDashboard";
 import { WA_CHECKLIST } from "@/lib/wa-checklist";
 
@@ -51,6 +52,92 @@ type Props = {
   initialConversations: Conversation[];
   initialChecklist: ChecklistEntry[];
 };
+
+function GoLiveButton({ listingId }: { listingId: string }) {
+  const [confirming, setConfirming] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleGoLive() {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/listings/${listingId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "ACTIVE" }),
+      });
+      const data = await res.json() as { error?: string };
+      if (!res.ok) {
+        setError(data.error ?? "Failed to go live.");
+        setConfirming(false);
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setError("Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (confirming) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+        <p style={{ fontSize: 13, color: "#374151", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", maxWidth: 260, textAlign: "right" }}>
+          This will open the property for offers. Are you sure?
+        </p>
+        {error && <p style={{ fontSize: 12, color: "#dc2626" }}>{error}</p>}
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setConfirming(false)}
+            style={{ fontSize: 13, color: "#6b7280", background: "none", border: "none", cursor: "pointer", fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleGoLive}
+            disabled={loading}
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#1a0f00",
+              background: "#f59e0b",
+              border: "none",
+              borderRadius: 8,
+              padding: "6px 16px",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.7 : 1,
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            }}
+          >
+            {loading ? "Going live…" : "Yes, go live"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setConfirming(true)}
+      style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#1a0f00",
+        background: "#f59e0b",
+        border: "none",
+        borderRadius: 8,
+        padding: "8px 20px",
+        cursor: "pointer",
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        flexShrink: 0,
+      }}
+    >
+      Go Live — Open for Offers
+    </button>
+  );
+}
 
 type Tab = "offers" | "messages" | "checklist" | "settings";
 
@@ -130,13 +217,13 @@ export function SellerDashboardClient({
           <div
             key={toast.id}
             style={{
-              background: toast.type === "warning" ? "#fff3e0" : "#0f1a2e",
+              background: toast.type === "warning" ? "#fff3e0" : "#0f1623",
               color: toast.type === "warning" ? "#e65100" : "#ffffff",
               border: toast.type === "warning" ? "1px solid #ffcc80" : "none",
               borderRadius: 10,
               padding: "12px 16px",
               fontSize: 14,
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               maxWidth: 320,
               boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
               pointerEvents: "auto",
@@ -155,36 +242,32 @@ export function SellerDashboardClient({
 
       {/* Page header */}
       <div style={{ marginBottom: 28 }}>
-        <h1
-          style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
-            fontSize: 28,
-            fontWeight: 400,
-            color: "#0f1a2e",
-            letterSpacing: "-0.02em",
-            marginBottom: 4,
-          }}
-        >
-          Seller Dashboard
-        </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "Outfit, sans-serif" }}>
-          {listingAddress}
-          {listingStatus !== "ACTIVE" && (
-            <span
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <h1
               style={{
-                marginLeft: 10,
-                background: listingStatus === "UNDER_OFFER" ? "#dbeafe" : "#f3f4f6",
-                color: listingStatus === "UNDER_OFFER" ? "#1d4ed8" : "#374151",
-                borderRadius: 6,
-                padding: "2px 8px",
-                fontSize: 12,
-                fontWeight: 600,
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontSize: 28,
+                fontWeight: 400,
+                color: "#0f1623",
+                letterSpacing: "-0.02em",
+                marginBottom: 4,
               }}
             >
-              {listingStatus.replace("_", " ")}
-            </span>
+              Seller Dashboard
+            </h1>
+            <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", display: "flex", alignItems: "center", gap: 8 }}>
+              {listingAddress}
+              <ListingStatusBadge status={listingStatus as Parameters<typeof ListingStatusBadge>[0]["status"]} />
+            </p>
+          </div>
+          {(listingStatus === "COMING_SOON" || listingStatus === "INSPECTIONS_OPEN") && (
+            <GoLiveButton listingId={listingId} />
           )}
-        </p>
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <ListingStatusProgress status={listingStatus as Parameters<typeof ListingStatusProgress>[0]["status"]} />
+        </div>
       </div>
 
       {/* Stats row */}
@@ -215,13 +298,13 @@ export function SellerDashboardClient({
               minHeight: 44,
               background: "transparent",
               border: "none",
-              borderBottom: `2px solid ${activeTab === tab.id ? "#0f1a2e" : "transparent"}`,
+              borderBottom: `2px solid ${activeTab === tab.id ? "#0f1623" : "transparent"}`,
               marginBottom: -2,
               cursor: "pointer",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 14,
               fontWeight: activeTab === tab.id ? 600 : 400,
-              color: activeTab === tab.id ? "#0f1a2e" : "#6b7280",
+              color: activeTab === tab.id ? "#0f1623" : "#6b7280",
               whiteSpace: "nowrap",
             }}
           >
@@ -229,8 +312,8 @@ export function SellerDashboardClient({
             {tab.badge !== undefined && tab.badge > 0 && (
               <span
                 style={{
-                  background: tab.id === "messages" ? "#2563eb" : "#e8a838",
-                  color: tab.id === "messages" ? "#ffffff" : "#0f1a2e",
+                  background: "#f59e0b",
+                  color: "#1a0f00",
                   borderRadius: 10,
                   padding: "1px 7px",
                   fontSize: 11,
@@ -334,10 +417,10 @@ function ListingSettingsTab({
       >
         <h3
           style={{
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontWeight: 600,
             fontSize: 15,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 6,
           }}
         >
@@ -350,14 +433,14 @@ function ListingSettingsTab({
           href={`/listings/${listingId}/edit`}
           style={{
             display: "inline-block",
-            background: "#0f1a2e",
+            background: "#0f1623",
             color: "#ffffff",
             borderRadius: 8,
             padding: "9px 18px",
             fontSize: 14,
             fontWeight: 500,
             textDecoration: "none",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           }}
         >
           Edit listing →
@@ -375,10 +458,10 @@ function ListingSettingsTab({
         >
           <h3
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontWeight: 600,
               fontSize: 15,
-              color: "#0f1a2e",
+              color: "#0f1623",
               marginBottom: 6,
             }}
           >
@@ -399,7 +482,7 @@ function ListingSettingsTab({
               padding: "9px 18px",
               fontSize: 14,
               cursor: "pointer",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}
           >
             {pausing ? "Pausing…" : "Pause listing"}
@@ -417,7 +500,7 @@ function ListingSettingsTab({
       >
         <h3
           style={{
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontWeight: 600,
             fontSize: 15,
             color: "#dc2626",
@@ -442,7 +525,7 @@ function ListingSettingsTab({
             fontSize: 14,
             fontWeight: 500,
             cursor: "pointer",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           }}
         >
           {withdrawing ? "Withdrawing…" : "Withdraw listing"}

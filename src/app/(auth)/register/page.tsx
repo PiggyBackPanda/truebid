@@ -7,13 +7,14 @@ import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { registerFormSchema } from "@/lib/validation";
+import { Logo } from "@/components/Logo";
 
 type Role = "BUYER" | "SELLER" | "BOTH";
 
 const ROLES: { value: Role; label: string; description: string }[] = [
   { value: "BUYER", label: "Buy", description: "Browse and place offers on properties" },
   { value: "SELLER", label: "Sell", description: "List your property for free" },
-  { value: "BOTH", label: "Buy & Sell", description: "Do both — most popular" },
+  { value: "BOTH", label: "Buy & Sell", description: "Do both (most popular)" },
 ];
 
 function RegisterForm() {
@@ -129,48 +130,20 @@ function RegisterForm() {
         border: "1px solid #e5e2db",
         borderRadius: 16,
         padding: "40px 40px 36px",
-        boxShadow: "0 1px 3px rgba(15,26,46,0.06), 0 4px 12px rgba(15,26,46,0.04)",
+        boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
       }}
     >
       {/* Logo */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 8,
-              background: "#e8a838",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#0f1a2e",
-            }}
-          >
-            T
-          </div>
-          <span
-            style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
-              fontSize: 20,
-              color: "#0f1a2e",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            TrueBid
-          </span>
-        </Link>
+        <Logo variant="dark" linked className="text-2xl" />
       </div>
 
       <h1
         style={{
-          fontFamily: "DM Serif Display, Georgia, serif",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: 28,
           fontWeight: 400,
-          color: "#0f1a2e",
+          color: "#0f1623",
           textAlign: "center",
           marginBottom: 8,
           letterSpacing: "-0.02em",
@@ -239,7 +212,7 @@ function RegisterForm() {
           value={fields.phone}
           onChange={(e) => setField("phone", e.target.value)}
           placeholder="0412 345 678"
-          hint="Optional — Australian mobile format"
+          hint="Optional: Australian mobile format"
           error={errors.phone}
         />
 
@@ -278,8 +251,8 @@ function RegisterForm() {
                 type="button"
                 onClick={() => setRole(r.value)}
                 style={{
-                  background: role === r.value ? "rgba(232,168,56,0.08)" : "#ffffff",
-                  border: `2px solid ${role === r.value ? "#e8a838" : "#e5e2db"}`,
+                  background: role === r.value ? "rgba(245,158,11,0.08)" : "#ffffff",
+                  border: `2px solid ${role === r.value ? "#f59e0b" : "#e5e2db"}`,
                   borderRadius: 10,
                   padding: "12px 8px",
                   cursor: "pointer",
@@ -291,9 +264,9 @@ function RegisterForm() {
                   style={{
                     fontSize: 14,
                     fontWeight: 600,
-                    color: role === r.value ? "#0f1a2e" : "#1a1a1a",
+                    color: role === r.value ? "#0f1623" : "#1a1a1a",
                     marginBottom: 4,
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {r.label}
@@ -303,7 +276,7 @@ function RegisterForm() {
                     fontSize: 11,
                     color: "#6b7280",
                     lineHeight: 1.4,
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {r.description}
@@ -323,7 +296,7 @@ function RegisterForm() {
                 setAgreedToTerms(e.target.checked);
                 if (errors.agreedToTerms) setErrors((err) => ({ ...err, agreedToTerms: "" }));
               }}
-              style={{ accentColor: "#e8a838", width: 15, height: 15, marginTop: 2, flexShrink: 0 }}
+              style={{ accentColor: "#f59e0b", width: 15, height: 15, marginTop: 2, flexShrink: 0 }}
             />
             <span style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.5 }}>
               I agree to the{" "}

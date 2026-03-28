@@ -58,9 +58,9 @@ export default async function SellerDashboardPage() {
       <div style={{ textAlign: "center", padding: "64px 32px" }}>
         <p
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 28,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 8,
           }}
         >
@@ -79,13 +79,13 @@ export default async function SellerDashboardPage() {
         <Link
           href="/listings/create"
           style={{
-            background: "#e8a838",
-            color: "#0f1a2e",
+            background: "#f59e0b",
+            color: "#1a0f00",
             fontWeight: 600,
             padding: "12px 28px",
             borderRadius: 10,
             textDecoration: "none",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontSize: 15,
           }}
         >
@@ -101,17 +101,17 @@ export default async function SellerDashboardPage() {
       <div style={{ marginBottom: 28 }}>
         <h1
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 32,
             fontWeight: 400,
-            color: "#0f1a2e",
+            color: "#0f1623",
             letterSpacing: "-0.02em",
             marginBottom: 6,
           }}
         >
           My Listings
         </h1>
-        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "Outfit, sans-serif" }}>
+        <p style={{ color: "#6b7280", fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
           Select a listing to manage it
         </p>
       </div>
@@ -121,7 +121,7 @@ export default async function SellerDashboardPage() {
           const statusColors: Record<string, { bg: string; color: string }> = {
             ACTIVE: { bg: "#dcfce7", color: "#15803d" },
             DRAFT: { bg: "#f3f4f6", color: "#374151" },
-            UNDER_OFFER: { bg: "#dbeafe", color: "#1d4ed8" },
+            UNDER_OFFER: { bg: "#dbeafe", color: "#d97706" },
           };
           const statusStyle = statusColors[listing.status] ?? { bg: "#f3f4f6", color: "#374151" };
 
@@ -150,7 +150,7 @@ export default async function SellerDashboardPage() {
                   borderRadius: 8,
                   background: listing.images[0]
                     ? undefined
-                    : "linear-gradient(135deg, #0f1a2e, #334766)",
+                    : "linear-gradient(135deg, #0f1623, #334766)",
                   overflow: "hidden",
                   flexShrink: 0,
                 }}
@@ -170,8 +170,8 @@ export default async function SellerDashboardPage() {
                   style={{
                     fontWeight: 600,
                     fontSize: 15,
-                    color: "#0f1a2e",
-                    fontFamily: "Outfit, sans-serif",
+                    color: "#0f1623",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     marginBottom: 3,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -180,7 +180,7 @@ export default async function SellerDashboardPage() {
                 >
                   {listing.streetAddress}
                 </p>
-                <p style={{ color: "#6b7280", fontSize: 13, fontFamily: "Outfit, sans-serif" }}>
+                <p style={{ color: "#6b7280", fontSize: 13, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
                   {listing.suburb}, {listing.state}
                 </p>
               </div>
@@ -194,7 +194,7 @@ export default async function SellerDashboardPage() {
                     padding: "3px 10px",
                     fontSize: 12,
                     fontWeight: 600,
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {listing.status.replace("_", " ")}
@@ -227,13 +227,13 @@ export default async function SellerDashboardPage() {
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            background: "rgba(232,168,56,0.08)",
-            color: "#0f1a2e",
-            border: "1px solid #e8a838",
+            background: "rgba(245,158,11,0.08)",
+            color: "#0f1623",
+            border: "1px solid #f59e0b",
             borderRadius: 10,
             padding: "10px 20px",
             textDecoration: "none",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontSize: 14,
             fontWeight: 500,
           }}

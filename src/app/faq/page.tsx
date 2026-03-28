@@ -21,7 +21,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Who is TrueBid for?",
-        a: "TrueBid is built for anyone buying or selling residential property in Australia \u2014 whether you\u2019re a first home buyer, an investor, a downsizer, or a seller who wants a fairer process. You don\u2019t need to be tech-savvy; the platform is designed to be simple and straightforward.",
+        a: "TrueBid is built for anyone buying or selling residential property in Australia \u2014 whether you\u2019re a first home buyer, an investor, a downsizer, or a seller who wants a fairer process. You don\u2019t need to be tech-savvy; the platform is simple and straightforward.",
       },
       {
         q: "Does TrueBid work for all property types?",
@@ -29,7 +29,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is TrueBid legal in Australia?",
-        a: "Yes. Open offer selling is legal across Australia. TrueBid operates within existing property law and is designed to complement, not replace, the standard contract process.",
+        a: "Yes. Open offer selling is legal across Australia. TrueBid operates within existing property law and works alongside the standard contract process — it doesn't replace it.",
       },
       {
         q: "Do I need an agent to use TrueBid?",
@@ -107,7 +107,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is there a cost to buyers?",
-        a: "No. TrueBid is completely free for buyers.",
+        a: "No. Using TrueBid as a buyer is free of charge.",
       },
     ],
   },
@@ -124,7 +124,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does it cost to list on TrueBid?",
-        a: "Listing on TrueBid is completely free. There is no commission, no listing fee, and no marketing fee. TrueBid generates revenue through optional premium services such as conveyancer referrals and property inspections — these are never required to list or sell.",
+        a: "Listing on TrueBid is Free during our current launch period. We plan to introduce a modest listing fee in the future, and existing users will be given advance notice before any charges apply. There is no commission and no marketing fee, now or in the future.",
       },
       {
         q: "Can I set a reserve price?",
@@ -232,7 +232,7 @@ export default function FaqPage() {
         <h1
           className="text-white mb-3"
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: "clamp(28px, 5vw, 42px)",
             fontWeight: 400,
             letterSpacing: "-0.02em",
@@ -244,7 +244,7 @@ export default function FaqPage() {
         <p
           style={{
             color: "rgba(255,255,255,0.55)",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontSize: 16,
             lineHeight: 1.5,
           }}
@@ -268,7 +268,7 @@ export default function FaqPage() {
                 <h2
                   className="text-navy m-0"
                   style={{
-                    fontFamily: "DM Serif Display, Georgia, serif",
+                    fontFamily: "Georgia, 'Times New Roman', serif",
                     fontSize: "clamp(18px, 3vw, 22px)",
                     fontWeight: 400,
                     letterSpacing: "-0.01em",
@@ -311,7 +311,7 @@ export default function FaqPage() {
                           className="font-semibold text-navy"
                           style={{
                             fontSize: 14,
-                            fontFamily: "Outfit, sans-serif",
+                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                           }}
                         >
                           {item.q}
@@ -338,7 +338,7 @@ export default function FaqPage() {
                           className="text-text-muted leading-relaxed"
                           style={{
                             fontSize: 14,
-                            fontFamily: "Outfit, sans-serif",
+                            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                           }}
                         >
                           {item.a}
@@ -356,7 +356,7 @@ export default function FaqPage() {
         <div className="mt-12 text-center border-t border-border pt-10">
           <p
             className="text-text-muted mb-6"
-            style={{ fontSize: 14, fontFamily: "Outfit, sans-serif" }}
+            style={{ fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
           >
             Still have questions?
           </p>

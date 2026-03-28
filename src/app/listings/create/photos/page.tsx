@@ -218,7 +218,7 @@ function PhotosForm() {
         >
           <div className="text-4xl">📸</div>
           <p className="text-sm font-medium text-text">Drag photos here, or click to browse</p>
-          <p className="text-xs text-text-muted">JPG, PNG or WebP — max 10MB per photo — up to 15 photos</p>
+          <p className="text-xs text-text-muted">JPG, PNG or WebP · max 10 MB per photo · up to 15 photos</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -342,7 +342,7 @@ function PhotosForm() {
             <h3 className="text-sm font-semibold text-navy">Floor Plan <span className="text-text-muted font-normal">(optional)</span></h3>
           </div>
           <p className="text-xs text-text-muted mb-4 ml-6">
-            Upload a single floor plan — JPG, PNG, or PDF, max 20 MB.
+            Upload a single floor plan: JPG, PNG, or PDF, max 20 MB.
           </p>
 
           {/* Uploaded floor plan preview */}

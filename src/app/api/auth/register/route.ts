@@ -75,6 +75,35 @@ export async function POST(request: Request) {
       },
     });
 
+    // Resolve any pending open-house attendance records for this email
+    const pendingAttendances = await prisma.pendingInspectionAttendance.findMany({
+      where: { email: data.email },
+      select: { id: true, slotId: true },
+    });
+
+    if (pendingAttendances.length > 0) {
+      await Promise.allSettled(
+        pendingAttendances.map(async (pending) => {
+          await prisma.inspectionBooking.upsert({
+            where: { slotId_buyerId: { slotId: pending.slotId, buyerId: user.id } },
+            create: {
+              slotId: pending.slotId,
+              buyerId: user.id,
+              status: "ATTENDED",
+              attendedAt: new Date(),
+            },
+            update: {
+              status: "ATTENDED",
+              attendedAt: new Date(),
+              cancelledAt: null,
+              cancelledBy: null,
+            },
+          });
+          await prisma.pendingInspectionAttendance.delete({ where: { id: pending.id } });
+        })
+      );
+    }
+
     return Response.json({ user }, { status: 201 });
   } catch (error) {
     if (error instanceof ZodError) {

@@ -3,14 +3,21 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireAuth, requireOwner, errorResponse, ApiError } from "@/lib/api-helpers";
 import { updateListingSchema } from "@/lib/validation";
+import { serializeListingAddress } from "@/lib/listing-serializer";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 // GET /api/listings/[id]
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
+
+    // Viewer identity (optional — endpoint is public)
+    const session = await getServerSession(authOptions);
+    const viewerId = (session?.user as { id?: string } | undefined)?.id;
 
     const listing = await prisma.listing.findUnique({
       where: { id },
@@ -41,8 +48,11 @@ export async function GET(
         minOfferCents: true,
         requireDeposit: true,
         depositAmountCents: true,
+        requireInspection: true,
+        addressVisibility: true,
         createdAt: true,
         publishedAt: true,
+        _count: { select: { inspectionSlots: { where: { status: { not: "CANCELLED" } } } } },
         images: {
           orderBy: { displayOrder: "asc" },
           select: {
@@ -84,6 +94,64 @@ export async function GET(
       throw new ApiError(404, "NOT_FOUND", "Listing not found");
     }
 
+    const isSeller = !!viewerId && viewerId === listing.seller.id;
+
+    // Viewer inspection status (when requireInspection is on)
+    let viewer = null;
+    if (viewerId && !isSeller && listing.requireInspection) {
+      const [attendedBooking, upcomingBooking] = await Promise.all([
+        prisma.inspectionBooking.findFirst({
+          where: { buyerId: viewerId, status: "ATTENDED", slot: { listingId: id } },
+          select: { id: true },
+        }),
+        prisma.inspectionBooking.findFirst({
+          where: {
+            buyerId: viewerId,
+            status: "CONFIRMED",
+            slot: { listingId: id, startTime: { gt: new Date() } },
+          },
+          orderBy: { slot: { startTime: "asc" } },
+          select: { id: true, slot: { select: { id: true, startTime: true, endTime: true } } },
+        }),
+      ]);
+
+      viewer = {
+        hasInspected: !!attendedBooking,
+        hasUpcomingBooking: !!upcomingBooking,
+        upcomingBookingSlot: upcomingBooking
+          ? {
+              id: upcomingBooking.slot.id,
+              startTime: upcomingBooking.slot.startTime.toISOString(),
+              endTime: upcomingBooking.slot.endTime.toISOString(),
+            }
+          : null,
+      };
+    }
+
+    // Determine if viewer has a booking for address visibility purposes
+    const hasBooking = viewer?.hasInspected || viewer?.hasUpcomingBooking || false;
+
+    // Serialize address based on visibility rules
+    const serializedAddress = serializeListingAddress(
+      {
+        id: listing.id,
+        streetAddress: listing.streetAddress,
+        suburb: listing.suburb,
+        state: listing.state,
+        postcode: listing.postcode,
+        latitude: listing.latitude,
+        longitude: listing.longitude,
+        addressVisibility: listing.addressVisibility,
+        hasInspectionSlots: listing._count.inspectionSlots > 0,
+      },
+      {
+        userId: viewerId,
+        isSeller,
+        isVerified: !!(session?.user as { verificationStatus?: string } | undefined)?.verificationStatus === true,
+        hasBooking,
+      }
+    );
+
     // Shape offers into the PublicOffer format; hide for non-OPEN_OFFERS listings
     const offers =
       listing.saleMethod === "OPEN_OFFERS"
@@ -100,16 +168,19 @@ export async function GET(
           }))
         : [];
 
-    const { offers: _raw, ...listingWithoutRaw } = listing;
-    void _raw;
+    const { offers: _rawOffers, _count: _rawCount, ...listingRest } = listing;
+    void _rawOffers;
+    void _rawCount;
 
     return Response.json({
       listing: {
-        ...listingWithoutRaw,
+        ...listingRest,
+        ...serializedAddress,
         closingDate: listing.closingDate?.toISOString() ?? null,
         originalClosingDate: listing.originalClosingDate?.toISOString() ?? null,
         offers,
       },
+      ...(viewer !== null ? { viewer } : {}),
     });
   } catch (error) {
     return errorResponse(error);
@@ -165,6 +236,8 @@ export async function PATCH(
         ...(data.requireDeposit !== undefined ? { requireDeposit: data.requireDeposit } : {}),
         ...(data.depositAmountCents !== undefined ? { depositAmountCents: data.depositAmountCents } : {}),
         ...(data.features !== undefined ? { features: data.features ?? Prisma.JsonNull } : {}),
+        ...(data.requireInspection !== undefined ? { requireInspection: data.requireInspection } : {}),
+        ...(data.addressVisibility !== undefined ? { addressVisibility: data.addressVisibility } : {}),
       },
       select: {
         id: true,

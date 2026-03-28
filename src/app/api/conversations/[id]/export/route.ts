@@ -145,7 +145,7 @@ export async function GET(
     .logo-mark {
       width: 28px;
       height: 28px;
-      background: #e8a838;
+      background: #f59e0b;
       border-radius: 6px;
       display: flex;
       align-items: center;

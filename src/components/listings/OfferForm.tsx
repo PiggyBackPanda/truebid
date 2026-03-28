@@ -15,11 +15,36 @@ const CONDITION_OPTIONS = [
 
 const SETTLEMENT_OPTIONS = [14, 21, 30, 45, 60, 90, 120] as const;
 
+interface UpcomingSlot {
+  id: string;
+  startTime: string;
+  endTime: string;
+  spotsRemaining: number;
+}
+
+interface ViewerInspectionStatus {
+  hasInspected: boolean;
+  hasUpcomingBooking: boolean;
+  upcomingBookingSlot: { id: string; startTime: string; endTime: string } | null;
+}
+
 interface OfferFormProps {
   listingId: string;
   listingAddress: string;
   guidePriceCents?: number | null;
   minOfferCents?: number | null;
+  requireInspection?: boolean;
+  viewerInspectionStatus?: ViewerInspectionStatus | null;
+  upcomingSlots?: UpcomingSlot[];
+}
+
+function formatSlotTimeShort(startIso: string, endIso: string): string {
+  const start = new Date(startIso);
+  const end   = new Date(endIso);
+  const date  = start.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", timeZone: "Australia/Perth" });
+  const startT = start.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Australia/Perth" });
+  const endT   = end.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Australia/Perth" });
+  return `${date} · ${startT} – ${endT}`;
 }
 
 export function OfferForm({
@@ -27,6 +52,9 @@ export function OfferForm({
   listingAddress,
   guidePriceCents,
   minOfferCents,
+  requireInspection = false,
+  viewerInspectionStatus = null,
+  upcomingSlots = [],
 }: OfferFormProps) {
   const router = useRouter();
 
@@ -116,6 +144,66 @@ export function OfferForm({
           Your offer of <strong>{formatCurrency(amountCents)}</strong> has been submitted.
           Redirecting you back to the listing…
         </p>
+      </div>
+    );
+  }
+
+  // Inspection gate — show locked state if seller requires inspection and buyer hasn't attended
+  if (requireInspection && viewerInspectionStatus && !viewerInspectionStatus.hasInspected) {
+    const { hasUpcomingBooking, upcomingBookingSlot } = viewerInspectionStatus;
+
+    return (
+      <div className="border border-amber/30 rounded-lg overflow-hidden">
+        <div className="bg-amber/8 px-4 py-3 border-b border-amber/20 flex items-center gap-2">
+          <span className="text-amber text-base" aria-hidden="true">🔒</span>
+          <span className="text-sm font-semibold text-navy">Inspection Required</span>
+        </div>
+        <div className="p-4 space-y-3">
+          <p className="text-sm text-text-muted">
+            The seller requires you to attend an inspection before placing an offer.
+          </p>
+
+          {hasUpcomingBooking && upcomingBookingSlot ? (
+            <div className="bg-green-bg border border-green/20 rounded-lg px-3 py-2.5">
+              <p className="text-xs text-green font-medium mb-0.5">Inspection booked</p>
+              <p className="text-sm text-navy">
+                {formatSlotTimeShort(upcomingBookingSlot.startTime, upcomingBookingSlot.endTime)}
+              </p>
+              <p className="text-xs text-text-muted mt-1">
+                Your offer form will unlock once you have attended.
+              </p>
+            </div>
+          ) : upcomingSlots.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-text-muted uppercase tracking-wide">
+                Next available inspections
+              </p>
+              {upcomingSlots.map((slot) => (
+                <div key={slot.id} className="flex items-center justify-between text-sm py-1">
+                  <span className="text-navy">
+                    {formatSlotTimeShort(slot.startTime, slot.endTime)}
+                  </span>
+                  <span className="text-text-muted text-xs">
+                    {slot.spotsRemaining} spot{slot.spotsRemaining !== 1 ? "s" : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-text-muted">
+              No upcoming inspections are scheduled. Save this listing to be notified when new inspections are added.
+            </p>
+          )}
+
+          {!hasUpcomingBooking && (
+            <a
+              href={`/listings/${listingId}#inspections`}
+              className="block w-full text-center bg-navy text-white font-semibold text-sm py-3 rounded-[10px] hover:bg-navy/90 transition-colors mt-2"
+            >
+              Book an Inspection
+            </a>
+          )}
+        </div>
       </div>
     );
   }
@@ -269,7 +357,7 @@ export function OfferForm({
         disabled={submitting}
         className="w-full bg-amber text-navy font-semibold text-sm py-3.5 rounded-[10px] hover:bg-amber-light transition-colors focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {submitting ? "Submitting…" : `Submit Offer${amountCents > 0 ? ` — ${formatCurrency(amountCents)}` : ""}`}
+        {submitting ? "Submitting…" : `Submit Offer${amountCents > 0 ? `: ${formatCurrency(amountCents)}` : ""}`}
       </button>
 
       <p className="text-[11px] text-text-muted text-center">

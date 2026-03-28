@@ -80,7 +80,7 @@ export default async function VerifyPage({
           style={{
             fontSize: 13,
             color: "#6b7280",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             textDecoration: "none",
           }}
         >
@@ -90,9 +90,9 @@ export default async function VerifyPage({
 
       <h1
         style={{
-          fontFamily: "DM Serif Display, Georgia, serif",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: 26,
-          color: "#0f1a2e",
+          color: "#0f1623",
           marginBottom: 6,
         }}
       >
@@ -102,7 +102,7 @@ export default async function VerifyPage({
         style={{
           fontSize: 14,
           color: "#6b7280",
-          fontFamily: "Outfit, sans-serif",
+          fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           marginBottom: 32,
           lineHeight: 1.6,
         }}
@@ -121,7 +121,7 @@ export default async function VerifyPage({
             padding: "12px 16px",
             marginBottom: 24,
             fontSize: 14,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             color: "#92400e",
           }}
         >
@@ -137,7 +137,7 @@ export default async function VerifyPage({
             padding: "12px 16px",
             marginBottom: 24,
             fontSize: 14,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             color: "#92400e",
           }}
         >
@@ -167,7 +167,7 @@ export default async function VerifyPage({
             padding: "6px 14px",
             fontSize: 13,
             fontWeight: 600,
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             marginBottom: 20,
           }}
         >
@@ -182,13 +182,13 @@ export default async function VerifyPage({
               style={{
                 fontSize: 14,
                 color: "#374151",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 lineHeight: 1.65,
                 marginBottom: 20,
               }}
             >
               {status === "FAILED"
-                ? "Your previous verification attempt was unsuccessful. Please try again — you may need to use a different document or improve lighting conditions."
+                ? "Your previous verification attempt was unsuccessful. Please try again. You may need to use a different document or improve lighting conditions."
                 : "To place offers or list your property, you need to verify your identity. The process takes about 2 minutes and requires a government-issued photo ID."}
             </p>
             <VerifyClient status={status} />
@@ -201,7 +201,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 14,
                 color: "#374151",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 lineHeight: 1.65,
                 marginBottom: 12,
               }}
@@ -213,7 +213,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 13,
                 color: "#6b7280",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               }}
             >
               Refresh this page to check for updates. You will also receive an
@@ -230,7 +230,7 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 12,
                     color: "#6b7280",
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     marginBottom: 2,
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
@@ -242,8 +242,8 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 16,
                     fontWeight: 600,
-                    color: "#0f1a2e",
-                    fontFamily: "Outfit, sans-serif",
+                    color: "#0f1623",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {verifiedName}
@@ -256,7 +256,7 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 12,
                     color: "#6b7280",
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     marginBottom: 2,
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
@@ -268,7 +268,7 @@ export default async function VerifyPage({
                   style={{
                     fontSize: 14,
                     color: "#374151",
-                    fontFamily: "Outfit, sans-serif",
+                    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                   }}
                 >
                   {formatDate(user.verifiedAt)}
@@ -280,7 +280,7 @@ export default async function VerifyPage({
                 marginTop: 20,
                 fontSize: 13,
                 color: "#6b7280",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 lineHeight: 1.6,
               }}
             >
@@ -296,7 +296,7 @@ export default async function VerifyPage({
               style={{
                 fontSize: 14,
                 color: "#374151",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 lineHeight: 1.65,
                 marginBottom: 12,
               }}
@@ -308,12 +308,12 @@ export default async function VerifyPage({
               style={{
                 fontSize: 13,
                 color: "#6b7280",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               }}
             >
               You will be notified by email once the review is complete. If you
               have questions, contact{" "}
-              <a href="mailto:support@truebid.com.au" style={{ color: "#0f1a2e" }}>
+              <a href="mailto:support@truebid.com.au" style={{ color: "#0f1623" }}>
                 support@truebid.com.au
               </a>
               .
@@ -335,7 +335,7 @@ export default async function VerifyPage({
           style={{
             fontSize: 12,
             color: "#6b7280",
-            fontFamily: "Outfit, sans-serif",
+            fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             lineHeight: 1.7,
           }}
         >
@@ -344,14 +344,14 @@ export default async function VerifyPage({
             href="https://stripe.com/identity"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: "#0f1a2e" }}
+            style={{ color: "#0f1623" }}
           >
             Stripe Identity
           </a>{" "}
           for verification. We do <strong>not</strong> store copies of your
           identity documents. Only your verification status and verified name
           are retained, encrypted at rest.{" "}
-          <Link href="/privacy" style={{ color: "#0f1a2e" }}>
+          <Link href="/privacy" style={{ color: "#0f1623" }}>
             Privacy Policy
           </Link>
         </p>

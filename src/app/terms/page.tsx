@@ -27,8 +27,8 @@ const TOC_ITEMS = [
 ];
 
 /* ── shared text styles ─────────────────────── */
-const serif = "DM Serif Display, Georgia, serif";
-const body = "Outfit, sans-serif";
+const serif = "Georgia, 'Times New Roman', serif";
+const body = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 const headingStyle: React.CSSProperties = {
   fontFamily: serif,
@@ -159,8 +159,8 @@ export default function TermsPage() {
           <div
             className="rounded-lg p-5 mb-10"
             style={{
-              background: "rgba(232,168,56,0.07)",
-              border: "1px solid rgba(232,168,56,0.25)",
+              background: "rgba(245,158,11,0.07)",
+              border: "1px solid rgba(245,158,11,0.25)",
             }}
           >
             <p
@@ -290,7 +290,7 @@ export default function TermsPage() {
               <SectionHeading id="fees" number="7" title="Fees" />
               <div className="space-y-3">
                 <P>7.1 Browsing listings and creating a buyer account on TrueBid is free of charge.</P>
-                <P>7.2 Listing on TrueBid is completely free. There is no commission, no listing fee, and no marketing fee. TrueBid generates revenue through optional premium services such as conveyancer referrals and property inspections — these are never required to list or sell.</P>
+                <P>7.2 During the current launch period, listing a property on TrueBid is provided at no cost to the seller. TrueBid reserves the right to introduce listing fees in the future. Registered users will be notified of any fee changes no less than 30 days before they take effect.</P>
                 <P>7.3 TrueBid reserves the right to introduce, change, or remove fees at any time. Where fees change for existing users, we will provide at least 30 days&rsquo; written notice before the change takes effect.</P>
                 <P>7.4 All fees are quoted in Australian dollars and are inclusive of GST unless otherwise stated.</P>
                 <P>7.5 Fees paid are non-refundable except where required by Australian Consumer Law.</P>

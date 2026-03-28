@@ -1,10 +1,17 @@
 import { NextRequest } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAuth, requireVerified, requireOwner, errorResponse, ApiError } from "@/lib/api-helpers";
 
+const bodySchema = z.object({
+  // "coming_soon" = publish as COMING_SOON (default)
+  // "active"      = go straight to ACTIVE (requires closingDate for Open Offers)
+  mode: z.enum(["coming_soon", "active"]).default("coming_soon"),
+});
+
 // POST /api/listings/[id]/publish
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -12,6 +19,16 @@ export async function POST(
     requireVerified(user);
 
     const { id } = await params;
+
+    // Body is optional — defaults to coming_soon
+    let mode: "coming_soon" | "active" = "coming_soon";
+    try {
+      const body = await req.json();
+      const parsed = bodySchema.safeParse(body);
+      if (parsed.success) mode = parsed.data.mode;
+    } catch {
+      // empty body — use default mode
+    }
 
     const listing = await prisma.listing.findUnique({
       where: { id },
@@ -40,9 +57,10 @@ export async function POST(
       throw new ApiError(400, "NO_IMAGES", "At least one image is required before publishing");
     }
 
-    if (listing.saleMethod === "OPEN_OFFERS") {
+    // Going straight to ACTIVE requires a valid closing date for Open Offers
+    if (mode === "active" && listing.saleMethod === "OPEN_OFFERS") {
       if (!listing.closingDate) {
-        throw new ApiError(400, "MISSING_CLOSING_DATE", "Open Offers listings require a closing date");
+        throw new ApiError(400, "MISSING_CLOSING_DATE", "Open Offers listings require a closing date to go live");
       }
       const minDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
       if (new Date(listing.closingDate) < minDate) {
@@ -50,10 +68,12 @@ export async function POST(
       }
     }
 
+    const newStatus = mode === "active" ? "ACTIVE" : "COMING_SOON";
+
     const published = await prisma.listing.update({
       where: { id },
       data: {
-        status: "ACTIVE",
+        status: newStatus,
         publishedAt: new Date(),
       },
       select: {

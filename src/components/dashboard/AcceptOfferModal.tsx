@@ -57,7 +57,7 @@ export function AcceptOfferModal({
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(15,26,46,0.5)",
+        background: "rgba(15,22,35,0.5)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -79,9 +79,9 @@ export function AcceptOfferModal({
       >
         <h2
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 22,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 8,
           }}
         >
@@ -90,11 +90,11 @@ export function AcceptOfferModal({
 
         <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 20, lineHeight: 1.6 }}>
           You are about to accept{" "}
-          <strong style={{ color: "#0f1a2e" }}>
+          <strong style={{ color: "#0f1623" }}>
             {offer.buyer.firstName} {offer.buyer.lastName}&apos;s
           </strong>{" "}
           offer of{" "}
-          <strong style={{ color: "#0f1a2e" }}>{formatCurrency(offer.amountCents)}</strong>{" "}
+          <strong style={{ color: "#0f1623" }}>{formatCurrency(offer.amountCents)}</strong>{" "}
           ({conditionLabel}, {offer.settlementDays}-day settlement). All other
           offers will be rejected and buyers will be notified.
         </p>
@@ -143,7 +143,7 @@ export function AcceptOfferModal({
               borderRadius: 8,
               padding: "10px 20px",
               cursor: "pointer",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 14,
               color: "#334766",
             }}
@@ -160,7 +160,7 @@ export function AcceptOfferModal({
               borderRadius: 8,
               padding: "10px 24px",
               cursor: loading ? "not-allowed" : "pointer",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 14,
               fontWeight: 600,
             }}

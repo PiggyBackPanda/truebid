@@ -80,15 +80,15 @@ export default async function FavouritesPage() {
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 24px 80px" }}>
       <h1
         style={{
-          fontFamily: "DM Serif Display, Georgia, serif",
+          fontFamily: "Georgia, 'Times New Roman', serif",
           fontSize: 28,
-          color: "#0f1a2e",
+          color: "#0f1623",
           marginBottom: 8,
         }}
       >
         My Favourites
       </h1>
-      <p style={{ fontSize: 14, color: "#6b7280", marginBottom: 32, fontFamily: "Outfit, sans-serif" }}>
+      <p style={{ fontSize: 14, color: "#6b7280", marginBottom: 32, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
         {listings.length} saved {listings.length === 1 ? "listing" : "listings"}
       </p>
 
@@ -117,8 +117,8 @@ export default async function FavouritesPage() {
           <p
             style={{
               fontSize: 18,
-              fontFamily: "DM Serif Display, Georgia, serif",
-              color: "#0f1a2e",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              color: "#0f1623",
               marginBottom: 8,
             }}
           >
@@ -128,7 +128,7 @@ export default async function FavouritesPage() {
             style={{
               fontSize: 14,
               color: "#6b7280",
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               marginBottom: 24,
             }}
           >
@@ -137,9 +137,9 @@ export default async function FavouritesPage() {
           <Link
             href="/listings"
             style={{
-              background: "#e8a838",
-              color: "#0f1a2e",
-              fontFamily: "Outfit, sans-serif",
+              background: "#f59e0b",
+              color: "#1a0f00",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 14,
               fontWeight: 600,
               textDecoration: "none",

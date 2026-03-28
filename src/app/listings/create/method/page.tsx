@@ -71,6 +71,10 @@ function MethodForm() {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Offer gating & privacy settings
+  const [requireInspection, setRequireInspection] = useState(false);
+  const [addressVisibility, setAddressVisibility] = useState<"PUBLIC" | "LOGGED_IN" | "BOOKED_ONLY">("LOGGED_IN");
+
   // Open Offers fields
   const [closingDate, setClosingDate] = useState(formatDateForInput(28));
   const [guidePriceFrom, setGuidePriceFrom] = useState("");
@@ -114,7 +118,7 @@ function MethodForm() {
 
     setSubmitting(true);
 
-    const body: Record<string, unknown> = { saleMethod: method };
+    const body: Record<string, unknown> = { saleMethod: method, requireInspection, addressVisibility };
 
     if (method === "OPEN_OFFERS") {
       body.closingDate = new Date(closingDate).toISOString();
@@ -176,7 +180,7 @@ function MethodForm() {
           <MethodCard
             title="Open Offers"
             badge="Recommended"
-            description="Transparent public bidding with a closing date. All buyers see every offer — price, conditions, and timing. Creates competitive tension and typically achieves the best price."
+            description="Transparent public bidding with a closing date. All buyers see every offer: price, conditions, and timing. Creates competitive tension and typically achieves the best price."
             selected={method === "OPEN_OFFERS"}
             onClick={() => setMethod("OPEN_OFFERS")}
           />
@@ -319,6 +323,62 @@ function MethodForm() {
             />
           </div>
         )}
+
+        {/* Offer Settings */}
+        <div className="bg-white border border-border rounded-[12px] p-6 mt-6 flex flex-col gap-4">
+          <h3 className="text-sm font-semibold text-navy">Offer Settings</h3>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={requireInspection}
+              onChange={(e) => setRequireInspection(e.target.checked)}
+              className="w-4 h-4 mt-0.5 accent-amber"
+            />
+            <div>
+              <span className="text-sm font-medium text-text block">
+                Require buyers to attend an inspection before placing an offer
+              </span>
+              <p className="text-xs text-text-muted mt-1">
+                Ensures all offers come from buyers who have seen the property in person.
+              </p>
+            </div>
+          </label>
+        </div>
+
+        {/* Address Privacy */}
+        <div className="bg-white border border-border rounded-[12px] p-6 mt-4 flex flex-col gap-4">
+          <h3 className="text-sm font-semibold text-navy">Address Privacy</h3>
+          <p className="text-xs text-text-muted -mt-2">Who can see your full street address?</p>
+
+          {(
+            [
+              { value: "PUBLIC" as const,    label: "Anyone (public)",          desc: "Visible to all internet visitors, including search engines.", badge: undefined },
+              { value: "LOGGED_IN" as const, label: "Logged-in users only",     desc: "Hidden from anonymous browsing and search engines. Recommended.", badge: "Recommended" as const },
+              { value: "BOOKED_ONLY" as const, label: "Inspection bookings only", desc: "Only revealed after a buyer books or attends an inspection. Best for maximum privacy.", badge: undefined },
+            ]
+          ).map(({ value, label, desc, badge }) => (
+            <label key={value} className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="radio"
+                name="addressVisibility"
+                value={value}
+                checked={addressVisibility === value}
+                onChange={() => setAddressVisibility(value)}
+                className="w-4 h-4 mt-0.5 accent-amber"
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-text">{label}</span>
+                  {badge && (
+                    <span className="text-[10px] font-semibold bg-amber text-navy px-1.5 py-0.5 rounded-full">{badge}</span>
+                  )}
+                </div>
+                <p className="text-xs text-text-muted mt-0.5">{desc}</p>
+              </div>
+            </label>
+          ))}
+        </div>
 
         <div className="flex items-center justify-between mt-8">
           <button

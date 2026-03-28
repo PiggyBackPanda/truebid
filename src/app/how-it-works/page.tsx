@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const OPEN_OFFERS_QA = [
   {
     q: "How does it work?",
-    a: 'When a seller lists with Open Offers, they set a closing date (typically 2–4 weeks away). During that time, any verified buyer can place an offer. Every offer appears on a live, public board showing the amount and when it was placed. Buyer identities, personal details, and offer conditions are kept private — buyers are identified only by anonymous aliases such as "Buyer_7a3k". Amounts and timing are fully transparent.',
+    a: 'When a seller lists with Open Offers, they set a closing date (typically 2–4 weeks away). During that time, any verified buyer can place an offer. Every offer appears on a live, public board showing the amount and when it was placed. Buyer identities, personal details, and offer conditions are kept private. Buyers are identified only by anonymous aliases such as "Buyer_7a3k". Amounts and timing are fully transparent.',
   },
   {
     q: "What makes it different from a traditional auction?",
@@ -21,15 +21,15 @@ const OPEN_OFFERS_QA = [
   },
   {
     q: "What about sniping?",
-    a: "Our anti-snipe protection means no one can swoop in at the last second. If a new offer is placed within 15 minutes of the closing time, the clock automatically extends by 15 minutes — just like a live auction where bidding continues as long as there is activity. The auction ends when the bidding stops, not when the clock stops.",
+    a: "Our anti-snipe protection means no one can swoop in at the last second. If a new offer is placed within 15 minutes of the closing time, the clock automatically extends by 15 minutes, just like a live auction where bidding continues as long as there is activity. The auction ends when the bidding stops, not when the clock stops.",
   },
   {
     q: "Does the seller have to accept the highest offer?",
-    a: "No. The seller can accept any offer — including a lower one with better conditions. An unconditional offer with a 30-day settlement might be more valuable than a higher offer subject to finance with a 90-day settlement. This is exactly how real property transactions work — TrueBid just makes it visible.",
+    a: "No. The seller can accept any offer, including a lower one with better conditions. An unconditional offer with a 30-day settlement might be more valuable than a higher offer subject to finance with a 90-day settlement. This is exactly how real property transactions work. TrueBid just makes it visible.",
   },
   {
     q: "Is it free?",
-    a: "Yes. Listing on TrueBid and using Open Offers is completely free. No commission, no listing fee, no hidden charges. We make money through optional premium services and referral partnerships with conveyancers and inspectors — services you'd use regardless of how you sell.",
+    a: "Listing on TrueBid is Free during our launch period. No commission, no listing fee, no hidden charges, and we'll always give you plenty of notice before anything changes. We make money through optional premium services and referral partnerships with conveyancers and inspectors (services you'd use regardless of how you sell).",
   },
 ];
 
@@ -44,7 +44,7 @@ export default function HowItWorksPage() {
           <h1
             className="text-white mb-5"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(32px, 5vw, 52px)",
               lineHeight: 1.15,
               letterSpacing: "-0.02em",
@@ -57,12 +57,12 @@ export default function HowItWorksPage() {
           <p
             className="text-white/65 max-w-2xl mx-auto"
             style={{
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: 17,
               lineHeight: 1.6,
             }}
           >
-            TrueBid gives you the tools to sell your home yourself — for free.
+            TrueBid gives you the tools to sell your home yourself. Free during our launch period.
             No agent commissions. No hidden fees. Just transparent, fair property
             transactions between real people.
           </p>
@@ -80,7 +80,7 @@ export default function HowItWorksPage() {
           <h2
             className="text-navy text-center mb-3"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: 28,
               fontWeight: 400,
               letterSpacing: "-0.02em",
@@ -89,7 +89,7 @@ export default function HowItWorksPage() {
             What is Open Offers?
           </h2>
           <p className="text-text-muted text-center text-sm mb-10">
-            Think of it as an auction — but fairer, less stressful, and open for
+            Think of it as an auction, but fairer, less stressful, and open for
             weeks instead of minutes.
           </p>
 
@@ -101,13 +101,13 @@ export default function HowItWorksPage() {
               >
                 <h3
                   className="font-semibold text-navy mb-2"
-                  style={{ fontSize: 15, fontFamily: "Outfit, sans-serif" }}
+                  style={{ fontSize: 15, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
                 >
                   {item.q}
                 </h3>
                 <p
                   className="text-text-muted leading-relaxed"
-                  style={{ fontSize: 14, fontFamily: "Outfit, sans-serif" }}
+                  style={{ fontSize: 14, fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
                 >
                   {item.a}
                 </p>
@@ -123,7 +123,7 @@ export default function HowItWorksPage() {
           <h2
             className="text-white mb-4"
             style={{
-              fontFamily: "DM Serif Display, Georgia, serif",
+              fontFamily: "Georgia, 'Times New Roman', serif",
               fontSize: "clamp(24px, 4vw, 36px)",
               fontWeight: 400,
               letterSpacing: "-0.02em",
@@ -136,7 +136,7 @@ export default function HowItWorksPage() {
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
             >
-              List your home — free →
+              List your home free during launch →
             </Link>
             <Link
               href="/listings"
@@ -151,11 +151,11 @@ export default function HowItWorksPage() {
             style={{
               color: "rgba(255,255,255,0.3)",
               fontSize: 12,
-              fontFamily: "Outfit, sans-serif",
+              fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             }}
           >
             Identity verified buyers and sellers · Real-time transparent offers ·
-            No commissions, ever · Australian owned and operated
+            No commissions on transactions · Australian owned and operated
           </p>
         </div>
       </section>

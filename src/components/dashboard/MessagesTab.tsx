@@ -59,7 +59,7 @@ function Avatar({ name }: { name: string }) {
         width: 40,
         height: 40,
         borderRadius: "50%",
-        background: "#0f1a2e",
+        background: "#0f1623",
         color: "#ffffff",
         display: "flex",
         alignItems: "center",
@@ -67,7 +67,7 @@ function Avatar({ name }: { name: string }) {
         fontSize: 14,
         fontWeight: 600,
         flexShrink: 0,
-        fontFamily: "Outfit, sans-serif",
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       }}
     >
       {initials}
@@ -191,9 +191,9 @@ export function MessagesTab({
       >
         <p
           style={{
-            fontFamily: "DM Serif Display, Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: 20,
-            color: "#0f1a2e",
+            color: "#0f1623",
             marginBottom: 8,
           }}
         >
@@ -259,8 +259,8 @@ export function MessagesTab({
                     style={{
                       fontWeight: 600,
                       fontSize: 14,
-                      color: "#0f1a2e",
-                      fontFamily: "Outfit, sans-serif",
+                      color: "#0f1623",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     }}
                   >
                     {name}
@@ -278,7 +278,7 @@ export function MessagesTab({
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                       maxWidth: 160,
-                      fontFamily: "Outfit, sans-serif",
+                      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                     }}
                   >
                     {convo.lastMessage.isFromMe ? "You: " : ""}
@@ -290,7 +290,7 @@ export function MessagesTab({
                         width: 8,
                         height: 8,
                         borderRadius: "50%",
-                        background: "#2563eb",
+                        background: "#f59e0b",
                         flexShrink: 0,
                       }}
                     />
@@ -330,8 +330,8 @@ export function MessagesTab({
                 style={{
                   fontWeight: 600,
                   fontSize: 15,
-                  color: "#0f1a2e",
-                  fontFamily: "Outfit, sans-serif",
+                  color: "#0f1623",
+                  fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 }}
               >
                 {selectedConvo.counterparty.firstName} {selectedConvo.counterparty.lastName}
@@ -388,8 +388,8 @@ export function MessagesTab({
                   <div
                     style={{
                       maxWidth: "70%",
-                      background: msg.isFromMe ? "#0f1a2e" : "#f3f4f6",
-                      color: msg.isFromMe ? "#ffffff" : "#0f1a2e",
+                      background: msg.isFromMe ? "#0f1623" : "#f3f4f6",
+                      color: msg.isFromMe ? "#ffffff" : "#0f1623",
                       borderRadius: msg.isFromMe
                         ? "12px 12px 2px 12px"
                         : "12px 12px 12px 2px",
@@ -442,7 +442,7 @@ export function MessagesTab({
                 borderRadius: 8,
                 padding: "10px 14px",
                 fontSize: 14,
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 outline: "none",
               }}
             />
@@ -450,13 +450,13 @@ export function MessagesTab({
               onClick={sendMessage}
               disabled={sending || !draftContent.trim()}
               style={{
-                background: draftContent.trim() ? "#0f1a2e" : "#e5e2db",
+                background: draftContent.trim() ? "#0f1623" : "#e5e2db",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: 8,
                 padding: "10px 18px",
                 cursor: draftContent.trim() ? "pointer" : "not-allowed",
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 fontSize: 14,
                 fontWeight: 500,
               }}
