@@ -116,7 +116,7 @@ The sender does NOT see read receipts (no "seen" indicator). This is a deliberat
 
 ## Overview
 
-Identity verification prevents fake accounts, shill bidding, and phantom offers. It's required before a user can publish a listing or place an offer. Uses GreenID (or equivalent Australian KYC provider) for document verification against government databases.
+Identity verification prevents fake accounts, shill bidding, and phantom offers. It's required before a user can publish a listing or place an offer. Uses Stripe Identity for document verification.
 
 ---
 
@@ -151,11 +151,11 @@ by TrueBid. We only record that you've been verified.
 ```
 
 **Step 2 — Document capture**
-Handled by GreenID's hosted widget (embedded iframe or redirect to GreenID's hosted page). The user:
+Handled by Stripe Identity's hosted verification flow. The user:
 1. Selects document type (driver's licence or passport).
 2. Captures or uploads a photo of the document.
 3. Takes a selfie for liveness check.
-4. GreenID verifies the document against the DVS (Document Verification Service).
+4. Stripe Identity verifies the document.
 
 **Step 3 — Result**
 - If VERIFIED: show green checkmark, "You're verified! Redirecting you back to [where they came from]..." Auto-redirect after 3 seconds.
@@ -168,19 +168,19 @@ Handled by GreenID's hosted widget (embedded iframe or redirect to GreenID's hos
 `POST /api/verification/start`
 1. User must be authenticated.
 2. User's verificationStatus must be UNVERIFIED or FAILED (don't re-verify already-verified users).
-3. Call GreenID API to create a verification session. Receive a session URL or widget token.
+3. Call Stripe Identity API to create a VerificationSession. Receive a client_secret.
 4. Set user's verificationStatus to PENDING.
 5. Return the verification URL/token to the client.
 
 ### Receiving Results
 
-`POST /api/verification/callback` (webhook from GreenID)
-1. Validate the webhook signature (GreenID provides a signing secret).
+`POST /api/verification/webhook` (webhook from Stripe Identity)
+1. Validate the webhook signature (Stripe provides a signing secret via STRIPE_WEBHOOK_SECRET).
 2. Find the user by session reference.
 3. If status is "verified":
    - Set verificationStatus to VERIFIED.
    - Set verificationDate to now.
-   - Set verificationRef to GreenID's reference ID (for audit, not the document itself).
+   - Set verificationRef to the Stripe VerificationSession ID (for audit, not the document itself).
 4. If status is "failed":
    - Set verificationStatus to FAILED.
 5. Send email to user confirming the result.
@@ -197,7 +197,7 @@ IMPORTANT for privacy and compliance:
 **We DO store:**
 - verificationStatus (UNVERIFIED / PENDING / VERIFIED / FAILED)
 - verificationDate (when they were verified)
-- verificationRef (GreenID's reference ID — for audit trail)
+- verificationRef (Stripe VerificationSession ID — for audit trail)
 
 **We do NOT store:**
 - The actual ID document image
@@ -206,13 +206,13 @@ IMPORTANT for privacy and compliance:
 - Date of birth (unless we need it for other features later)
 - Any biometric data
 
-GreenID handles and stores the sensitive data under their own privacy and compliance obligations. TrueBid only stores the fact that verification occurred.
+Stripe Identity handles and stores the sensitive data under their own privacy and compliance obligations. TrueBid only stores the fact that verification occurred.
 
 ## 5. Preventing Shill Bidding
 
 When a buyer places an offer on a listing:
 1. Check that buyer.id !== listing.sellerId (basic check — same user account).
-2. If GreenID provides a unique person identifier (some KYC providers do), check that the buyer's verificationRef !== the seller's verificationRef (different person check). This catches the case where someone creates two accounts with different emails but the same real identity.
+2. Check that the buyer's verificationRef !== the seller's verificationRef (different Stripe VerificationSession check). This catches the case where someone creates two accounts with different emails but the same real identity.
 
 If match detected: reject the offer with code `SHILL_BID_DETECTED` and message "You cannot place offers on your own listing."
 
@@ -242,7 +242,7 @@ When an unverified user tries to place an offer, show an inline prompt instead o
 
 ## 7. MVP Simplification
 
-If GreenID integration is complex or costly for MVP, use a simplified manual verification:
+If Stripe Identity integration is not available for MVP, use a simplified manual verification:
 1. User uploads a photo of their driver's licence.
 2. User takes a selfie.
 3. A TrueBid team member manually reviews (compare face, check document isn't expired).

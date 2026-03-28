@@ -119,7 +119,7 @@ model User {
   // Identity verification
   verificationStatus  VerificationStatus  @default(UNVERIFIED)
   verificationDate    DateTime?
-  verificationRef     String?             // External reference from GreenID
+  verificationRef     String?             // External reference from Stripe Identity (session ID)
   
   // Profile
   avatarUrl           String?

@@ -537,8 +537,8 @@ Also check for listings that have closed (closingDate passed) but still have sta
 
 ### Shill Bidding Prevention
 
-- Identity verification (GreenID) ensures each person can only have one account.
-- Cross-reference: when a buyer places an offer, check that their verified identity is different from the listing seller's verified identity. The `verificationRef` from GreenID can be used for this.
+- Identity verification (Stripe Identity) ensures each person can only have one account.
+- Cross-reference: when a buyer places an offer, check that their verified identity is different from the listing seller's verified identity. The `verificationRef` (Stripe VerificationSession ID) can be used for this.
 - If the same person is detected as both seller and bidder, reject the offer with code `SHILL_BID_DETECTED`.
 
 ### Bid Withdrawal Abuse

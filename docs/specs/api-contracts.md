@@ -680,19 +680,19 @@ Initiate the identity verification process.
 
 // Response (200)
 {
-  verificationUrl: string;   // URL to redirect user to GreenID verification page
+  verificationUrl: string;   // URL to redirect user to Stripe Identity verification page
   sessionId: string;         // Track this verification attempt
 }
 ```
 
 Sets user's verificationStatus to `PENDING`.
 
-### POST `/api/verification/callback` — WEBHOOK (from GreenID)
+### POST `/api/verification/webhook` — WEBHOOK (from Stripe Identity)
 
-Receives the verification result from GreenID.
+Receives the verification result from Stripe Identity.
 
 ```typescript
-// Request (from GreenID webhook)
+// Request (from Stripe Identity webhook)
 {
   sessionId: string;
   status: "verified" | "failed";

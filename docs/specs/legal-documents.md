@@ -138,7 +138,7 @@ Save as a static page at `/privacy`. Must comply with the Australian Privacy Act
 
 **1. Information We Collect**
 - Account information: name, email, phone number, role preference
-- Identity verification data: we pass your ID to our verification partner (GreenID) for processing. We store only the verification result and reference number — NOT the ID document itself.
+- Identity verification data: we pass your ID to our verification partner (Stripe Identity) for processing. We store only the verification result and reference number — NOT the ID document itself.
 - Property listing data: address, description, photos, price, property details
 - Offer data: offer amounts, conditions, settlement preferences, personal notes to sellers
 - Communication data: messages between buyers and sellers
@@ -155,7 +155,7 @@ Save as a static page at `/privacy`. Must comply with the Australian Privacy Act
 
 **3. Who We Share Your Information With**
 - Other TrueBid users: sellers see buyer names, email, and phone when an offer is placed. Buyers see seller first names. The public sees only pseudonymous aliases on the offer board.
-- Identity verification provider: GreenID receives your ID document for verification purposes, subject to their own privacy policy.
+- Identity verification provider: Stripe Identity receives your ID document for verification purposes, subject to their own privacy policy.
 - Service providers: hosting (AWS), email (Resend), analytics — all bound by data processing agreements.
 - Referral partners: only when you explicitly click a referral link and consent to sharing your contact details.
 - Law enforcement: if required by law or court order.

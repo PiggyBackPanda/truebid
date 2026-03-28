@@ -14,7 +14,7 @@ Free, transparent property sales platform for Australia. Sellers list for free, 
 - **Cache**: Redis (Upstash) for sessions, rate limiting, pub/sub
 - **Email**: Resend (transactional emails)
 - **Payments**: Stripe (premium features only — core listing is free)
-- **Identity Verification**: GreenID API
+- **Identity Verification**: Stripe Identity
 - **Maps**: Mapbox GL JS
 
 ## Commands

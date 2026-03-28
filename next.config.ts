@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       // S3 direct (development / presigned URLs)
       { protocol: "https", hostname: "*.s3.amazonaws.com" },
       { protocol: "https", hostname: "*.s3.*.amazonaws.com" },
+      // Unsplash (fallback images for listings without photos + hero)
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "plus.unsplash.com" },
     ],
   },
 };
