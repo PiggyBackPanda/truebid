@@ -16,6 +16,10 @@ interface ListingCardProps {
   suburb: string;
   state: string;
   postcode: string;
+  /** Pre-serialised display address — used when address privacy rules apply */
+  displayAddress?: string;
+  /** Whether the full street address has been revealed to this viewer */
+  addressRevealed?: boolean;
   propertyType: string;
   bedrooms: number;
   bathrooms: number;
@@ -48,6 +52,8 @@ export function ListingCard({
   coverImage,
   initialFavourited = false,
   priority = false,
+  displayAddress,
+  addressRevealed,
 }: ListingCardProps) {
   const isOpenOffers = saleMethod === "OPEN_OFFERS";
 
@@ -101,10 +107,16 @@ export function ListingCard({
         ) : (
           <p className="font-serif text-base text-text-muted leading-tight">Contact for price</p>
         )}
-        <p className="text-sm font-medium text-text mt-0.5 truncate">{streetAddress}</p>
-        <p className="text-xs text-text-muted truncate">
-          {suburb} {state} {postcode}
-        </p>
+        {addressRevealed === false ? (
+          <p className="text-sm text-text-muted mt-0.5 truncate">{displayAddress}</p>
+        ) : (
+          <>
+            <p className="text-sm font-medium text-text mt-0.5 truncate">{streetAddress}</p>
+            <p className="text-xs text-text-muted truncate">
+              {suburb} {state} {postcode}
+            </p>
+          </>
+        )}
 
         <div className="flex items-center gap-3 mt-2 text-xs text-text-muted">
           {bedrooms > 0 && (

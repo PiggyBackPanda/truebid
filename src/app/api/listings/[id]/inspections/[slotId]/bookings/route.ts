@@ -75,28 +75,40 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
       throw new ApiError(409, "ALREADY_BOOKED", "You have already booked this inspection slot");
     }
 
-    if (slot._count.bookings >= slot.maxGroups) {
-      throw new ApiError(409, "SLOT_FULL", "This inspection slot is fully booked", { spotsRemaining: 0 });
-    }
-
+    // Parse body before the transaction to avoid holding a lock while reading the request
     const body = await req.json();
     const { note } = createBookingSchema.parse(body);
 
-    const booking = await prisma.inspectionBooking.upsert({
-      where: { slotId_buyerId: { slotId, buyerId: user.id } },
-      create: {
-        slotId,
-        buyerId: user.id,
-        status: "CONFIRMED",
-        note: note ?? null,
-      },
-      update: {
-        status: "CONFIRMED",
-        note: note ?? null,
-        cancelledAt: null,
-        cancelledBy: null,
-      },
-      select: { id: true, status: true, note: true, createdAt: true },
+    // Wrap capacity check + upsert in a transaction with a row-level lock to prevent
+    // concurrent bookings from exceeding maxGroups
+    const booking = await prisma.$transaction(async (tx) => {
+      // Lock the slot row so concurrent requests queue up here
+      await tx.$queryRaw`SELECT id FROM "InspectionSlot" WHERE id = ${slotId} FOR UPDATE`;
+
+      const confirmedCount = await tx.inspectionBooking.count({
+        where: { slotId, status: "CONFIRMED" },
+      });
+
+      if (confirmedCount >= slot.maxGroups) {
+        throw new ApiError(409, "SLOT_FULL", "This inspection slot is fully booked", { spotsRemaining: 0 });
+      }
+
+      return tx.inspectionBooking.upsert({
+        where: { slotId_buyerId: { slotId, buyerId: user.id } },
+        create: {
+          slotId,
+          buyerId: user.id,
+          status: "CONFIRMED",
+          note: note ?? null,
+        },
+        update: {
+          status: "CONFIRMED",
+          note: note ?? null,
+          cancelledAt: null,
+          cancelledBy: null,
+        },
+        select: { id: true, status: true, note: true, createdAt: true },
+      });
     });
 
     const address = `${slot.listing.streetAddress}, ${slot.listing.suburb} ${slot.listing.state}`;

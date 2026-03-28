@@ -128,5 +128,8 @@ function resolveVisibility(
       // Otherwise: require an active/attended booking
       return !!(viewer.userId && viewer.hasBooking);
     }
+
+    default:
+      return false;
   }
 }

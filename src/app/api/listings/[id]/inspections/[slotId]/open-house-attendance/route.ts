@@ -58,7 +58,7 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
 
     if (buyer) {
       // Upsert a synthetic ATTENDED booking
-      const booking = await prisma.inspectionBooking.upsert({
+      await prisma.inspectionBooking.upsert({
         where: { slotId_buyerId: { slotId, buyerId: buyer.id } },
         create: {
           slotId,
@@ -72,32 +72,21 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
           cancelledAt: null,
           cancelledBy: null,
         },
-        select: { id: true, status: true },
+        select: { id: true },
       });
-
-      return Response.json({
-        result: "MARKED",
-        booking: { id: booking.id, status: booking.status },
-        buyer: {
-          email: buyer.email,
-          firstName: buyer.firstName,
-          lastName: buyer.lastName,
-          verificationStatus: buyer.verificationStatus,
-        },
+    } else {
+      // User not found — store pending attendance
+      await prisma.pendingInspectionAttendance.upsert({
+        where: { slotId_email: { slotId, email } },
+        create: { slotId, email },
+        update: {}, // already exists — no-op
       });
     }
 
-    // User not found — store pending attendance
-    await prisma.pendingInspectionAttendance.upsert({
-      where: { slotId_email: { slotId, email } },
-      create: { slotId, email },
-      update: {}, // already exists — no-op
-    });
-
+    // Return the same response regardless of registered/unregistered to prevent email enumeration
     return Response.json({
-      result: "PENDING",
-      message: "Email not registered. Offer access will be granted automatically when they sign up.",
-      email,
+      result: "ATTENDANCE_RECORDED",
+      message: "Attendance recorded. If not yet registered, offer access will be granted automatically when they sign up.",
     });
   } catch (error) {
     return errorResponse(error);

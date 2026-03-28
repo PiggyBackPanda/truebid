@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     });
 
     if (pendingAttendances.length > 0) {
-      await Promise.allSettled(
+      const resolutions = await Promise.allSettled(
         pendingAttendances.map(async (pending) => {
           await prisma.inspectionBooking.upsert({
             where: { slotId_buyerId: { slotId: pending.slotId, buyerId: user.id } },
@@ -102,6 +102,14 @@ export async function POST(request: Request) {
           await prisma.pendingInspectionAttendance.delete({ where: { id: pending.id } });
         })
       );
+      resolutions.forEach((result, i) => {
+        if (result.status === "rejected") {
+          console.error(
+            `[register] Failed to resolve pending attendance ${pendingAttendances[i].id} for ${data.email}:`,
+            result.reason
+          );
+        }
+      });
     }
 
     return Response.json({ user }, { status: 201 });

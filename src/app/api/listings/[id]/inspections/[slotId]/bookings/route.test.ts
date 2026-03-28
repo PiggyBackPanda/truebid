@@ -18,6 +18,7 @@ const { mockPrisma, mockRequireAuth, mockRequireOwner, mockRequireVerified } = v
       favourite: createModelMock(), checklistProgress: createModelMock(),
       listingView: createModelMock(), inspectionSlot: createModelMock(),
       inspectionBooking: createModelMock(),
+      $queryRaw: vi.fn().mockResolvedValue([]), // FOR UPDATE lock — no-op in tests
       $transaction: vi.fn((fn: (tx: typeof mockPrisma) => Promise<unknown>) => fn(mockPrisma)),
     },
     mockRequireAuth: vi.fn(),
@@ -184,6 +185,8 @@ describe("POST /api/listings/[id]/inspections/[slotId]/bookings", () => {
       baseSlot({ maxGroups: 2, _count: { bookings: 2 } })
     );
     mockPrisma.inspectionBooking.findUnique.mockResolvedValue(null);
+    // Transaction re-checks count with a fresh query
+    mockPrisma.inspectionBooking.count.mockResolvedValue(2);
 
     const req = postRequest("listing_1", "slot_1");
     const { status, body } = await parseResponse(

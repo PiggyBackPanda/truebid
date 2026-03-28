@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { serializeListingAddress } from "@/lib/listing-serializer";
+import type { AddressVisibility } from "@/lib/listing-serializer";
 import { ListingCard } from "@/components/listings/ListingCard";
 import type { Metadata } from "next";
 
@@ -16,6 +18,9 @@ type FavouritedListing = {
   suburb: string;
   state: string;
   postcode: string;
+  latitude: number | null;
+  longitude: number | null;
+  addressVisibility: string;
   propertyType: string;
   bedrooms: number;
   bathrooms: number;
@@ -26,7 +31,7 @@ type FavouritedListing = {
   closingDate: Date | null;
   status: string;
   images: { url: string; thumbnailUrl: string }[];
-  _count: { offers: number };
+  _count: { offers: number; inspectionSlots: number };
 };
 
 export default async function FavouritesPage() {
@@ -50,6 +55,9 @@ export default async function FavouritesPage() {
             suburb: true,
             state: true,
             postcode: true,
+            latitude: true,
+            longitude: true,
+            addressVisibility: true,
             propertyType: true,
             bedrooms: true,
             bathrooms: true,
@@ -65,7 +73,10 @@ export default async function FavouritesPage() {
               select: { url: true, thumbnailUrl: true },
             },
             _count: {
-              select: { offers: { where: { status: "ACTIVE" } } },
+              select: {
+                offers: { where: { status: "ACTIVE" } },
+                inspectionSlots: true,
+              },
             },
           },
         },
@@ -152,27 +163,45 @@ export default async function FavouritesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
-            <ListingCard
-              key={listing.id}
-              id={listing.id}
-              streetAddress={listing.streetAddress}
-              suburb={listing.suburb}
-              state={listing.state}
-              postcode={listing.postcode}
-              propertyType={listing.propertyType}
-              bedrooms={listing.bedrooms}
-              bathrooms={listing.bathrooms}
-              carSpaces={listing.carSpaces}
-              landSizeM2={listing.landSizeM2}
-              guidePriceCents={listing.guidePriceCents}
-              saleMethod={listing.saleMethod}
-              closingDate={listing.closingDate}
-              activeOfferCount={listing._count.offers}
-              coverImage={listing.images[0] ?? null}
-              initialFavourited={true}
-            />
-          ))}
+          {listings.map((listing) => {
+            const serialized = serializeListingAddress(
+              {
+                id: listing.id,
+                streetAddress: listing.streetAddress,
+                suburb: listing.suburb,
+                state: listing.state,
+                postcode: listing.postcode,
+                latitude: listing.latitude,
+                longitude: listing.longitude,
+                addressVisibility: listing.addressVisibility as AddressVisibility,
+                hasInspectionSlots: listing._count.inspectionSlots > 0,
+              },
+              { userId }
+            );
+            return (
+              <ListingCard
+                key={listing.id}
+                id={listing.id}
+                streetAddress={listing.streetAddress}
+                suburb={listing.suburb}
+                state={listing.state}
+                postcode={listing.postcode}
+                displayAddress={serialized.displayAddress}
+                addressRevealed={serialized.addressRevealed}
+                propertyType={listing.propertyType}
+                bedrooms={listing.bedrooms}
+                bathrooms={listing.bathrooms}
+                carSpaces={listing.carSpaces}
+                landSizeM2={listing.landSizeM2}
+                guidePriceCents={listing.guidePriceCents}
+                saleMethod={listing.saleMethod}
+                closingDate={listing.closingDate}
+                activeOfferCount={listing._count.offers}
+                coverImage={listing.images[0] ?? null}
+                initialFavourited={true}
+              />
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { serializeListingAddress } from "@/lib/listing-serializer";
+import type { AddressVisibility } from "@/lib/listing-serializer";
 import { ListingCard } from "@/components/listings/ListingCard";
 import type { Metadata } from "next";
 import type { PropertyType, SaleMethod } from "@prisma/client";
@@ -137,7 +141,11 @@ export default async function ListingsPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const params = await searchParams;
+  const [params, session] = await Promise.all([
+    searchParams,
+    getServerSession(authOptions),
+  ]);
+  const viewerId = (session?.user as unknown as Record<string, unknown> | undefined)?.id as string | undefined;
 
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;
@@ -190,6 +198,9 @@ export default async function ListingsPage({
         suburb: true,
         state: true,
         postcode: true,
+        latitude: true,
+        longitude: true,
+        addressVisibility: true,
         propertyType: true,
         bedrooms: true,
         bathrooms: true,
@@ -204,7 +215,10 @@ export default async function ListingsPage({
           select: { url: true, thumbnailUrl: true },
         },
         _count: {
-          select: { offers: { where: { status: "ACTIVE" } } },
+          select: {
+            offers: { where: { status: "ACTIVE" } },
+            inspectionSlots: true,
+          },
         },
       },
     }),
@@ -466,27 +480,45 @@ export default async function ListingsPage({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {listings.map((listing, index) => (
-              <ListingCard
-                key={listing.id}
-                id={listing.id}
-                streetAddress={listing.streetAddress}
-                suburb={listing.suburb}
-                state={listing.state}
-                postcode={listing.postcode}
-                propertyType={listing.propertyType}
-                bedrooms={listing.bedrooms}
-                bathrooms={listing.bathrooms}
-                carSpaces={listing.carSpaces}
-                landSizeM2={listing.landSizeM2}
-                guidePriceCents={listing.guidePriceCents}
-                saleMethod={listing.saleMethod}
-                closingDate={listing.closingDate}
-                activeOfferCount={listing._count.offers}
-                coverImage={listing.images[0] ?? null}
-                priority={index === 0}
-              />
-            ))}
+            {listings.map((listing, index) => {
+              const serialized = serializeListingAddress(
+                {
+                  id: listing.id,
+                  streetAddress: listing.streetAddress,
+                  suburb: listing.suburb,
+                  state: listing.state,
+                  postcode: listing.postcode,
+                  latitude: listing.latitude,
+                  longitude: listing.longitude,
+                  addressVisibility: listing.addressVisibility as AddressVisibility,
+                  hasInspectionSlots: listing._count.inspectionSlots > 0,
+                },
+                { userId: viewerId }
+              );
+              return (
+                <ListingCard
+                  key={listing.id}
+                  id={listing.id}
+                  streetAddress={listing.streetAddress}
+                  suburb={listing.suburb}
+                  state={listing.state}
+                  postcode={listing.postcode}
+                  displayAddress={serialized.displayAddress}
+                  addressRevealed={serialized.addressRevealed}
+                  propertyType={listing.propertyType}
+                  bedrooms={listing.bedrooms}
+                  bathrooms={listing.bathrooms}
+                  carSpaces={listing.carSpaces}
+                  landSizeM2={listing.landSizeM2}
+                  guidePriceCents={listing.guidePriceCents}
+                  saleMethod={listing.saleMethod}
+                  closingDate={listing.closingDate}
+                  activeOfferCount={listing._count.offers}
+                  coverImage={listing.images[0] ?? null}
+                  priority={index === 0}
+                />
+              );
+            })}
           </div>
         )}
 

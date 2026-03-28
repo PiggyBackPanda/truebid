@@ -6,6 +6,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { rankOffers } from "@/lib/offer-utils";
+import { serializeListingAddress } from "@/lib/listing-serializer";
+import type { AddressVisibility } from "@/lib/listing-serializer";
 import { OfferBoard } from "@/components/listings/OfferBoard";
 import { FavouriteButton } from "@/components/FavouriteButton";
 import { WatchButton } from "@/components/listings/WatchButton";
@@ -37,6 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       suburb: true,
       state: true,
       postcode: true,
+      addressVisibility: true,
       bedrooms: true,
       bathrooms: true,
       description: true,
@@ -53,7 +56,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!listing) return { title: "Listing not found" };
 
-  const address = `${listing.streetAddress}, ${listing.suburb} ${listing.state} ${listing.postcode}`;
+  // For metadata (no session available), only include full address for PUBLIC listings
+  const address = listing.addressVisibility === "PUBLIC"
+    ? `${listing.streetAddress}, ${listing.suburb} ${listing.state} ${listing.postcode}`
+    : `${listing.suburb}, ${listing.state} ${listing.postcode}`;
   const title = `${address}`;
   const typeLabel = PROPERTY_TYPE_LABELS_META[listing.propertyType] ?? "Property";
   const methodLabel = SALE_METHOD_LABELS_META[listing.saleMethod] ?? "";
@@ -263,7 +269,10 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
         },
       },
       _count: {
-        select: { offers: { where: { status: "ACTIVE" } } },
+        select: {
+          offers: { where: { status: "ACTIVE" } },
+          inspectionSlots: true,
+        },
       },
     },
   });
@@ -272,6 +281,39 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
 
   const isOwner = currentUser?.id === listing.sellerId;
   if (listing.status === "DRAFT" && !isOwner) notFound();
+
+  // Check if the viewer has an active booking on this listing (for BOOKED_ONLY visibility)
+  let viewerHasBooking = false;
+  if (currentUser?.id && !isOwner) {
+    const booking = await prisma.inspectionBooking.findFirst({
+      where: {
+        buyerId: currentUser.id as string,
+        status: { in: ["CONFIRMED", "ATTENDED"] },
+        slot: { listingId: id },
+      },
+      select: { id: true },
+    });
+    viewerHasBooking = !!booking;
+  }
+
+  const serializedAddress = serializeListingAddress(
+    {
+      id: listing.id,
+      streetAddress: listing.streetAddress,
+      suburb: listing.suburb,
+      state: listing.state,
+      postcode: listing.postcode,
+      latitude: listing.latitude,
+      longitude: listing.longitude,
+      addressVisibility: listing.addressVisibility as AddressVisibility,
+      hasInspectionSlots: listing._count.inspectionSlots > 0,
+    },
+    {
+      userId: currentUser?.id as string | undefined,
+      isSeller: isOwner,
+      hasBooking: viewerHasBooking,
+    }
+  );
 
   // Fetch initial favourite state for the logged-in user
   let initialFavourited = false;
@@ -363,7 +405,9 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
-    name: `${listing.streetAddress}, ${listing.suburb} ${listing.state}`,
+    name: serializedAddress.addressRevealed
+      ? `${listing.streetAddress}, ${listing.suburb} ${listing.state}`
+      : `${listing.suburb}, ${listing.state}`,
     description: listing.description ?? undefined,
     url: canonicalUrl,
     ...(photos.length > 0
@@ -384,10 +428,10 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       : {}),
     item: {
       "@type": SCHEMA_PROPERTY_TYPE[listing.propertyType] ?? "Residence",
-      name: listing.streetAddress,
+      name: serializedAddress.addressRevealed ? listing.streetAddress : `${listing.suburb}, ${listing.state}`,
       address: {
         "@type": "PostalAddress",
-        streetAddress: listing.streetAddress,
+        ...(serializedAddress.addressRevealed ? { streetAddress: listing.streetAddress } : {}),
         addressLocality: listing.suburb,
         addressRegion: listing.state,
         postalCode: listing.postcode,
@@ -480,7 +524,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
             >
               <PropertyImage
                 src={photos[0].url}
-                alt={`${listing.streetAddress}, cover photo`}
+                alt={`${serializedAddress.displayAddress}, cover photo`}
                 className="object-cover"
                 priority
               />
@@ -494,7 +538,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               <div className="relative col-span-2 row-span-2">
                 <PropertyImage
                   src={photos[0].url}
-                  alt={`${listing.streetAddress}, cover photo`}
+                  alt={`${serializedAddress.displayAddress}, cover photo`}
                   className="object-cover"
                   priority
                 />
@@ -503,7 +547,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 <div key={img.id} className="relative overflow-hidden">
                   <PropertyImage
                     src={img.thumbnailUrl || img.url}
-                    alt={`${listing.streetAddress}, photo ${i + 2}`}
+                    alt={`${serializedAddress.displayAddress}, photo ${i + 2}`}
                     className="object-cover"
                   />
                 </div>
@@ -517,7 +561,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
           >
             <PropertyImage
               src={getListingFallbackImage(id)}
-              alt={`${listing.streetAddress}, cover photo`}
+              alt={`${serializedAddress.displayAddress}, cover photo`}
               className="object-cover"
               priority
             />
@@ -571,7 +615,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               <div className="rounded-[12px] overflow-hidden border border-border bg-white">
                 <img
                   src={floorplan.url}
-                  alt={`Floor plan, ${listing.streetAddress}`}
+                  alt={`Floor plan, ${serializedAddress.displayAddress}`}
                   style={{ width: "100%", display: "block", maxHeight: 480, objectFit: "contain", background: "#f7f5f0" }}
                 />
               </div>
@@ -606,14 +650,25 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
               </div>
 
               <div className="flex items-start justify-between gap-4">
-                <h1 className="font-serif text-2xl text-navy mb-1">
-                  {listing.streetAddress}
-                </h1>
+                <div>
+                  <h1 className="font-serif text-2xl text-navy mb-1">
+                    {serializedAddress.streetAddress ?? serializedAddress.displayAddress}
+                  </h1>
+                  {!serializedAddress.addressRevealed && (
+                    <p className="text-xs text-text-muted mt-0.5">
+                      {serializedAddress.lockReason === "LOGIN_REQUIRED"
+                        ? "Log in to see the full address"
+                        : "Book an inspection to see the full address"}
+                    </p>
+                  )}
+                </div>
                 <FavouriteButton listingId={id} initialFavourited={initialFavourited} />
               </div>
-              <p className="text-base text-text-muted">
-                {listing.suburb} {listing.state} {listing.postcode}
-              </p>
+              {serializedAddress.addressRevealed && (
+                <p className="text-base text-text-muted">
+                  {listing.suburb} {listing.state} {listing.postcode}
+                </p>
+              )}
 
               <div className="flex items-center gap-5 mt-4">
                 {listing.bedrooms > 0 && (

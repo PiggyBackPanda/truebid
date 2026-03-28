@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
+import { serializeListingAddress } from "@/lib/listing-serializer";
+import type { AddressVisibility } from "@/lib/listing-serializer";
 
 type RouteContext = { params: Promise<{ bookingId: string }> };
 
@@ -45,16 +47,22 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
       select: {
         id: true,
         buyerId: true,
+        status: true,
         slot: {
           select: {
             startTime: true,
             endTime: true,
             listing: {
               select: {
+                id: true,
                 streetAddress: true,
                 suburb: true,
                 state: true,
                 postcode: true,
+                latitude: true,
+                longitude: true,
+                addressVisibility: true,
+                _count: { select: { inspectionSlots: true } },
               },
             },
           },
@@ -71,7 +79,26 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
     }
 
     const { listing } = booking.slot;
-    const address = `${listing.streetAddress}, ${listing.suburb} ${listing.state} ${listing.postcode}`;
+    const serialized = serializeListingAddress(
+      {
+        id: listing.id,
+        streetAddress: listing.streetAddress,
+        suburb: listing.suburb,
+        state: listing.state,
+        postcode: listing.postcode,
+        latitude: listing.latitude,
+        longitude: listing.longitude,
+        addressVisibility: listing.addressVisibility as AddressVisibility,
+        hasInspectionSlots: listing._count.inspectionSlots > 0,
+      },
+      {
+        userId: user.id,
+        hasBooking: booking.status === "CONFIRMED" || booking.status === "ATTENDED",
+      }
+    );
+    const address = serialized.streetAddress
+      ? `${serialized.streetAddress}, ${listing.suburb} ${listing.state} ${listing.postcode}`
+      : `${listing.suburb}, ${listing.state} ${listing.postcode}`;
 
     const ical = generateIcal({
       startTime: booking.slot.startTime,

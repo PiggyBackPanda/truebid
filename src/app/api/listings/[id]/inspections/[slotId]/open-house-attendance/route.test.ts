@@ -82,8 +82,7 @@ describe("POST /api/listings/[id]/inspections/[slotId]/open-house-attendance", (
     );
 
     expect(status).toBe(200);
-    expect(body.result).toBe("MARKED");
-    expect(body.booking.status).toBe("ATTENDED");
+    expect(body.result).toBe("ATTENDANCE_RECORDED");
     expect(mockPrisma.inspectionBooking.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
         create: expect.objectContaining({ status: "ATTENDED", buyerId: "buyer_1" }),
@@ -107,8 +106,7 @@ describe("POST /api/listings/[id]/inspections/[slotId]/open-house-attendance", (
     );
 
     expect(status).toBe(200);
-    expect(body.result).toBe("PENDING");
-    expect(body.email).toBe("unknown@example.com");
+    expect(body.result).toBe("ATTENDANCE_RECORDED");
     expect(mockPrisma.pendingInspectionAttendance.upsert).toHaveBeenCalled();
   });
 
