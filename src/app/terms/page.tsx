@@ -184,7 +184,7 @@ export default function TermsPage() {
               do not agree, do not use the Platform.
             </P>
             <P>
-              TrueBid is operated by TrueBid Pty Ltd (ABN: [ABN TO BE CONFIRMED])
+              TrueBid is operated by TrueBid Pty Ltd (ABN: [ABN pending registration])
               (&ldquo;TrueBid&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or
               &ldquo;our&rdquo;), registered in Australia.
             </P>
@@ -226,6 +226,8 @@ export default function TermsPage() {
                 <P>3.2 Where a licensed real estate agent is involved in a transaction, that agent is responsible for their own legal obligations under applicable state legislation, including the Property and Stock Agents Act 2002 (NSW), Estate Agents Act 1980 (VIC), and equivalent legislation in other states and territories.</P>
                 <P>3.3 TrueBid does not provide legal, financial, taxation, or conveyancing advice. Nothing on the Platform constitutes such advice. You should seek independent professional advice before making or accepting any offer.</P>
                 <P>3.4 TrueBid does not guarantee the accuracy of any listing content, including property descriptions, photographs, pricing, or documentation provided by sellers.</P>
+                <P>3.5 TrueBid is not licensed under the <em>Real Estate and Business Agents Act 1978</em> (WA) or equivalent legislation in any other state or territory. TrueBid does not hold a real estate agent&rsquo;s licence, auctioneer&rsquo;s licence, or settlement agent&rsquo;s licence, and does not act as an agent for any party to a property transaction.</P>
+                <P>3.6 Before signing any contract of sale arising from an offer submitted through the Platform, buyers and sellers are strongly encouraged to engage a licensed settlement agent, conveyancer, or solicitor. TrueBid does not prepare contracts of sale, manage settlement, or provide conveyancing services.</P>
               </div>
               <Divider />
             </section>
@@ -242,6 +244,9 @@ export default function TermsPage() {
                 <P>4.6 Withdrawing a submitted offer is permitted but will be recorded on the buyer&rsquo;s account. Repeated offer withdrawals may result in restricted access to the Platform.</P>
                 <P>4.7 Anti-snipe protection automatically extends the Live Offers window if a new offer is submitted within 10 minutes of the scheduled close time. The closing time automatically extends by 10 minutes.</P>
                 <P>4.8 TrueBid reserves the right to cancel or void any offer it reasonably believes has been submitted in bad faith, through error, or in breach of these Terms.</P>
+                <P>4.9 <strong className="text-navy">Live Offers is not an auction.</strong> The Live Offers feature is a transparent offer management process, not an auction. TrueBid does not conduct auctions, does not operate under auction rules, and does not require a licensed auctioneer to operate the Platform. No provision of these Terms or operation of the Live Offers feature is intended to, or should be construed to, constitute TrueBid as an auctioneer or the Live Offers process as an auction under any applicable Australian state or territory law.</P>
+                <P>4.10 Submitting an offer through the Platform does not create a legally binding contract between the buyer and seller. A binding contract of sale is formed only when both parties have signed a formal contract of sale prepared and executed through a licensed settlement agent or solicitor.</P>
+                <P>4.11 The Live Offers process operates entirely under the seller&rsquo;s direction. The seller retains full control over whether to accept, reject, or negotiate any offer at any time. TrueBid facilitates the display and submission of offers only and does not negotiate on behalf of either party.</P>
               </div>
               <Divider />
             </section>
@@ -262,6 +267,20 @@ export default function TermsPage() {
                 <P>5.4 If a seller accepts an offer and then refuses to proceed without reasonable cause, TrueBid may suspend the seller&rsquo;s account and record the event on their profile.</P>
                 <P>5.5 Sellers must not engage in misleading or deceptive conduct, including artificially inflating interest in a property or submitting false enquiries.</P>
                 <P>5.6 Sellers using a licensed real estate agent to manage their campaign remain responsible for the accuracy of all listing content submitted to the Platform, regardless of who physically submits it.</P>
+                <P>5.7 The seller indemnifies TrueBid against any loss, claim, liability, cost, or damage (including legal costs on a full indemnity basis) arising from or in connection with: (a) any false, inaccurate, or misleading information provided in a listing; (b) the seller not being the registered proprietor of the property or not having authority from the registered proprietor to list it for sale; or (c) the seller&rsquo;s failure to comply with any applicable disclosure obligation under state or territory law.</P>
+                <P>5.8 TrueBid reserves the right to remove any listing from the Platform at any time, without prior notice, where TrueBid has reasonable grounds to believe that the seller is not the registered proprietor of the property or does not have the registered proprietor&rsquo;s authority to list it for sale.</P>
+              </div>
+              <div className="mt-5 rounded-lg p-4" style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.25)" }}>
+                <p className="text-text-muted leading-relaxed" style={paraStyle}>
+                  <strong className="text-navy">General information — not legal advice:</strong>{" "}
+                  Private sellers are responsible for their own disclosure obligations under
+                  state and territory law. In Western Australia, this includes compliance
+                  with the <em>Sale of Land Act 1970</em> (WA) and any other applicable
+                  disclosure requirements. TrueBid recommends that sellers engage a licensed
+                  settlement agent or conveyancer before listing a property for sale. TrueBid
+                  does not prepare contracts of sale or manage settlement. Nothing in these
+                  Terms or on this Platform constitutes legal advice.
+                </p>
               </div>
               <Divider />
             </section>
@@ -293,6 +312,8 @@ export default function TermsPage() {
                 <P>7.3 TrueBid reserves the right to introduce, change, or remove fees at any time. Where fees change for existing users, we will provide at least 30 days&rsquo; written notice before the change takes effect.</P>
                 <P>7.4 All fees are quoted in Australian dollars and are inclusive of GST unless otherwise stated.</P>
                 <P>7.5 Fees paid are non-refundable except where required by Australian Consumer Law.</P>
+                <P>7.6 Where TrueBid introduces fees following the notice period under clause 7.2, your continued use of the Platform after those fees take effect constitutes your acceptance of the new pricing. If you do not wish to accept the new pricing, you must stop using the Platform before the fees take effect.</P>
+                <P>7.7 TrueBid will not use struck-out, &ldquo;was&rdquo;, or &ldquo;originally&rdquo; pricing to imply that a fee represents a saving from a price that TrueBid has never actually charged. Any fees introduced will be stated as new charges.</P>
               </div>
               <Divider />
             </section>
@@ -397,8 +418,10 @@ export default function TermsPage() {
               <div className="space-y-3">
                 <P>13.1 If you have a complaint about the Platform or another user, you should contact TrueBid first at <a href="mailto:hello@truebid.com.au" className="underline hover:text-navy">hello@truebid.com.au</a>. We will acknowledge your complaint within 2 business days and aim to resolve it within 10 business days.</P>
                 <P>13.2 If your complaint is not resolved to your satisfaction, either party may refer the matter to mediation before a mutually agreed mediator. The costs of mediation will be shared equally unless the mediator determines otherwise.</P>
-                <P>13.3 TrueBid does not act as arbitrator or adjudicator in disputes between buyers and sellers regarding the terms of any transaction. Such disputes are a matter for the parties and their legal representatives.</P>
+                <P>13.3 TrueBid is not a party to any property transaction and has no obligation to resolve disputes between buyers and sellers regarding the terms of any transaction. TrueBid has no power to enforce contracts, compel either party to proceed with a transaction, or determine the rights of the parties in relation to a property sale.</P>
                 <P>13.4 Nothing in this section prevents either party from seeking urgent injunctive or other equitable relief from a court of competent jurisdiction.</P>
+                <P>13.5 Disputes arising out of a property transaction (including disputes about whether a buyer or seller has breached an agreement to transact) should be referred to the relevant state consumer protection authority (in Western Australia, Consumer Protection WA) or to a licensed legal practitioner.</P>
+                <P>13.6 Platform-related complaints (complaints about TrueBid&rsquo;s conduct, platform errors, or misuse by another user) may be submitted to{" "}<a href="mailto:hello@truebid.com.au" className="underline hover:text-navy">hello@truebid.com.au</a>. TrueBid will acknowledge platform complaints within 2 business days and aim to resolve them within 10 business days.</P>
               </div>
               <Divider />
             </section>
@@ -438,6 +461,13 @@ export default function TermsPage() {
                 </div>
               </div>
             </section>
+          </div>
+
+          {/* Lawyer review note */}
+          <div className="mt-10 rounded-lg p-4" style={{ background: "#f9f8f5", border: "1px solid #e5e2db" }}>
+            <p className="text-text-muted" style={{ fontSize: 12, fontFamily: body, lineHeight: 1.6 }}>
+              This document should be reviewed by a qualified Australian lawyer before relying on it for legal compliance purposes.
+            </p>
           </div>
 
           {/* Nav links */}

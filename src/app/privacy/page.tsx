@@ -12,7 +12,7 @@ const TOC_ITEMS = [
   { id: "collection",   label: "2. Information We Collect" },
   { id: "use",          label: "3. How We Use Your Information" },
   { id: "security",     label: "4. Storage & Security" },
-  { id: "identity",     label: "5. Identity Verification" },
+  { id: "identity",     label: "5. Identity Verification and Biometric Data" },
   { id: "third-parties",label: "6. Third-Party Service Providers" },
   { id: "sharing",      label: "7. Sharing Your Information" },
   { id: "rights",       label: "8. Your Privacy Rights" },
@@ -163,7 +163,7 @@ export default function PrivacyPage() {
               <SectionHeading id="overview" number="1" title="Overview" />
               <div className="space-y-3">
                 <P>
-                  TrueBid Pty Ltd (ABN: [ABN TO BE CONFIRMED]) (<strong className="text-navy">&ldquo;TrueBid&rdquo;</strong>,{" "}
+                  TrueBid Pty Ltd (ABN: [ABN pending registration]) (<strong className="text-navy">&ldquo;TrueBid&rdquo;</strong>,{" "}
                   <strong className="text-navy">&ldquo;we&rdquo;</strong>,{" "}
                   <strong className="text-navy">&ldquo;us&rdquo;</strong>, or{" "}
                   <strong className="text-navy">&ldquo;our&rdquo;</strong>) operates a free,
@@ -357,7 +357,7 @@ export default function PrivacyPage() {
 
             {/* 5. Identity Verification */}
             <section>
-              <SectionHeading id="identity" number="5" title="Identity Verification" />
+              <SectionHeading id="identity" number="5" title="Identity Verification and Biometric Data" />
               <P>
                 TrueBid requires identity verification before a user can publish a listing
                 or place an offer. This is a core fraud prevention measure and is not
@@ -366,16 +366,17 @@ export default function PrivacyPage() {
 
               <SubHeading>5.1 How verification works</SubHeading>
               <P>
-                We use <strong className="text-navy">Stripe Identity</strong>, a product of
-                Stripe Payments Australia Pty Ltd. When you initiate verification, you are
-                directed into a Stripe-hosted verification flow where you photograph your
-                government-issued identity document and a selfie. This process happens
-                entirely within Stripe&rsquo;s infrastructure.
+                We use <strong className="text-navy">Stripe Identity</strong>, a service of
+                Stripe Inc (United States), made available in Australia by Stripe Payments
+                Australia Pty Ltd. When you initiate verification, you are directed into a
+                Stripe-hosted verification flow where you photograph your government-issued
+                identity document and a selfie. This process happens entirely within
+                Stripe&rsquo;s infrastructure.
               </P>
 
               <SubHeading>5.2 What TrueBid receives</SubHeading>
               <P>
-                TrueBid receives only two pieces of information from Stripe after
+                TrueBid receives only three pieces of information from Stripe after
                 verification completes:
               </P>
               <ul className="space-y-2 mt-3 mb-4">
@@ -388,6 +389,11 @@ export default function PrivacyPage() {
                   extracted from your identity document by Stripe. Encrypted with
                   AES-256-GCM before being written to our database (see Section 4.3).
                   Used only for internal dispute resolution and fraud detection.
+                </Bullet>
+                <Bullet>
+                  <strong className="text-navy">Date of verification</strong>: the
+                  timestamp at which Stripe confirmed the verification outcome.
+                  Stored in our database.
                 </Bullet>
               </ul>
 
@@ -424,6 +430,39 @@ export default function PrivacyPage() {
                 verification. Requests to delete data held by Stripe must be directed to
                 Stripe directly.
               </P>
+
+              <SubHeading>5.6 Biometric data and the Australian Privacy Principles</SubHeading>
+              <P>
+                Under the Australian Privacy Principles (APPs), biometric information is
+                classified as{" "}<strong className="text-navy">sensitive information</strong>{" "}
+                and is subject to the highest level of protection. TrueBid does not store
+                biometric data on its own servers. We have selected Stripe Identity as our
+                verification provider on the basis that Stripe operates under strict data
+                processing agreements and is subject to its own obligations under applicable
+                privacy laws including the GDPR and the California Consumer Privacy Act.
+              </P>
+
+              <SubHeading>5.7 Cross-border disclosure</SubHeading>
+              <P>
+                Stripe is a United States-based service. By completing identity verification,
+                you consent to your biometric and identity data being transferred to and
+                processed in the United States under Stripe&rsquo;s data processing
+                agreements. TrueBid has entered into a data processing agreement with Stripe
+                that requires Stripe to handle your data in accordance with applicable privacy
+                obligations.
+              </P>
+
+              <SubHeading>5.8 Consent is separate from general Terms of Use acceptance</SubHeading>
+              <P>
+                Consent to the collection of biometric data by Stripe Identity is obtained
+                via a dedicated acknowledgement step before verification begins. This consent
+                step is presented separately from your acceptance of TrueBid&rsquo;s general
+                Terms of Service. You may withdraw your consent at any time by contacting{" "}
+                <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                  hello@truebid.com.au
+                </a>, noting that withdrawal will prevent you from placing offers or
+                publishing listings on the Platform.
+              </P>
               <Divider />
             </section>
 
@@ -438,45 +477,78 @@ export default function PrivacyPage() {
               </P>
 
               <div className="space-y-5 mt-5">
-                <DefRow label="Stripe Identity">
-                  Identity verification. Stripe processes your identity documents and
-                  returns only a verification outcome and verified name to TrueBid.
-                  Stripe operates globally under its own privacy policy and is bound by
-                  a data processing agreement with TrueBid.
+                <DefRow label="Stripe Inc (USA) — payment processing and identity verification">
+                  Stripe processes your identity documents for verification and returns
+                  only a verification outcome, your verified name, and the date of
+                  verification to TrueBid. <strong className="text-navy">Data leaves
+                  Australia:</strong> Stripe is a US-based service and your data is
+                  processed in the United States. Stripe is bound by a data processing
+                  agreement with TrueBid.{" "}
+                  <a href="https://stripe.com/en-au/privacy" target="_blank" rel="noopener noreferrer" className="text-navy underline">
+                    Stripe Privacy Policy
+                  </a>.
                 </DefRow>
 
-                <DefRow label="Resend">
-                  Transactional email delivery. When TrueBid sends you an email
-                  notification (new offer, offer accepted, unread message), the message
-                  is delivered via Resend&rsquo;s infrastructure. Resend receives your
-                  email address, email subject, and email body. No other personal data
-                  is shared. Resend does not use this data for its own marketing.
+                <DefRow label="Resend — transactional email delivery">
+                  When TrueBid sends you an email notification (new offer, offer
+                  accepted, unread message), the message is delivered via Resend&rsquo;s
+                  infrastructure. Resend receives your email address, email subject, and
+                  email body. No other personal data is shared. Resend does not use this
+                  data for its own marketing. <strong className="text-navy">Data leaves
+                  Australia:</strong> Resend infrastructure is US-based.{" "}
+                  <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-navy underline">
+                    Resend Privacy Policy
+                  </a>.
                 </DefRow>
 
-                <DefRow label="Cloudflare">
-                  Network security, DDoS protection, and DNS. All web traffic to the
-                  Platform passes through Cloudflare&rsquo;s network. Cloudflare processes
-                  IP addresses and request metadata in the course of providing these
-                  services. TrueBid has a data processing addendum in place with
-                  Cloudflare. Cloudflare&rsquo;s privacy policy is at
-                  cloudflare.com/privacypolicy.
+                <DefRow label="Cloudflare — file storage (R2) and infrastructure">
+                  Network security, DDoS protection, DNS, and file storage (R2). All
+                  web traffic to the Platform passes through Cloudflare&rsquo;s network.
+                  Cloudflare processes IP addresses and request metadata in the course of
+                  providing these services. TrueBid has a data processing addendum in
+                  place with Cloudflare. <strong className="text-navy">Data leaves
+                  Australia:</strong> Cloudflare infrastructure spans multiple global
+                  regions.{" "}
+                  <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-navy underline">
+                    Cloudflare Privacy Policy
+                  </a>.
                 </DefRow>
 
-                <DefRow label="Upstash">
-                  Rate limiting and message queue services. Upstash Redis stores
-                  time-windowed rate limit counters keyed on hashed identifiers (email
-                  address or IP address). No offer data, message content, or full personal
-                  profiles are written to Upstash. Counters expire automatically (maximum
-                  24-hour window). Upstash QStash schedules delayed email notifications
-                  by storing the recipient email, message preview, and conversation ID
-                  for up to 15 minutes. This data is deleted after the delivery job runs.
+                <DefRow label="Upstash — rate limiting and message queue (Redis/QStash)">
+                  Upstash Redis stores time-windowed rate limit counters keyed on hashed
+                  identifiers (email address or IP address). No offer data, message
+                  content, or full personal profiles are written to Upstash. Counters
+                  expire automatically (maximum 24-hour window). Upstash QStash
+                  schedules delayed email notifications by storing the recipient email,
+                  message preview, and conversation ID for up to 15 minutes. This data
+                  is deleted after the delivery job runs. <strong className="text-navy">
+                  Data leaves Australia:</strong> Upstash infrastructure is US-based.{" "}
+                  <a href="https://upstash.com/trust/privacy.pdf" target="_blank" rel="noopener noreferrer" className="text-navy underline">
+                    Upstash Privacy Policy
+                  </a>.
                 </DefRow>
 
-                <DefRow label="AWS (Amazon Web Services)">
+                <DefRow label="Mapbox — property location mapping">
+                  Property addresses are geocoded and displayed on maps using Mapbox.
+                  Property addresses (street address, suburb, postcode, state) are sent
+                  to Mapbox for geocoding. No personal information beyond the property
+                  address is shared with Mapbox. <strong className="text-navy">Data
+                  leaves Australia:</strong> Mapbox infrastructure is US-based.{" "}
+                  <a href="https://www.mapbox.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-navy underline">
+                    Mapbox Privacy Policy
+                  </a>.
+                </DefRow>
+
+                <DefRow label="AWS (Amazon Web Services) — image storage">
                   Object storage (S3) for property listing images and floor plans, served
                   via CloudFront CDN. Images uploaded to the Platform are stored in AWS
-                  Sydney (ap-southeast-2). AWS is bound by a data processing addendum
-                  with TrueBid and operates under strict access controls.
+                  Sydney (ap-southeast-2). <strong className="text-navy">Data remains in
+                  Australia:</strong> images are stored in the Sydney region only. AWS is
+                  bound by a data processing addendum with TrueBid and operates under
+                  strict access controls.{" "}
+                  <a href="https://aws.amazon.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-navy underline">
+                    AWS Privacy Notice
+                  </a>.
                 </DefRow>
               </div>
 
@@ -578,6 +650,17 @@ export default function PrivacyPage() {
                   Transactional emails (e.g. offer notifications) cannot be disabled
                   while your account is active as they are integral to platform operation.
                 </DefRow>
+                <DefRow label="Right to withdraw biometric consent">
+                  You may withdraw your consent to biometric data collection by Stripe
+                  Identity at any time by contacting{" "}
+                  <a href="mailto:hello@truebid.com.au" className="text-navy underline">
+                    hello@truebid.com.au
+                  </a>.
+                  Note that withdrawing this consent will prevent you from submitting
+                  offers or publishing listings, as identity verification is required
+                  for these actions. Requests to delete biometric data held by Stripe
+                  must be directed to Stripe directly.
+                </DefRow>
                 <DefRow label="Right to complain (APP 1)">
                   If you are not satisfied with how we handle your privacy concern, you
                   may lodge a complaint with the Office of the Australian Information
@@ -622,10 +705,13 @@ export default function PrivacyPage() {
                   is accessible only to authorised TrueBid personnel for legal and
                   audit purposes and is not used for any other purpose.
                 </DefRow>
-                <DefRow label="Offer records">
-                  Accepted offer records (including amount, parties, and dates) are
-                  retained for 7 years from acceptance. Withdrawn and rejected offers
-                  are retained for 2 years for fraud detection and dispute resolution.
+                <DefRow label="Offer history">
+                  Offer records are retained permanently. This is a core requirement of
+                  the Platform&rsquo;s transparency feature. After a listing closes,
+                  offer data is anonymised (buyer identities are removed from the public
+                  record) but the offer amounts and timestamps are not deleted. Accepted
+                  offer records (including parties and amounts) are retained for 7 years
+                  from acceptance for legal and dispute resolution purposes.
                 </DefRow>
                 <DefRow label="Messages">
                   Conversation messages are retained for 7 years after the conversation
@@ -633,10 +719,13 @@ export default function PrivacyPage() {
                   disputes. Pre-acceptance direct messages are retained for 2 years.
                 </DefRow>
                 <DefRow label="Identity verification data">
-                  Verification status and encrypted verified name are retained for
-                  7 years from the date of verification to support anti-fraud measures.
-                  You may request earlier deletion (see Section 8), subject to our
-                  assessment of ongoing fraud risk.
+                  Verification status and encrypted verified name are retained for the
+                  life of your account. This supports ongoing fraud prevention and
+                  ensures verification status remains accurate for all platform activity.
+                  You may request deletion of this data by contacting us (see Section 8),
+                  noting that deletion will prevent access to features requiring
+                  verification. Identity documents and biometric data are not retained
+                  by TrueBid — these are held by Stripe only (see Section 5).
                 </DefRow>
                 <DefRow label="Server and access logs">
                   Server logs (IP addresses, request metadata) are retained for 90 days
@@ -748,6 +837,14 @@ export default function PrivacyPage() {
                   immediate steps to contain the breach and prevent further unauthorised
                   access, and will conduct a post-incident review to prevent recurrence.
                 </Bullet>
+                <Bullet>
+                  <strong className="text-navy">Stripe Identity data:</strong> Given
+                  that TrueBid processes identity verification through Stripe Identity,
+                  which involves government-issued photo ID and biometric data, any
+                  breach that involves the compromise of this data will be treated as
+                  triggering NDB notification obligations regardless of TrueBid&rsquo;s
+                  size or threshold calculations under the Privacy Act.
+                </Bullet>
               </ul>
 
               <SubHeading>11.2 Reporting a suspected breach</SubHeading>
@@ -773,7 +870,7 @@ export default function PrivacyPage() {
               </P>
               <div className="mt-4 space-y-2" style={{ fontFamily: body, fontSize: 14 }}>
                 <p className="font-semibold text-navy">TrueBid Privacy Officer</p>
-                <p className="text-text-muted">[Address to be confirmed]</p>
+                <p className="text-text-muted">Perth, Western Australia</p>
                 <p className="text-text-muted">
                   Email:{" "}
                   <a href="mailto:hello@truebid.com.au" className="text-navy underline">
@@ -802,6 +899,13 @@ export default function PrivacyPage() {
             </section>
 
           </div>{/* /space-y-8 */}
+
+          {/* Lawyer review note */}
+          <div className="mt-10 rounded-lg p-4" style={{ background: "#f9f8f5", border: "1px solid #e5e2db" }}>
+            <p className="text-text-muted" style={{ fontSize: 12, fontFamily: body, lineHeight: 1.6 }}>
+              This document should be reviewed by a qualified Australian lawyer before relying on it for legal compliance purposes.
+            </p>
+          </div>
 
           {/* Bottom nav links */}
           <div className="mt-12 pt-8 border-t border-border flex flex-wrap gap-4">
