@@ -118,7 +118,7 @@ export default function TermsPage() {
               marginTop: 10,
             }}
           >
-            Last updated: 28 March 2026
+            Last updated: March 2026
           </p>
         </div>
       </div>
@@ -184,8 +184,7 @@ export default function TermsPage() {
               do not agree, do not use the Platform.
             </P>
             <P>
-              {/* TODO: Replace with company name and ABN before going live */}
-              TrueBid is operated by TrueBid Pty Ltd ABN: pending registration
+              TrueBid is operated by TrueBid Pty Ltd (ABN: [ABN TO BE CONFIRMED])
               (&ldquo;TrueBid&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or
               &ldquo;our&rdquo;), registered in Australia.
             </P>
@@ -307,7 +306,7 @@ export default function TermsPage() {
                   <li>(a) submit false, misleading, or fraudulent information;</li>
                   <li>(b) impersonate any person or entity;</li>
                   <li>(c) list a property you do not own or have authority to sell;</li>
-                  <li>(d) engage in price manipulation, collusion, or bid rigging;</li>
+                  <li>(d) engage in price manipulation, collusion, or offer manipulation;</li>
                   <li>(e) use automated tools, bots, or scripts to interact with the Platform;</li>
                   <li>(f) scrape, copy, or republish Platform content without written permission;</li>
                   <li>(g) harass, threaten, or engage in discriminatory conduct toward other users;</li>
@@ -317,7 +316,7 @@ export default function TermsPage() {
                 </ul>
                 <P>8.2 The following conduct is expressly prohibited and constitutes a serious breach of these Terms:</P>
                 <ul className="text-text-muted leading-relaxed list-none space-y-2" style={subListStyle}>
-                  <li>(a) <strong className="text-navy">Shill bidding:</strong> placing, arranging, or encouraging fictitious offers for the purpose of artificially inflating the offer board or creating a false impression of demand;</li>
+                  <li>(a) <strong className="text-navy">Shill offers:</strong> placing, arranging, or encouraging fictitious offers for the purpose of artificially inflating the offer board or creating a false impression of demand;</li>
                   <li>(b) <strong className="text-navy">Fictitious offers:</strong> submitting an offer with no genuine intention to proceed to purchase if accepted;</li>
                   <li>(c) <strong className="text-navy">Collusion:</strong> coordinating with any other party, whether a buyer, seller, or third party, to manipulate offer outcomes or undermine the integrity of the offer process;</li>
                   <li>(d) <strong className="text-navy">Impersonation:</strong> representing yourself as another person or entity, whether real or fictitious, in any part of the Platform;</li>
@@ -341,7 +340,7 @@ export default function TermsPage() {
                   <li>(d) your use of the Platform creates legal or reputational risk for TrueBid or other users.</li>
                 </ul>
                 <P>9.2 If your account is suspended, you must not attempt to create a new account without prior written approval from TrueBid.</P>
-                <P>9.3 You may close your account at any time by contacting us at <a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a>. Closing your account does not affect any obligations you have already incurred through submitted or accepted offers.</P>
+                <P>9.3 You may close your account at any time by contacting us at <a href="mailto:hello@truebid.com.au" className="underline hover:text-navy">hello@truebid.com.au</a>. Closing your account does not affect any obligations you have already incurred through submitted or accepted offers.</P>
                 <P>9.4 TrueBid will retain certain account and transaction records after closure as required by law and our Privacy Policy.</P>
               </div>
               <Divider />
@@ -351,9 +350,7 @@ export default function TermsPage() {
             <section>
               <SectionHeading id="privacy" number="10" title="Privacy & Data" />
               <div className="space-y-3">
-                <P>10.1 TrueBid collects, stores, and uses personal information in accordance with our Privacy Policy, which forms part of these Terms and is available at {process.env.NODE_ENV === "development" ? (
-                  <mark style={{ backgroundColor: "#fef08a", padding: "0 2px" }}>⚠ [INSERT PRIVACY POLICY URL]</mark>
-                ) : "[INSERT PRIVACY POLICY URL]"}.</P>
+                <P>10.1 TrueBid collects, stores, and uses personal information in accordance with our Privacy Policy, which forms part of these Terms and is available at <a href="/privacy" className="underline hover:text-navy">truebid.com.au/privacy</a>.</P>
                 <P>10.2 By using the Platform, you consent to the collection and use of your personal information as described in the Privacy Policy.</P>
                 <P>10.3 TrueBid complies with the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).</P>
                 <P>10.4 TrueBid will not sell your personal information to third parties. We may share information with third-party service providers (including identity verification providers, cloud hosting services, and payment processors) solely for the purpose of operating the Platform.</P>
@@ -398,7 +395,7 @@ export default function TermsPage() {
             <section>
               <SectionHeading id="disputes" number="13" title="Dispute Resolution" />
               <div className="space-y-3">
-                <P>13.1 If you have a complaint about the Platform or another user, you should contact TrueBid first at <a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a>. We will acknowledge your complaint within 2 business days and aim to resolve it within 10 business days.</P>
+                <P>13.1 If you have a complaint about the Platform or another user, you should contact TrueBid first at <a href="mailto:hello@truebid.com.au" className="underline hover:text-navy">hello@truebid.com.au</a>. We will acknowledge your complaint within 2 business days and aim to resolve it within 10 business days.</P>
                 <P>13.2 If your complaint is not resolved to your satisfaction, either party may refer the matter to mediation before a mutually agreed mediator. The costs of mediation will be shared equally unless the mediator determines otherwise.</P>
                 <P>13.3 TrueBid does not act as arbitrator or adjudicator in disputes between buyers and sellers regarding the terms of any transaction. Such disputes are a matter for the parties and their legal representatives.</P>
                 <P>13.4 Nothing in this section prevents either party from seeking urgent injunctive or other equitable relief from a court of competent jurisdiction.</P>
@@ -435,16 +432,9 @@ export default function TermsPage() {
                 <P>For questions about these Terms, contact us at:</P>
                 <div className="text-text-muted leading-relaxed" style={paraStyle}>
                   <p className="font-semibold text-navy">TrueBid</p>
-                  {/* TODO: Replace with company name, address, email, and phone before going live */}
-                  {process.env.NODE_ENV === "development" && (
-                    <p style={{ backgroundColor: "#fef08a", padding: "4px 6px", marginBottom: 8, fontWeight: 600 }}>
-                      ⚠ Contact details below are placeholders. Fill in before launch.
-                    </p>
-                  )}
                   <p>TrueBid Pty Ltd</p>
                   <p>Perth, Western Australia</p>
-                  <p><a href="mailto:privacy@truebid.com.au" className="underline hover:text-navy">privacy@truebid.com.au</a></p>
-                  <p>[INSERT PHONE (optional)]</p>
+                  <p><a href="mailto:hello@truebid.com.au" className="underline hover:text-navy">hello@truebid.com.au</a></p>
                 </div>
               </div>
             </section>

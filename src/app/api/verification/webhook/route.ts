@@ -99,7 +99,7 @@ async function handleEvent(event: Stripe.Event, stripe: Stripe) {
           verificationStatus: "VERIFIED",
           verificationProvider: "stripe_identity",
           verificationRefId: session.id,
-          verifiedAt: new Date(),
+          verificationDate: new Date(),
           verifiedName,
         },
       });

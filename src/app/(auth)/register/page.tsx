@@ -211,7 +211,7 @@ function RegisterForm() {
           autoComplete="tel"
           value={fields.phone}
           onChange={(e) => setField("phone", e.target.value)}
-          placeholder="0412 345 678"
+          placeholder="e.g. 0400 000 000"
           hint="Optional: Australian mobile format"
           error={errors.phone}
         />
@@ -327,7 +327,27 @@ function RegisterForm() {
         </Button>
       </form>
 
-      <p style={{ textAlign: "center", fontSize: 14, color: "#6b7280", marginTop: 24 }}>
+      {/* Collection notice (APP 5) */}
+      <p
+        style={{
+          fontSize: 13,
+          color: "#6b7280",
+          lineHeight: 1.6,
+          marginTop: 20,
+          padding: "12px 16px",
+          background: "#f9f8f6",
+          borderRadius: 8,
+          border: "1px solid #e5e2db",
+        }}
+      >
+        TrueBid collects this information to create and manage your account and to verify your identity when placing offers.{" "}
+        <Link href="/privacy" style={{ color: "#b45309", textDecoration: "none" }}>
+          See our Privacy Policy
+        </Link>{" "}
+        for details on how we handle your data, your rights to access and correct it, and how to contact us.
+      </p>
+
+      <p style={{ textAlign: "center", fontSize: 14, color: "#6b7280", marginTop: 16 }}>
         Already have an account?{" "}
         <Link href="/login" style={{ color: "#b45309", fontWeight: 500, textDecoration: "none" }}>
           Sign in

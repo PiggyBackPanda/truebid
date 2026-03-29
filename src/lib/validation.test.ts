@@ -90,6 +90,7 @@ describe("createOfferSchema", () => {
     amountCents: 80_000_000,
     conditionType: "UNCONDITIONAL" as const,
     settlementDays: 30,
+    legalAcknowledgedAt: new Date().toISOString(),
   };
 
   it("accepts valid offer", () => {

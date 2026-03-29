@@ -64,6 +64,7 @@ export function OfferForm({
   const [settlementDays, setSettlementDays] = useState(30);
   const [personalNote, setPersonalNote] = useState("");
 
+  const [acknowledged, setAcknowledged] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -73,6 +74,11 @@ export function OfferForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!acknowledged) {
+      setError("You must acknowledge the statement above before submitting your offer.");
+      return;
+    }
 
     if (amountCents <= 0) {
       setError("Please enter a valid offer amount.");
@@ -96,6 +102,7 @@ export function OfferForm({
           conditionText: conditionType === "OTHER" ? conditionText : undefined,
           settlementDays,
           personalNote: personalNote.trim() || undefined,
+          legalAcknowledgedAt: new Date().toISOString(),
         }),
       });
 
@@ -344,6 +351,22 @@ export function OfferForm({
         </p>
       </div>
 
+      {/* Legal acknowledgement */}
+      <div className="bg-white border border-border rounded-lg px-4 py-4">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={acknowledged}
+            onChange={(e) => setAcknowledged(e.target.checked)}
+            className="w-4 h-4 mt-0.5 accent-amber flex-shrink-0"
+            required
+          />
+          <span className="text-sm text-navy leading-relaxed">
+            I understand that submitting this offer does not create a legally binding contract. My offer is an expression of interest only. The seller is not obligated to accept any offer. Any contract of sale must be separately negotiated and executed between myself and the seller, outside of this platform.
+          </span>
+        </label>
+      </div>
+
       {/* Error */}
       {error && (
         <div className="bg-red/10 border border-red/20 text-red text-sm rounded-lg px-4 py-3">
@@ -354,16 +377,16 @@ export function OfferForm({
       {/* Submit */}
       <button
         type="submit"
-        disabled={submitting}
+        disabled={submitting || !acknowledged}
         className="w-full bg-amber text-navy font-semibold text-sm py-3.5 rounded-[10px] hover:bg-amber-light transition-colors focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting ? "Submitting…" : `Submit Offer${amountCents > 0 ? `: ${formatCurrency(amountCents)}` : ""}`}
       </button>
 
-      <p className="text-[11px] text-text-muted text-center">
-        By placing an offer you agree to our{" "}
-        <a href="/terms" className="underline hover:no-underline">Terms of Service</a>.
-        {" "}Offers can be increased or withdrawn at any time before the closing date.
+      {/* Collection notice (APP 5) */}
+      <p className="text-xs text-text-muted text-center leading-relaxed">
+        Your offer details (amount and terms) are recorded by TrueBid and may be visible to other buyers and the seller, depending on the seller&apos;s visibility settings.{" "}
+        <a href="/privacy" className="underline hover:no-underline">See our Privacy Policy for full details.</a>
       </p>
     </form>
   );

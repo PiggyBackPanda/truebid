@@ -831,6 +831,13 @@ function DetailsForm() {
             </div>
           </section>
 
+          {/* Collection notice (APP 5) */}
+          <div className="text-sm text-text-muted leading-relaxed px-1 border border-border rounded-[10px] px-4 py-3 bg-bg">
+            TrueBid collects this information to create and manage your property listing.
+            Your listing information will be publicly visible to buyers on the platform.{" "}
+            <a href="/privacy" className="underline hover:no-underline">See our Privacy Policy for full details.</a>
+          </div>
+
           <div className="flex justify-end pt-4">
             <Button type="submit" size="lg" loading={submitting}>
               Continue to Photos

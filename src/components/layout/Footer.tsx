@@ -53,8 +53,9 @@ export function Footer() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <FooterLink href="/listings">Browse Listings</FooterLink>
               <FooterLink href="/how-it-works">How It Works</FooterLink>
+              <FooterLink href="/pricing">Pricing</FooterLink>
               <FooterLink href="/guides">Guides</FooterLink>
-              <FooterLink href="/register">List Your Property</FooterLink>
+              <FooterLink href="/listings/create">List Your Property</FooterLink>
               <FooterLink href="/faq">FAQ</FooterLink>
             </div>
           </div>
@@ -118,7 +119,7 @@ export function Footer() {
             &copy; {year} TrueBid Pty Ltd &middot; Australian owned and operated
           </p>
           <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: SYS }}>
-            Launching in Western Australia · 2026
+            Launching in Western Australia · {year}
           </p>
           <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, fontFamily: SYS, width: "100%" }}>
             TrueBid is a technology platform, not a licensed real estate agency. We do not act as an agent for buyers or sellers.

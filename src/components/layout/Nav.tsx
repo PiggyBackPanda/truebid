@@ -68,7 +68,8 @@ export function Nav() {
         {/* Desktop nav links */}
         <div className="hidden md:flex" style={{ alignItems: "center", gap: 8 }}>
           <NavLink href="/listings">Browse</NavLink>
-          <NavLink href="/how-it-works">How it works</NavLink>
+          <NavLink href="/how-it-works">How It Works</NavLink>
+          <NavLink href="/pricing">Pricing</NavLink>
           <NavLink href="/guides">Guides</NavLink>
           <NavLink href="/faq">FAQ</NavLink>
           <NavLink href="/about">About</NavLink>
@@ -312,7 +313,8 @@ export function Nav() {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <MobileNavLink href="/listings" onClick={() => setMenuOpen(false)}>Browse</MobileNavLink>
-            <MobileNavLink href="/how-it-works" onClick={() => setMenuOpen(false)}>How it works</MobileNavLink>
+            <MobileNavLink href="/how-it-works" onClick={() => setMenuOpen(false)}>How It Works</MobileNavLink>
+            <MobileNavLink href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</MobileNavLink>
             <MobileNavLink href="/guides" onClick={() => setMenuOpen(false)}>Guides</MobileNavLink>
             <MobileNavLink href="/faq" onClick={() => setMenuOpen(false)}>FAQ</MobileNavLink>
             <MobileNavLink href="/about" onClick={() => setMenuOpen(false)}>About</MobileNavLink>

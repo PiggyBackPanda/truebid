@@ -29,7 +29,7 @@ export async function getPresignedUploadUrl(
     if (process.env.NODE_ENV === "production") {
       throw new Error("S3 is not configured. Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_S3_BUCKET.");
     }
-    const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
     const uploadUrl = `${baseUrl}/api/dev/upload?key=${encodeURIComponent(s3Key)}`;
     const publicUrl = `/dev-uploads/${s3Key}`;
     return { uploadUrl, publicUrl };

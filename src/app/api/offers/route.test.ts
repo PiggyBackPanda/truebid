@@ -107,6 +107,7 @@ describe("POST /api/offers", () => {
     amountCents: 80_000_000,
     conditionType: "UNCONDITIONAL",
     settlementDays: 30,
+    legalAcknowledgedAt: new Date().toISOString(),
   };
 
   function setupValidPost() {
@@ -209,7 +210,7 @@ describe("POST /api/offers", () => {
     expect(body.code).toBe("LISTING_NOT_ACTIVE");
   });
 
-  it("returns 403 if seller tries to bid on own listing", async () => {
+  it("returns 403 if seller tries to offer on own listing", async () => {
     const seller = mockUser();
     mockRequireAuth.mockResolvedValue(seller);
     mockRequireVerified.mockReturnValue(undefined);
@@ -236,7 +237,7 @@ describe("POST /api/offers", () => {
     const { status, body } = await parseResponse(res);
 
     expect(status).toBe(403);
-    expect(body.code).toBe("CANNOT_BID_OWN_LISTING");
+    expect(body.code).toBe("CANNOT_OFFER_OWN_LISTING");
   });
 
   it("returns 409 if buyer already has an active offer", async () => {

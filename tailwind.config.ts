@@ -37,6 +37,7 @@ const config: Config = {
       fontFamily: {
         serif: ["Georgia", "Times New Roman", "serif"],
         sans: [
+          "var(--font-outfit)",
           "system-ui",
           "-apple-system",
           "BlinkMacSystemFont",

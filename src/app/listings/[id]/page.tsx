@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { BASE_URL } from "@/lib/constants";
 import { rankOffers } from "@/lib/offer-utils";
 import { serializeListingAddress } from "@/lib/listing-serializer";
 import type { AddressVisibility } from "@/lib/listing-serializer";
@@ -39,7 +40,7 @@ const SALE_METHOD_LABELS_META: Record<string, string> = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
+  const baseUrl = BASE_URL;
 
   const listing = await prisma.listing.findUnique({
     where: { id },
@@ -419,7 +420,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       ? await getNearbyAmenities(mapCentroid.lat, mapCentroid.lng, mapboxToken)
       : null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
+  const baseUrl = BASE_URL;
   const canonicalUrl = `${baseUrl}/listings/${id}`;
 
   const jsonLd = {

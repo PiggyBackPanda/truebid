@@ -232,6 +232,7 @@ export const createOfferSchema = z
       { message: "Settlement days must be one of: 14, 21, 30, 45, 60, 90, 120" }
     ),
     personalNote: z.string().max(1000).optional(),
+    legalAcknowledgedAt: z.string().datetime({ message: "Legal acknowledgement timestamp is required" }),
   })
   .refine(
     (data) => {
@@ -360,5 +361,5 @@ export const updateInspectionSlotSchema = z.object({
   maxGroups: z.number().int().min(1).max(20).optional(),
   startTime: z.string().datetime().optional(),
   endTime: z.string().datetime().optional(),
-  status: z.enum(["CANCELLED"]).optional(),
+  status: z.enum(["CANCELLED", "IN_PROGRESS"]).optional(),
 });

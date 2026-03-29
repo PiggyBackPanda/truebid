@@ -113,7 +113,7 @@ export async function POST(
       };
 
       const qstashUrl = process.env.QSTASH_URL;
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
       const internalSecret = process.env.INTERNAL_API_SECRET;
 
       if (qstashUrl && internalSecret) {

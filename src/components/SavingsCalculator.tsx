@@ -148,7 +148,7 @@ export function SavingsCalculator() {
                 <span className="font-medium text-gray-600">Not included in this estimate:</span>{" "}
                 professional photography (typically $300 to $700, required on any platform),
                 legal and conveyancing fees (required regardless of sale method), and optional
-                costs such as home staging or auctioneer fees.
+                costs such as home staging or selling agent fees.
               </p>
               <p>
                 This calculator shows agent-related costs avoided. It does not account for any

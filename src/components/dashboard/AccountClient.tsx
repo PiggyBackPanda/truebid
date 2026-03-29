@@ -202,7 +202,7 @@ function PersonalDetails({ user }: { user: User }) {
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="0412 345 678"
+            placeholder="e.g. 0400 000 000"
             style={inputStyle}
           />
         </Field>

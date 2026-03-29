@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { AccountClient } from "@/components/dashboard/AccountClient";
-export const metadata = { title: "Account Settings" };
+export const metadata = { title: "Account Settings | TrueBid" };
 
 export default async function AccountPage() {
   const session = await getServerSession(authOptions);

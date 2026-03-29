@@ -13,7 +13,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What is TrueBid?",
-        a: "TrueBid is a property sales platform built for Australia, currently free to use. Every offer on a property is visible to all registered buyers in real time: no hidden negotiations, no blind auctions. You can see where you stand at any point during the offer period.",
+        a: "TrueBid is a property sales platform built for Australia, currently free to use. Every offer on a property is visible to all registered buyers in real time: no hidden negotiations, no hidden offer processes. You can see where you stand at any point during the offer period.",
       },
       {
         q: "How is TrueBid different from a traditional sale?",
@@ -29,7 +29,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Is TrueBid legal in Australia?",
-        a: "Yes. Open offer selling is legal across Australia. TrueBid operates within existing property law and works alongside the standard contract process. It doesn\u2019t replace it.",
+        a: "Yes. Live Offers is legal across Australia. TrueBid operates within existing property law and works alongside the standard contract process. It doesn\u2019t replace it.",
       },
       {
         q: "Do I need an agent to use TrueBid?",
@@ -46,7 +46,7 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What is a Live Offer?",
-        a: "A Live Offer is TrueBid\u2019s core feature. When a property is listed with Live Offers enabled, all registered buyers can see every offer\u2019s amount and submission time in real time. Buyer identities and offer conditions are kept private. There are no secret bids.",
+        a: "A Live Offer is TrueBid\u2019s core feature. When a property is listed with Live Offers enabled, all registered buyers can see every offer\u2019s amount and submission time in real time. Buyer identities and offer conditions are kept private. There are no secret offers.",
       },
       {
         q: "How long does a Live Offers period last?",
@@ -124,7 +124,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does it cost to list on TrueBid?",
-        a: "Listing on TrueBid is free during our current launch period, which will end with no less than 30 days written notice to registered users. We don\u2019t charge commission on sales.",
+        a: "Listing on TrueBid is free during our current launch period. Fees will be introduced in the future with advance notice to registered users. Any listings active at the time of the fee change will complete their current listing period at no charge. We do not charge commission on sales.",
       },
       {
         q: "Can I set a minimum offer threshold?",
@@ -165,7 +165,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What is a cooling-off period and when does it apply?",
-        a: "A cooling-off period gives a buyer the right to withdraw from a signed contract within a set number of days without forfeiting their full deposit. The rules vary by state \u2014 Victoria allows 3 business days, Queensland allows 5, and New South Wales allows 5. Cooling-off periods do not apply to purchases made at auction in most states. Your conveyancer can confirm the rules that apply to your transaction.",
+        a: "A cooling-off period gives a buyer the right to withdraw from a signed contract within a set number of days without forfeiting their full deposit. The rules vary by state \u2014 Victoria allows 3 business days, Queensland allows 5, and New South Wales allows 5. Cooling-off periods do not apply to purchases made through a private sale in most states. Your conveyancer can confirm the rules that apply to your transaction.",
       },
       {
         q: "What deposit is required and when is it paid?",

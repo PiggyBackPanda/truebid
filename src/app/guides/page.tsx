@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getGuidesGroupedByCategory, CATEGORY_ORDER, CATEGORIES } from "@/lib/guides";
 
 export const metadata: Metadata = {
-  title: "Guides",
+  title: "Guides | TrueBid",
   description:
     "Practical guides for selling your home privately in Australia, without a real estate agent.",
 };

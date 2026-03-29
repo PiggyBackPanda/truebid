@@ -120,6 +120,127 @@ describe("GET /api/listings/[id]", () => {
     expect(status).toBe(404);
     expect(body.code).toBe("NOT_FOUND");
   });
+
+  it.each(["SOLD", "UNDER_OFFER", "WITHDRAWN", "EXPIRED"] as const)(
+    "returns empty offers array for OPEN_OFFERS listing with status %s",
+    async (closedStatus) => {
+      const now = new Date();
+      mockPrisma.listing.findUnique.mockResolvedValue({
+        id: "listing_1",
+        status: closedStatus,
+        streetAddress: "1 Main St",
+        suburb: "Perth",
+        state: "WA",
+        postcode: "6000",
+        latitude: null,
+        longitude: null,
+        propertyType: "HOUSE",
+        bedrooms: 3,
+        bathrooms: 2,
+        carSpaces: 1,
+        landSizeM2: 500,
+        buildingSizeM2: null,
+        yearBuilt: null,
+        title: null,
+        description: "A nice house",
+        features: [],
+        guidePriceCents: 80_000_000,
+        guideRangeMaxCents: null,
+        saleMethod: "OPEN_OFFERS",
+        closingDate: now,
+        originalClosingDate: now,
+        minOfferCents: null,
+        requireDeposit: false,
+        depositAmountCents: null,
+        createdAt: now,
+        publishedAt: now,
+        requireInspection: false,
+        addressVisibility: "LOGGED_IN",
+        _count: { inspectionSlots: 0 },
+        images: [],
+        seller: { id: "seller_1", firstName: "Jane", publicAlias: "Seller_ab12", verificationStatus: "VERIFIED" },
+        offers: [
+          {
+            id: "offer_1",
+            amountCents: 80_000_000,
+            conditionType: "UNCONDITIONAL",
+            conditionText: null,
+            settlementDays: 30,
+            status: "ACCEPTED",
+            createdAt: now,
+            updatedAt: now,
+            buyer: { publicAlias: "Buyer_cd34" },
+          },
+        ],
+      });
+
+      const req = new Request("http://localhost/api/listings/listing_1");
+      const res = await GET(req as never, makeParams("listing_1") as never);
+      const { status, body } = await parseResponse(res);
+
+      expect(status).toBe(200);
+      expect(body.listing.offers).toHaveLength(0);
+    }
+  );
+
+  it("returns empty offers for PRIVATE_OFFERS listing even when ACTIVE", async () => {
+    const now = new Date();
+    mockPrisma.listing.findUnique.mockResolvedValue({
+      id: "listing_2",
+      status: "ACTIVE",
+      streetAddress: "2 Side St",
+      suburb: "Perth",
+      state: "WA",
+      postcode: "6000",
+      latitude: null,
+      longitude: null,
+      propertyType: "HOUSE",
+      bedrooms: 4,
+      bathrooms: 2,
+      carSpaces: 2,
+      landSizeM2: 600,
+      buildingSizeM2: null,
+      yearBuilt: null,
+      title: null,
+      description: "Another house",
+      features: [],
+      guidePriceCents: 90_000_000,
+      guideRangeMaxCents: null,
+      saleMethod: "PRIVATE_OFFERS",
+      closingDate: now,
+      originalClosingDate: now,
+      minOfferCents: null,
+      requireDeposit: false,
+      depositAmountCents: null,
+      createdAt: now,
+      publishedAt: now,
+      requireInspection: false,
+      addressVisibility: "PUBLIC",
+      _count: { inspectionSlots: 0 },
+      images: [],
+      seller: { id: "seller_2", firstName: "John", publicAlias: "Seller_ef56", verificationStatus: "VERIFIED" },
+      offers: [
+        {
+          id: "offer_2",
+          amountCents: 90_000_000,
+          conditionType: "UNCONDITIONAL",
+          conditionText: null,
+          settlementDays: 42,
+          status: "ACTIVE",
+          createdAt: now,
+          updatedAt: now,
+          buyer: { publicAlias: "Buyer_gh78" },
+        },
+      ],
+    });
+
+    const req = new Request("http://localhost/api/listings/listing_2");
+    const res = await GET(req as never, makeParams("listing_2") as never);
+    const { status, body } = await parseResponse(res);
+
+    expect(status).toBe(200);
+    expect(body.listing.offers).toHaveLength(0);
+  });
 });
 
 describe("PATCH /api/listings/[id]", () => {

@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (listing.sellerId === user.id) {
-      throw new ApiError(403, "CANNOT_BID_OWN_LISTING", "You cannot place an offer on your own listing");
+      throw new ApiError(403, "CANNOT_OFFER_OWN_LISTING", "You cannot place an offer on your own listing");
     }
 
     // Inspection gate: buyer must have attended an inspection if seller requires it
@@ -195,6 +195,7 @@ export async function POST(req: NextRequest) {
         personalNote: data.personalNote ?? null,
         status: "ACTIVE",
         isPublic,
+        legalAcknowledgedAt: new Date(data.legalAcknowledgedAt),
       },
       select: {
         id: true,
@@ -239,6 +240,7 @@ export async function POST(req: NextRequest) {
       sellerEmail: listing.seller.email,
       sellerName: listing.seller.firstName,
       listingAddress: address,
+      listingId: listing.id,
       amountCents: data.amountCents,
     }).catch(() => {/* non-critical, log handled inside sendEmail */});
 

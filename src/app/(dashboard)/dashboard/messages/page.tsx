@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { MessagesPageClient } from "@/components/dashboard/MessagesPageClient";
 
-export const metadata = { title: "Messages" };
+export const metadata = { title: "Messages | TrueBid" };
 
 export default async function MessagesPage({
   searchParams,

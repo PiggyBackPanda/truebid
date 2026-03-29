@@ -82,7 +82,7 @@ export function AskOwnerModal({ listingId, sellerFirstName }: AskOwnerModalProps
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
         </svg>
-        Ask the Owner
+        Ask the Seller
       </button>
 
       {/* Modal overlay */}
@@ -101,7 +101,7 @@ export function AskOwnerModal({ listingId, sellerFirstName }: AskOwnerModalProps
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-              <h2 className="font-serif text-lg text-navy">Send a Message to the Owner</h2>
+              <h2 className="font-serif text-lg text-navy">Send a Message to the Seller</h2>
               <button
                 type="button"
                 onClick={closeModal}
@@ -137,7 +137,7 @@ export function AskOwnerModal({ listingId, sellerFirstName }: AskOwnerModalProps
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <p className="text-sm text-text-muted">
-                    Your message will be emailed to {sellerFirstName}, the owner of this property.
+                    Your message will be emailed to {sellerFirstName}, the seller of this property.
                   </p>
 
                   <div className="flex flex-col gap-1.5">

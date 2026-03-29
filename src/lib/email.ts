@@ -1,16 +1,9 @@
 import { Resend } from "resend";
 import { logger } from "@/lib/logger";
+import { formatCurrency } from "@/lib/utils";
+import { BASE_URL } from "@/lib/constants";
 
 const FROM = process.env.EMAIL_FROM ?? "TrueBid <noreply@truebid.com.au>";
-const BASE_URL = () => process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
-
-function formatAUD(cents: number): string {
-  return new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    minimumFractionDigits: 0,
-  }).format(cents / 100);
-}
 
 function emailLayout(body: string): string {
   return `<!DOCTYPE html>
@@ -36,10 +29,10 @@ function emailLayout(body: string): string {
         <tr>
           <td style="padding:16px 32px 24px;border-top:1px solid #e5e1da;">
             <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.5;">
-              This email was sent by <a href="${BASE_URL()}" style="color:#f59e0b;text-decoration:none;">TrueBid</a>: free, transparent property sales for Australia.
+              This email was sent by <a href="${BASE_URL}" style="color:#f59e0b;text-decoration:none;">TrueBid</a>: free, transparent property sales for Australia.
             </p>
             <p style="font-size:11px;color:#c0bdb6;margin:8px 0 0;">
-              <a href="${BASE_URL()}/account" style="color:#c0bdb6;text-decoration:underline;">Manage email preferences</a>
+              <a href="${BASE_URL}/account" style="color:#c0bdb6;text-decoration:underline;">Manage email preferences</a>
             </p>
           </td>
         </tr>
@@ -82,14 +75,16 @@ export async function sendNewOfferEmail({
   sellerEmail,
   sellerName,
   listingAddress,
+  listingId,
   amountCents,
 }: {
   sellerEmail: string;
   sellerName: string;
   listingAddress: string;
+  listingId: string;
   amountCents: number;
 }): Promise<void> {
-  const amount = formatAUD(amountCents);
+  const amount = formatCurrency(amountCents);
 
   await sendEmail({
     to: sellerEmail,
@@ -104,7 +99,7 @@ export async function sendNewOfferEmail({
       <p style="font-size:14px;line-height:1.6;margin:0 0 8px;color:#334766;">
         Review the offer details, buyer profile, and conditions in your seller dashboard.
       </p>
-      ${ctaButton(`${BASE_URL()}/dashboard/seller`, "View Offer Details")}
+      ${ctaButton(`${BASE_URL}/dashboard/seller/listings/${listingId}`, "View Offer Details")}
     `),
   });
 }
@@ -120,7 +115,7 @@ export async function sendOfferAcceptedEmail({
   listingAddress: string;
   amountCents: number;
 }): Promise<void> {
-  const amount = formatAUD(amountCents);
+  const amount = formatCurrency(amountCents);
 
   await sendEmail({
     to: buyerEmail,
@@ -135,7 +130,7 @@ export async function sendOfferAcceptedEmail({
       <p style="font-size:14px;line-height:1.6;margin:0 0 8px;color:#334766;">
         A secure conversation has been opened between you and the seller. You can now exchange details and progress the sale.
       </p>
-      ${ctaButton(`${BASE_URL()}/dashboard/messages`, "View Conversation")}
+      ${ctaButton(`${BASE_URL}/dashboard/messages`, "View Conversation")}
     `),
   });
 }
@@ -151,7 +146,7 @@ export async function sendOfferRejectedEmail({
   listingAddress: string;
   amountCents: number;
 }): Promise<void> {
-  const amount = formatAUD(amountCents);
+  const amount = formatCurrency(amountCents);
 
   await sendEmail({
     to: buyerEmail,
@@ -166,7 +161,7 @@ export async function sendOfferRejectedEmail({
       <p style="font-size:14px;line-height:1.6;margin:0 0 8px;color:#334766;">
         There are new properties being listed every day. Keep searching and you will find your perfect home.
       </p>
-      ${ctaButton(`${BASE_URL()}/listings`, "Browse Listings")}
+      ${ctaButton(`${BASE_URL}/listings`, "Browse Listings")}
     `),
   });
 }
@@ -187,7 +182,7 @@ export async function sendUnreadMessageEmail({
   messagePreview: string;
 }): Promise<void> {
   const preview = messagePreview.slice(0, 100);
-  const link = `${BASE_URL()}/dashboard/messages/${conversationId}`;
+  const link = `${BASE_URL}/dashboard/messages/${conversationId}`;
 
   await sendEmail({
     to: recipientEmail,
@@ -242,7 +237,7 @@ export async function sendInspectionBookingConfirmedEmail({
         <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${timeStr}</td></tr>
       </table>
       <p style="font-size:13px;color:#6b7280;">Hi ${buyerName}, we look forward to seeing you at the inspection.</p>
-      ${ctaButton(`${BASE_URL()}/listings/${listingId}`, "View Listing")}
+      ${ctaButton(`${BASE_URL}/listings/${listingId}`, "View Listing")}
     `),
   });
 }
@@ -268,7 +263,7 @@ export async function sendInspectionNewBookingEmail({
         <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Bookings</td></tr>
         <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${confirmedCount} / ${maxGroups} spots filled</td></tr>
       </table>
-      ${ctaButton(`${BASE_URL()}/dashboard/listings/${listingId}/inspections`, "View All Bookings")}
+      ${ctaButton(`${BASE_URL}/dashboard/listings/${listingId}/inspections`, "View All Bookings")}
     `),
   });
 }
@@ -293,7 +288,7 @@ export async function sendInspectionCancelledEmail({
         <tr><td style="font-size:15px;color:#0f1a2e;">${timeStr}</td></tr>
       </table>
       <p style="font-size:13px;color:#6b7280;">Please check the listing for alternative inspection times.</p>
-      ${ctaButton(`${BASE_URL()}/listings/${listingId}`, "View Listing")}
+      ${ctaButton(`${BASE_URL}/listings/${listingId}`, "View Listing")}
     `),
   });
 }
@@ -318,7 +313,7 @@ export async function sendInspectionReminderEmail({
         <tr><td style="font-size:13px;color:#6b7280;padding-bottom:4px;">Date &amp; Time</td></tr>
         <tr><td style="font-size:15px;font-weight:600;color:#0f1a2e;">${timeStr}</td></tr>
       </table>
-      ${ctaButton(`${BASE_URL()}/listings/${listingId}`, "View Listing")}
+      ${ctaButton(`${BASE_URL}/listings/${listingId}`, "View Listing")}
     `),
   });
 }
@@ -340,8 +335,8 @@ export async function sendHigherOfferEmail({
   highestOfferCents: number;
   closingDate: Date | null;
 }): Promise<void> {
-  const yourOffer = formatAUD(buyerOfferCents);
-  const highestOffer = formatAUD(highestOfferCents);
+  const yourOffer = formatCurrency(buyerOfferCents);
+  const highestOffer = formatCurrency(highestOfferCents);
 
   const now = new Date();
   const closingLine =
@@ -369,10 +364,42 @@ export async function sendHigherOfferEmail({
         A new offer has been submitted on <strong>${listingAddress}</strong> that is higher than your current offer of <strong>${yourOffer}</strong>. The current highest offer is now <strong style="color:#0f1a2e;font-size:18px;">${highestOffer}</strong>.
       </p>
       ${closingLine}
-      ${ctaButton(`${BASE_URL()}/listings/${listingId}/offer`, "Update Your Offer")}
+      ${ctaButton(`${BASE_URL}/listings/${listingId}/offer`, "Update Your Offer")}
       <p style="font-size:11px;color:#c0bdb6;margin:16px 0 0;line-height:1.5;">
         You are receiving this email because you have an active offer on this property. TrueBid is a technology platform, not a licensed real estate agency.
       </p>
+    `),
+  });
+}
+
+export async function sendListingPublishedEmail({
+  sellerEmail,
+  sellerName,
+  listingAddress,
+  listingId,
+}: {
+  sellerEmail: string;
+  sellerName: string;
+  listingAddress: string;
+  listingId: string;
+}): Promise<void> {
+  await sendEmail({
+    to: sellerEmail,
+    subject: `Your listing is now live: ${listingAddress}`,
+    html: emailLayout(`
+      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;margin:0 0 16px;color:#0f1a2e;">Your Listing Is Live</h2>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">Hi ${sellerName},</p>
+      <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
+        Your listing at <strong>${listingAddress}</strong> is now live on TrueBid and visible to buyers.
+      </p>
+      ${ctaButton(`${BASE_URL}/listings/${listingId}`, "View Your Listing")}
+      <div style="background:#f7f5f0;border-radius:10px;padding:16px 20px;margin:24px 0 0;">
+        <p style="font-size:12px;color:#6b7280;margin:0;line-height:1.6;">
+          <strong style="color:#0f1a2e;">Listing fees:</strong>
+          Listing is free during TrueBid&apos;s launch period. Fees will be introduced in the future with advance notice to registered users.
+          Any listings active at the time of the fee change will complete their current listing period at no charge.
+        </p>
+      </div>
     `),
   });
 }

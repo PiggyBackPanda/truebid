@@ -229,6 +229,15 @@ export function OfferBoard({
             </div>
           )}
 
+          {/* Live Offers info panel */}
+          <div className="bg-amber/5 border-b border-amber/15 px-4 py-3">
+            <p className="text-[11px] text-amber-900 leading-relaxed">
+              <strong>Live Offers is a transparent offer process — not an auction.</strong>{" "}
+              No offer submitted here creates a legally binding contract. The seller is not obligated to accept any offer.
+              All final negotiations and contracts happen separately, off this platform.
+            </p>
+          </div>
+
           {/* Inspection required notice */}
           {requireInspection && (
             <div className="bg-amber/5 border-b border-amber/20 px-4 py-2">

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { errorResponse, ApiError } from "@/lib/api-helpers";
 import { sendEmail } from "@/lib/email";
+import { BASE_URL } from "@/lib/constants";
 import { z } from "zod";
 
 const enquirySchema = z.object({
@@ -52,7 +53,7 @@ export async function POST(
         ? `${listing.streetAddress}, ${listing.suburb} ${listing.state} ${listing.postcode}`
         : `${listing.suburb}, ${listing.state} ${listing.postcode}`;
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
+    const baseUrl = BASE_URL;
     const listingUrl = `${baseUrl}/listings/${id}`;
 
     await sendEmail({

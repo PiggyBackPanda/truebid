@@ -22,17 +22,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PlaceOfferPage({ params }: PageProps) {
+  const { id } = await params;
+
   const session = await getServerSession(authOptions);
   if (!session?.user) {
-    redirect("/login?callbackUrl=/listings/[id]/offer");
+    redirect(`/login?callbackUrl=/listings/${id}/offer`);
   }
 
   const user = session.user as {
     id: string;
     verificationStatus?: string;
   };
-
-  const { id } = await params;
 
   const listing = await prisma.listing.findUnique({
     where: { id },

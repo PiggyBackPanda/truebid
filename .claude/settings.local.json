@@ -140,7 +140,19 @@
       "Bash(while read:*)",
       "Bash(do sed:*)",
       "Bash(python3 -c \":*)",
-      "Bash(find C:UsersjordaProjectstruebidsrcappguides -type f -name *.tsx)"
+      "Bash(find C:UsersjordaProjectstruebidsrcappguides -type f -name *.tsx)",
+      "Bash(find /c/Users/jorda/Projects/truebid -type f \\\\\\(-name *email* -o -name *template* -o -name *.html \\\\\\))",
+      "Bash(psql \"$DATABASE_URL\" -c \":*)",
+      "Bash(source /c/Users/jorda/Projects/truebid/.env)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(curl -s http://localhost:3000/terms -o /tmp/terms.html)",
+      "Bash(curl -s http://localhost:3000/privacy -o /tmp/privacy.html)",
+      "Bash(curl -s http://localhost:3000/privacy -o /c/Temp/privacy2.html)",
+      "Bash(tasklist //FI 'IMAGENAME eq node.exe' //V)",
+      "Bash(taskkill /PID 34736 /F)",
+      "Bash(taskkill /PID 19500 /F)",
+      "Bash(taskkill /PID 26316 /F)",
+      "Bash(cmd.exe /C \"taskkill /PID 34736 /F & taskkill /PID 19500 /F & taskkill /PID 26316 /F\")"
     ]
   }
 }

@@ -33,7 +33,7 @@ const BUYER_STEPS = [
   },
   {
     title: "Compete transparently",
-    body: "You can see every other offer's amount and submission time. Personal details and offer conditions are kept private. If you're outbid, you'll be notified instantly so you can decide whether to raise your offer. Sellers consider both price and terms when choosing: an unconditional offer might win over a higher offer with conditions attached.",
+    body: "You can see every other offer's amount and submission time. Personal details and offer conditions are kept private. If another buyer places a higher offer, you'll be notified instantly so you can decide whether to raise your offer. Sellers consider both price and terms when choosing: an unconditional offer might win over a higher offer with conditions attached.",
   },
   {
     title: "Win and settle",

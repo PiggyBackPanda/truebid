@@ -124,7 +124,7 @@ function MethodForm() {
 
     if (method === "OPEN_OFFERS") {
       if (!closingDate) {
-        newErrors.closingDate = "Closing date is required for Open Offers";
+        newErrors.closingDate = "Closing date is required for Live Offers";
       } else if (new Date(closingDate) < minDate) {
         newErrors.closingDate = "Closing date must be at least 14 days from today";
       }
@@ -198,7 +198,7 @@ function MethodForm() {
           <MethodCard
             title="Live Offers"
             badge="Recommended"
-            description="Transparent public offers with a closing date. All buyers see every offer: price, conditions, and timing. Creates competitive tension and typically achieves the best price."
+            description="A transparent offer process where buyers can submit offers during the offer period, and previous offer amounts may be visible to all buyers. Not an auction. No offer creates a legally binding contract. Creates open competition and typically achieves the best price."
             selected={method === "OPEN_OFFERS"}
             onClick={() => setMethod("OPEN_OFFERS")}
           />
@@ -222,6 +222,11 @@ function MethodForm() {
         {method === "OPEN_OFFERS" && (
           <div className="bg-white border border-border rounded-[12px] p-6 flex flex-col gap-5">
             <h3 className="text-sm font-semibold text-navy">Live Offers settings</h3>
+
+            {/* Live Offers description */}
+            <div className="bg-amber/5 border border-amber/20 rounded-[10px] px-4 py-3 text-sm text-navy leading-relaxed">
+              Live Offers is a transparent offer process — not an auction. Buyers can submit offers during the offer period, and the seller may choose to make previous offer amounts visible to help all buyers make informed decisions. No offer submitted through Live Offers creates a legally binding contract. The seller is not obligated to accept any offer. All final negotiations and contracts happen separately, off this platform.
+            </div>
 
             <div>
               <label className="text-sm font-medium text-text block mb-1.5">

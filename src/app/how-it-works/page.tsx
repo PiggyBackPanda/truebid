@@ -16,8 +16,8 @@ const OPEN_OFFERS_QA = [
     a: 'When a seller lists with Live Offers, they set a closing date (typically 2–4 weeks away). During that time, any verified buyer can place an offer. Every offer appears on a live, public board showing the amount and when it was placed. Buyer identities, personal details, and offer conditions are kept private. Buyers are identified only by anonymous aliases such as "Buyer_7a3k". Amounts and timing are fully transparent.',
   },
   {
-    q: "What makes it different from a traditional auction?",
-    a: "At a traditional auction, you have minutes to decide under extreme pressure, in a crowd, with an auctioneer pushing the pace. With Live Offers, you have days or weeks to think. You can arrange your finance, do your research, consult your family, and decide what the property is truly worth to you. No auctioneer, no crowd pressure, no hidden reserve games.",
+    q: "What makes it different from a private treaty sale?",
+    a: "At a private treaty sale, you have minutes to decide under extreme pressure, in a crowd, with a selling agent pushing the pace. With Live Offers, you have days or weeks to think. You can arrange your finance, do your research, consult your family, and decide what the property is truly worth to you. No selling agent, no crowd pressure, no hidden reserve games.",
   },
   {
     q: "What about sniping?",
@@ -88,9 +88,13 @@ export default function HowItWorksPage() {
           >
             What is Live Offers?
           </h2>
-          <p className="text-text-muted text-center text-sm mb-10">
+          <p className="text-text-muted text-center text-sm mb-6">
             It is a structured, transparent offer process: fairer, less stressful, and open for weeks instead of minutes.
           </p>
+          {/* Live Offers description panel */}
+          <div className="bg-amber/5 border border-amber/20 rounded-lg px-6 py-5 mb-8 text-sm text-navy leading-relaxed">
+            Live Offers is a transparent offer process — not an auction. Buyers can submit offers during the offer period, and the seller may choose to make previous offer amounts visible to help all buyers make informed decisions. No offer submitted through Live Offers creates a legally binding contract. The seller is not obligated to accept any offer. All final negotiations and contracts happen separately, off this platform.
+          </div>
 
           <div className="space-y-3">
             {OPEN_OFFERS_QA.map((item, i) => (

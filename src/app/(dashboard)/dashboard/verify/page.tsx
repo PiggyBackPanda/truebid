@@ -60,8 +60,9 @@ export default async function VerifyPage({
     where: { id: userId },
     select: {
       verificationStatus: true,
-      verifiedAt: true,
+      verificationDate: true,
       verifiedName: true,
+      biometricConsentAt: true,
     },
   });
 
@@ -191,7 +192,7 @@ export default async function VerifyPage({
                 ? "Your previous verification attempt was unsuccessful. Please try again. You may need to use a different document or improve lighting conditions."
                 : "To place offers or list your property, you need to verify your identity. The process takes about 2 minutes and requires a government-issued photo ID."}
             </p>
-            <VerifyClient status={status} />
+            <VerifyClient status={status} biometricConsentGiven={user.biometricConsentAt !== null} />
           </div>
         )}
 
@@ -250,7 +251,7 @@ export default async function VerifyPage({
                 </p>
               </div>
             )}
-            {user.verifiedAt && (
+            {user.verificationDate && (
               <div>
                 <p
                   style={{
@@ -271,7 +272,7 @@ export default async function VerifyPage({
                     fontFamily: "var(--font-sans)",
                   }}
                 >
-                  {formatDate(user.verifiedAt)}
+                  {formatDate(user.verificationDate)}
                 </p>
               </div>
             )}

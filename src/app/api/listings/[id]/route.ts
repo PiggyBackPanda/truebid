@@ -165,14 +165,17 @@ export async function GET(
       {
         userId: viewerId,
         isSeller,
-        isVerified: !!(session?.user as { verificationStatus?: string } | undefined)?.verificationStatus === true,
+        isVerified: (session?.user as { verificationStatus?: string } | undefined)?.verificationStatus === "VERIFIED",
         hasBooking,
       }
     );
 
-    // Shape offers into the PublicOffer format; hide for non-OPEN_OFFERS listings
+    // Shape offers into the PublicOffer format.
+    // Only expose the public board while the listing is ACTIVE — once it moves to
+    // UNDER_OFFER, SOLD, WITHDRAWN, or EXPIRED the offer history is no longer
+    // accessible to buyers or the public. The seller uses the dashboard route.
     const offers =
-      listing.saleMethod === "OPEN_OFFERS"
+      listing.saleMethod === "OPEN_OFFERS" && listing.status === "ACTIVE"
         ? listing.offers.map((o) => ({
             id: o.id,
             publicAlias: o.buyer.publicAlias,

@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
 import { createMessageSchema } from "@/lib/validation";
-import { sendUnreadMessageEmail } from "@/lib/email";
+
 import { logger } from "@/lib/logger";
 
 const URL_PATTERN = /https?:\/\/|www\./i;
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
         id: true,
         email: true,
         firstName: true,
+        lastName: true,
         notificationPreferences: true,
       },
     });
@@ -79,29 +80,50 @@ export async function POST(req: NextRequest) {
       const listingAddress = `${listing.streetAddress}, ${listing.suburb} ${listing.state}`;
       const senderName = `${user.firstName} ${user.lastName}`;
 
-      // Development: setTimeout (does not survive server restarts)
-      // Production: replace with Upstash QStash scheduled message
-      setTimeout(async () => {
-        try {
-          const msg = await prisma.message.findUnique({
-            where: { id: message.id },
-            select: { readAt: true },
-          });
+      const emailPayload = {
+        messageId: message.id,
+        conversationId: message.id,
+        recipientEmail: recipient.email,
+        recipientName: `${recipient.firstName} ${recipient.lastName}`,
+        senderName,
+        listingAddress,
+        messagePreview: content,
+      };
 
-          if (!msg || msg.readAt !== null) return;
+      // Enqueue delayed email via Upstash QStash → /api/internal/send-unread-email
+      const qstashUrl = process.env.QSTASH_URL;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://truebid.com.au";
+      const internalSecret = process.env.INTERNAL_API_SECRET;
 
-          await sendUnreadMessageEmail({
-            recipientEmail: recipient.email,
-            recipientName: recipient.firstName,
-            senderName,
-            listingAddress,
-            conversationId: message.id,
-            messagePreview: content,
-          });
-        } catch (err) {
-          logger.error("[messages] send-unread-email failed", err);
-        }
-      }, UNREAD_EMAIL_DELAY_MS);
+      if (qstashUrl && internalSecret) {
+        // Production: use Upstash QStash for reliable delayed delivery
+        fetch(`${qstashUrl}/v2/publish/${baseUrl}/api/internal/send-unread-email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.QSTASH_TOKEN ?? ""}`,
+            "Upstash-Delay": `${UNREAD_EMAIL_DELAY_MS / 1000}s`,
+          },
+          body: JSON.stringify(emailPayload),
+        }).catch((err) => logger.error("[messages] QStash schedule failed", err));
+      } else {
+        // Development fallback: setTimeout (does not survive server restarts)
+        setTimeout(async () => {
+          try {
+            const res = await fetch(`${baseUrl}/api/internal/send-unread-email`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "x-internal-secret": internalSecret ?? "",
+              },
+              body: JSON.stringify(emailPayload),
+            });
+            if (!res.ok) logger.error("[messages] send-unread-email failed", await res.text());
+          } catch (err) {
+            logger.error("[messages] send-unread-email failed", err);
+          }
+        }, UNREAD_EMAIL_DELAY_MS);
+      }
     }
 
     return Response.json(

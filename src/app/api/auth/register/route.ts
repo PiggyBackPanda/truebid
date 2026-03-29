@@ -7,10 +7,11 @@ import bcrypt from "bcryptjs";
 
 const BCRYPT_COST = 12;
 
-async function generateUniqueAlias(): Promise<string> {
+async function generateUniqueAlias(role?: string): Promise<string> {
+  const prefix = role === "SELLER" ? "Seller_" : role === "BUYER" ? "Buyer_" : "User_";
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   for (let attempt = 0; attempt < 10; attempt++) {
-    let alias = "Buyer_";
+    let alias = prefix;
     for (let i = 0; i < 4; i++) {
       alias += chars[Math.floor(Math.random() * chars.length)];
     }
@@ -18,7 +19,7 @@ async function generateUniqueAlias(): Promise<string> {
     if (!existing) return alias;
   }
   // Fallback: use timestamp-based suffix
-  return `Buyer_${Date.now().toString(36).slice(-4)}`;
+  return `${prefix}${Date.now().toString(36).slice(-4)}`;
 }
 
 export async function POST(request: Request) {
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
 
     const [passwordHash, publicAlias] = await Promise.all([
       bcrypt.hash(data.password, BCRYPT_COST),
-      generateUniqueAlias(),
+      generateUniqueAlias(data.role),
     ]);
 
     const user = await prisma.user.create({

@@ -88,6 +88,11 @@ function ReviewForm() {
   const [listing, setListing] = useState<ListingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [dec1, setDec1] = useState(false);
+  const [dec2, setDec2] = useState(false);
+  const [dec3, setDec3] = useState(false);
+  const [dec4, setDec4] = useState(false);
+  const allDeclarationsChecked = dec1 && dec2 && dec3 && dec4;
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [publishError, setPublishError] = useState("");
@@ -113,10 +118,20 @@ function ReviewForm() {
     setPublishError("");
 
     try {
+      const now = new Date().toISOString();
       const res = await fetch(`/api/listings/${listingId}/publish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode }),
+        body: JSON.stringify({
+          mode,
+          ownerDeclarationAt: now,
+          ownerDeclarationData: {
+            checkbox1AcceptedAt: now,
+            checkbox2AcceptedAt: now,
+            checkbox3AcceptedAt: now,
+            checkbox4AcceptedAt: now,
+          },
+        }),
       });
       const data = await res.json() as { error?: string };
 
@@ -170,7 +185,7 @@ function ReviewForm() {
                     </p>
                     <Button
                       size="sm"
-                      onClick={() => router.push(`/verify-identity?returnTo=/listings/create/review?id=${listingId}`)}
+                      onClick={() => router.push(`/verify-identity?returnTo=${encodeURIComponent(`/listings/create/review?id=${listingId}`)}`)}
                     >
                       Verify my identity
                     </Button>
@@ -299,8 +314,9 @@ function ReviewForm() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       size="lg"
-                      onClick={() => router.push(`/listings/${listingId}?updated=true`)}
+                      onClick={() => handlePublish("active")}
                       disabled={!agreed}
+                      loading={submitting}
                       className="flex-1"
                     >
                       Confirm &amp; Update Listing
@@ -332,35 +348,94 @@ function ReviewForm() {
                   Your listing will appear on TrueBid only. It will not be listed on realestate.com.au or Domain. Make sure you are comfortable with your marketing reach before publishing.
                 </div>
 
-                {/* Legal agreement */}
-                <div className="bg-navy/5 border border-navy/15 rounded-[12px] p-5 mb-6">
+                {/* Seller ownership declaration */}
+                <div className="bg-navy/5 border border-navy/15 rounded-[12px] p-5 mb-4">
                   <h3 className="text-sm font-semibold text-navy mb-3">Before you publish</h3>
-                  <ul className="text-sm text-text-muted space-y-2 mb-4 list-none">
+
+                  {/* Information panel */}
+                  <div className="bg-amber/8 border border-amber/25 rounded-[10px] px-4 py-3 mb-4 text-sm text-navy leading-relaxed">
+                    <p>
+                      Before listing your property, please confirm the following.
+                      TrueBid is not a licensed real estate agency and does not provide legal, financial, or conveyancing advice.
+                      As a private seller, you are responsible for complying with all applicable laws.
+                      We recommend engaging a licensed settlement agent or conveyancer before accepting any offer.
+                    </p>
+                    <p className="mt-2">
+                      Find a licensed settlement agent at the Settlement Agents Supervisory Board:{" "}
+                      <a
+                        href="https://www.sasb.wa.gov.au"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:no-underline text-amber-900"
+                      >
+                        www.sasb.wa.gov.au
+                      </a>
+                    </p>
+                  </div>
+
+                  {/* Individual declarations */}
+                  <div className="space-y-3">
                     {[
-                      "TrueBid does not influence or guarantee the offers you receive. Your sale outcome depends on buyer demand, your pricing, and market conditions.",
-                      "All information provided is accurate and not misleading.",
-                      "You are the legal owner or authorised to sell this property.",
-                      "You understand that once published, offers may be placed immediately.",
-                      "You agree to TrueBid's Seller Terms of Service.",
-                      "Withdrawing the listing after offers are received may have legal consequences.",
-                    ].map((point) => (
-                      <li key={point} className="flex items-start gap-2">
-                        <span className="text-amber mt-0.5 flex-shrink-0">✓</span>
-                        {point}
-                      </li>
+                      {
+                        checked: dec1,
+                        setter: setDec1,
+                        label: "I am the registered proprietor of this property, or I have written authority from the registered proprietor to list this property for sale.",
+                      },
+                      {
+                        checked: dec2,
+                        setter: setDec2,
+                        label: "I understand that TrueBid is a marketplace platform only. TrueBid does not provide legal advice, act as my agent, prepare contracts of sale, or handle deposits or settlement.",
+                      },
+                      {
+                        checked: dec3,
+                        setter: setDec3,
+                        label: "I confirm that all information I provide in this listing is accurate and not misleading, and I am solely responsible for its accuracy.",
+                      },
+                      {
+                        checked: dec4,
+                        setter: setDec4,
+                        label: "I understand that as a private seller, I am responsible for my own legal obligations in relation to this sale, including disclosing material facts about the property to potential buyers.",
+                      },
+                    ].map(({ checked, setter, label }, i) => (
+                      <label key={i} className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => setter(e.target.checked)}
+                          className="w-4 h-4 accent-amber mt-0.5 flex-shrink-0"
+                        />
+                        <span className="text-sm text-text leading-relaxed">{label}</span>
+                      </label>
                     ))}
-                  </ul>
-                  <label className="flex items-start gap-3 cursor-pointer">
+                  </div>
+                </div>
+
+                {/* Free period disclaimer */}
+                <div className="bg-bg border border-border rounded-[10px] px-4 py-3 text-sm text-text-muted mb-6">
+                  <strong className="text-navy">Listing fees:</strong>{" "}
+                  Listing is free during TrueBid&apos;s launch period. Fees will be introduced in the future with advance notice.
+                  Any listings active at the time of the fee change will complete their current listing period at no charge.
+                </div>
+
+                {/* Confirmation checkbox — only enabled once declarations are all checked */}
+                <div className="bg-navy/5 border border-navy/15 rounded-[12px] p-5 mb-6">
+                  <label className={`flex items-start gap-3 ${allDeclarationsChecked ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}>
                     <input
                       type="checkbox"
                       checked={agreed}
                       onChange={(e) => setAgreed(e.target.checked)}
+                      disabled={!allDeclarationsChecked}
                       className="w-4 h-4 accent-amber mt-0.5 flex-shrink-0"
                     />
                     <span className="text-sm text-text font-medium">
-                      I confirm the above statements are true and I agree to proceed.
+                      I have read and confirmed all declarations above and I am ready to publish.
                     </span>
                   </label>
+                  {!allDeclarationsChecked && (
+                    <p className="text-xs text-text-muted mt-2 ml-7">
+                      Please check all four declarations before confirming.
+                    </p>
+                  )}
                 </div>
 
                 {publishError && (

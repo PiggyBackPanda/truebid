@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -156,7 +156,38 @@ function VerifyIdentityContent() {
   const [devBypassing, setDevBypassing] = useState(false);
   const [devError, setDevError] = useState("");
 
+  // Biometric consent state: null = checking, false = consent needed, true = consent given
+  const [consentState, setConsentState] = useState<null | false | true>(null);
+  const [recordingConsent, setRecordingConsent] = useState(false);
+
   const isDev = process.env.NODE_ENV === "development";
+
+  // Check consent status once authenticated
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    fetch("/api/verification/consent")
+      .then((r) => r.json())
+      .then((data: { consented: boolean }) => {
+        setConsentState(data.consented ? true : false);
+      })
+      .catch(() => {
+        // On error, show consent screen to be safe
+        setConsentState(false);
+      });
+  }, [status]);
+
+  async function handleGiveConsent() {
+    setRecordingConsent(true);
+    try {
+      await fetch("/api/verification/consent", { method: "POST" });
+      setConsentState(true);
+    } catch {
+      // Best-effort; proceed anyway
+      setConsentState(true);
+    } finally {
+      setRecordingConsent(false);
+    }
+  }
 
   async function handleStartVerification() {
     setStarting(true);
@@ -263,8 +294,8 @@ function VerifyIdentityContent() {
         </p>
         <p style={{ color: "#6b7280", fontSize: 13, marginBottom: 28 }}>
           Please try again, or contact{" "}
-          <a href="mailto:support@truebid.com.au" style={{ color: "#b45309" }}>
-            support@truebid.com.au
+          <a href="mailto:hello@truebid.com.au" style={{ color: "#b45309" }}>
+            hello@truebid.com.au
           </a>{" "}
           if you believe this is an error.
         </p>
@@ -314,6 +345,181 @@ function VerifyIdentityContent() {
         {isDev && (
           <DevBypassBlock onBypass={handleDevBypass} busy={devBypassing} error={devError} />
         )}
+      </div>
+    );
+  }
+
+  // ── Consent loading ───────────────────────────────────────────────────────────
+
+  if (consentState === null) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            border: "3px solid #f59e0b",
+            borderTopColor: "transparent",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite",
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ── Consent screen (shown once, before Stripe Identity) ───────────────────────
+
+  if (consentState === false) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 520,
+          background: "#ffffff",
+          border: "1px solid #e5e2db",
+          borderRadius: 16,
+          padding: "40px",
+          boxShadow: "0 1px 3px rgba(15,22,35,0.06), 0 4px 12px rgba(15,22,35,0.04)",
+        }}
+      >
+        {/* Logo */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: "#f59e0b",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontSize: 16,
+                fontWeight: 700,
+                color: "#0f1623",
+              }}
+            >
+              T
+            </div>
+            <span
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontSize: 20,
+                color: "#0f1623",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              TrueBid
+            </span>
+          </Link>
+        </div>
+
+        {/* Shield icon */}
+        <div
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: "50%",
+            background: "#fffbeb",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 24,
+            margin: "0 auto 20px",
+          }}
+        >
+          🔒
+        </div>
+
+        <h1
+          style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: 24,
+            fontWeight: 400,
+            color: "#0f1623",
+            textAlign: "center",
+            marginBottom: 8,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          Identity Verification — Your Privacy Rights
+        </h1>
+
+        <div
+          style={{
+            background: "#f9f8f6",
+            border: "1px solid #e5e2db",
+            borderRadius: 12,
+            padding: "20px 24px",
+            marginBottom: 24,
+            fontSize: 14,
+            color: "#334766",
+            lineHeight: 1.7,
+          }}
+        >
+          <p style={{ margin: "0 0 12px" }}>
+            To place offers on TrueBid, we are required to verify your identity.
+            This process is handled by Stripe Identity, a third-party identity verification service.
+          </p>
+          <p style={{ margin: "0 0 8px", fontWeight: 600, color: "#0f1623" }}>During verification, Stripe will collect:</p>
+          <ul style={{ margin: "0 0 12px", paddingLeft: 20 }}>
+            <li>A copy of your government-issued photo ID (passport or driver&apos;s licence)</li>
+            <li>A selfie or liveness check (biometric facial data)</li>
+            <li>The personal information contained in your ID document</li>
+          </ul>
+          <p style={{ margin: "0 0 12px" }}>
+            This data is processed and stored by Stripe, Inc., which is based in the United States.
+            TrueBid receives a verification result (verified / not verified) only.
+            TrueBid does not store copies of your ID documents or biometric data.
+          </p>
+          <p style={{ margin: "0 0 12px" }}>
+            You have the right to request deletion of your identity verification data. To do so,
+            contact us at{" "}
+            <a href="mailto:hello@truebid.com.au" style={{ color: "#b45309" }}>
+              hello@truebid.com.au
+            </a>
+          </p>
+          <p style={{ margin: 0, fontStyle: "italic", color: "#0f1623" }}>
+            By proceeding, you consent to the collection and processing of your biometric and
+            identity document data by Stripe for the purpose of verifying your identity on TrueBid.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <Button
+            size="lg"
+            onClick={handleGiveConsent}
+            loading={recordingConsent}
+            className="w-full"
+          >
+            I Consent — Continue to Verification
+          </Button>
+          <button
+            type="button"
+            onClick={() => router.push(returnTo)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              background: "#0f1623",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: "pointer",
+              fontFamily: "var(--font-sans)",
+            }}
+          >
+            No Thanks — Go Back
+          </button>
+        </div>
+
+        <p style={{ textAlign: "center", fontSize: 12, color: "#9ca3af", marginTop: 16 }}>
+          You can still use TrueBid without completing verification.
+          Verification is required to place offers or list a property.
+        </p>
       </div>
     );
   }

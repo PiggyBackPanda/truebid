@@ -120,7 +120,6 @@ model User {
   verificationRef      String?
   verificationProvider String?
   verificationRefId    String?
-  verifiedAt           DateTime?
   verifiedName         String?   // AES-256-GCM encrypted
   avatarUrl            String?
   bio                String?
@@ -129,6 +128,7 @@ model User {
   updatedAt          DateTime           @updatedAt
   lastLoginAt             DateTime?
   passwordChangedAt  DateTime?
+  biometricConsentAt DateTime?
   notificationPreferences Json?
 
   listings            Listing[]
@@ -212,8 +212,10 @@ model Listing {
   currentRentalAmount   Float?
   titleType             String?
   bodyCorporateFees     Float?
-  inspectionTimes       Json?
-  buildingPestReportUrl String?
+  inspectionTimes          Json?
+  buildingPestReportUrl    String?
+  ownerDeclarationAt       DateTime?
+  ownerDeclarationData     Json?
   floorplanUrl          String?
 
   images            ListingImage[]
@@ -285,9 +287,10 @@ model Offer {
   isPublic        Boolean       @default(true)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  withdrawnAt     DateTime?
-  acceptedAt      DateTime?
-  rejectedAt      DateTime?
+  withdrawnAt         DateTime?
+  acceptedAt          DateTime?
+  rejectedAt          DateTime?
+  legalAcknowledgedAt DateTime?
 
   history      OfferHistory[]
   conversation Conversation?

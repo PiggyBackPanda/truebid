@@ -1,12 +1,16 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireAuth, requireVerified, requireOwner, errorResponse, ApiError } from "@/lib/api-helpers";
+import { sendListingPublishedEmail } from "@/lib/email";
 
 const bodySchema = z.object({
   // "coming_soon" = publish as COMING_SOON (default)
   // "active"      = go straight to ACTIVE (requires closingDate for Open Offers)
   mode: z.enum(["coming_soon", "active"]).default("coming_soon"),
+  ownerDeclarationAt: z.string().datetime().optional(),
+  ownerDeclarationData: z.record(z.string(), z.unknown()).optional(),
 });
 
 // POST /api/listings/[id]/publish
@@ -22,10 +26,11 @@ export async function POST(
 
     // Body is optional, defaults to coming_soon
     let mode: "coming_soon" | "active" = "coming_soon";
+    let parsedBody: ReturnType<typeof bodySchema.safeParse> | null = null;
     try {
       const body = await req.json();
-      const parsed = bodySchema.safeParse(body);
-      if (parsed.success) mode = parsed.data.mode;
+      parsedBody = bodySchema.safeParse(body);
+      if (parsedBody.success) mode = parsedBody.data.mode;
     } catch {
       // empty body: use default mode
     }
@@ -80,6 +85,12 @@ export async function POST(
       data: {
         status: newStatus,
         publishedAt: new Date(),
+        ...(parsedBody?.success && parsedBody.data.ownerDeclarationAt
+          ? {
+              ownerDeclarationAt: new Date(parsedBody.data.ownerDeclarationAt),
+              ownerDeclarationData: (parsedBody.data.ownerDeclarationData ?? undefined) as Prisma.InputJsonValue | undefined,
+            }
+          : {}),
       },
       select: {
         id: true,
@@ -89,6 +100,23 @@ export async function POST(
         suburb: true,
       },
     });
+
+    // Send listing published confirmation email (non-critical)
+    ;(async () => {
+      const seller = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { email: true, firstName: true },
+      });
+      if (seller) {
+        const address = `${published.streetAddress}, ${published.suburb}`;
+        sendListingPublishedEmail({
+          sellerEmail: seller.email,
+          sellerName: seller.firstName,
+          listingAddress: address,
+          listingId: published.id,
+        }).catch(() => {/* non-critical */});
+      }
+    })().catch(() => {/* non-critical */});
 
     return Response.json({ listing: published });
   } catch (error) {

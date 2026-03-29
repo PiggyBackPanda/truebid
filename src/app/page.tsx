@@ -249,7 +249,7 @@ export default function HomePage() {
                   </svg>
                 ),
                 title: "Live Offers",
-                body: "Every offer is visible to every buyer in real time. No secret negotiations. No phantom bids. Genuine competition, in the open.",
+                body: "Every offer is visible to every buyer in real time. No secret negotiations. No phantom offers. Genuine competition, in the open.",
                 link: "/how-it-works",
                 linkLabel: "How Live Offers works",
               },

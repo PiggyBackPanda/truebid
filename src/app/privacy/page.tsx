@@ -110,7 +110,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, fontFamily: body, marginTop: 10 }}>
-            Last updated: 28 March 2026
+            Last updated: March 2026
           </p>
         </div>
       </div>
@@ -163,7 +163,7 @@ export default function PrivacyPage() {
               <SectionHeading id="overview" number="1" title="Overview" />
               <div className="space-y-3">
                 <P>
-                  TrueBid Pty Ltd (ABN: pending registration) (<strong className="text-navy">&ldquo;TrueBid&rdquo;</strong>,{" "}
+                  TrueBid Pty Ltd (ABN: [ABN TO BE CONFIRMED]) (<strong className="text-navy">&ldquo;TrueBid&rdquo;</strong>,{" "}
                   <strong className="text-navy">&ldquo;we&rdquo;</strong>,{" "}
                   <strong className="text-navy">&ldquo;us&rdquo;</strong>, or{" "}
                   <strong className="text-navy">&ldquo;our&rdquo;</strong>) operates a free,
@@ -773,12 +773,7 @@ export default function PrivacyPage() {
               </P>
               <div className="mt-4 space-y-2" style={{ fontFamily: body, fontSize: 14 }}>
                 <p className="font-semibold text-navy">TrueBid Privacy Officer</p>
-                {/* TODO: Replace with company address before going live */}
-                {process.env.NODE_ENV === "development" && (
-                  <p style={{ backgroundColor: "#fef08a", padding: "4px 6px", display: "inline-block" }}>
-                    ⚠ Add company address before launch
-                  </p>
-                )}
+                <p className="text-text-muted">[Address to be confirmed]</p>
                 <p className="text-text-muted">
                   Email:{" "}
                   <a href="mailto:hello@truebid.com.au" className="text-navy underline">
