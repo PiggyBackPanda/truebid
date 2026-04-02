@@ -3,7 +3,7 @@ import type { Guide } from "@/lib/guides";
 const guide: Guide = {
   slug: "true-cost-of-selling-with-vs-without-an-agent",
   title: "The True Cost of Selling With an Agent vs Privately",
-  category: "costs-of-selling",
+  category: "legal-and-costs",
   summary:
     "Agent commissions in Australia typically range from 1.5% to 3% of the sale price. On a $900,000 home, that's up to $27,000. Here's what you actually pay either way.",
   readTime: "5 min read",

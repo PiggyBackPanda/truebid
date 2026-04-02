@@ -82,7 +82,7 @@ function ConversationList({
           No conversations yet
         </p>
         <p className="text-text-muted text-sm font-sans leading-relaxed">
-          Conversations open automatically when an offer is accepted.
+          Conversations open when a seller chooses to share contact details with a buyer.
         </p>
       </div>
     );
@@ -280,7 +280,7 @@ function MessageThread({
             {summary.listing.address}
             {" · "}
             <span className="text-text-light">
-              {formatCurrency(summary.offer.amountCents)} accepted
+              Offer: {formatCurrency(summary.offer.amountCents)}
             </span>
           </p>
         </div>
@@ -313,8 +313,10 @@ function MessageThread({
               Start the conversation
             </p>
             <p className="text-text-muted text-sm font-sans max-w-xs leading-relaxed">
-              Send a message to {summary.other.firstName} to get started. All
-              messages are permanently stored as an official record.
+              Send a message to {summary.other.firstName} to get started.
+              Messages are stored for your reference only. They do not constitute a legal agreement.
+              All binding terms must be agreed in a formal contract of sale prepared by a licensed
+              settlement agent or solicitor.
             </p>
           </div>
         ) : (
@@ -491,7 +493,7 @@ export function MessagesPageClient({
             Messages
           </h1>
           <p className="text-text-muted text-sm font-sans">
-            Secure conversations between buyers and sellers after offer acceptance.
+            Secure conversations between buyers and sellers to exchange contact details.
           </p>
         </div>
         {totalUnread > 0 && (
@@ -571,7 +573,7 @@ export function MessagesPageClient({
             </p>
             <p className="text-text-muted text-sm font-sans max-w-xs leading-relaxed">
               {conversations.length === 0
-                ? "Conversations unlock automatically when an offer is accepted on a listing."
+                ? "Conversations open when a seller chooses to share contact details with a buyer."
                 : "Choose a conversation from the left panel to view messages."}
             </p>
           </div>

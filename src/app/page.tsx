@@ -151,7 +151,7 @@ export default function HomePage() {
               { n: "1", title: "Create your listing", body: "Enter your property details, upload photos, and choose your sale method. Takes about 15 minutes." },
               { n: "2", title: "Go live instantly", body: "Publish and your listing appears to buyers immediately. No review delays, no gatekeepers." },
               { n: "3", title: "Buyers place live offers", body: "Every offer is visible on your live board in real time. Genuine competition, in the open." },
-              { n: "4", title: "Accept and settle", body: "Choose the offer that suits you best, then hand over to your conveyancer for settlement." },
+              { n: "4", title: "Proceed and settle", body: "Choose the offer that suits you best, then hand over to your conveyancer for settlement." },
             ].map(({ n, title, body }) => (
               <div key={n} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <div
@@ -272,7 +272,7 @@ export default function HomePage() {
                   </svg>
                 ),
                 title: "You stay in control",
-                body: "Set your timeline, choose your sale method, and decide which offer to accept, or none at all. No obligation to sell at any price.",
+                body: "Set your timeline, choose your sale method, and decide which offer to proceed with, or none at all. No obligation to sell at any price.",
                 link: "/how-it-works",
                 linkLabel: "Seller walkthrough",
               },
@@ -388,7 +388,7 @@ export default function HomePage() {
                 boxShadow: "0 4px 16px rgba(245, 158, 11, 0.35)",
               }}
             >
-              List Your Home for Free
+              List Your Home Free During Launch
             </Link>
             <Link
               href="/listings"

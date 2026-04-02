@@ -71,7 +71,6 @@ export function Nav() {
           <NavLink href="/how-it-works">How It Works</NavLink>
           <NavLink href="/pricing">Pricing</NavLink>
           <NavLink href="/guides">Guides</NavLink>
-          <NavLink href="/faq">FAQ</NavLink>
           <NavLink href="/about">About</NavLink>
 
           {status === "loading" ? null : session ? (
@@ -316,7 +315,6 @@ export function Nav() {
             <MobileNavLink href="/how-it-works" onClick={() => setMenuOpen(false)}>How It Works</MobileNavLink>
             <MobileNavLink href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</MobileNavLink>
             <MobileNavLink href="/guides" onClick={() => setMenuOpen(false)}>Guides</MobileNavLink>
-            <MobileNavLink href="/faq" onClick={() => setMenuOpen(false)}>FAQ</MobileNavLink>
             <MobileNavLink href="/about" onClick={() => setMenuOpen(false)}>About</MobileNavLink>
             {status === "loading" ? null : session ? (
               <>

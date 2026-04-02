@@ -29,7 +29,7 @@ function emailLayout(body: string): string {
         <tr>
           <td style="padding:16px 32px 24px;border-top:1px solid #e5e1da;">
             <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.5;">
-              This email was sent by <a href="${BASE_URL}" style="color:#f59e0b;text-decoration:none;">TrueBid</a>: free, transparent property sales for Australia.
+              This email was sent by <a href="${BASE_URL}" style="color:#f59e0b;text-decoration:none;">TrueBid</a>: transparent property sales for Australia.
             </p>
             <p style="font-size:11px;color:#c0bdb6;margin:8px 0 0;">
               <a href="${BASE_URL}/account" style="color:#c0bdb6;text-decoration:underline;">Manage email preferences</a>
@@ -119,18 +119,26 @@ export async function sendOfferAcceptedEmail({
 
   await sendEmail({
     to: buyerEmail,
-    subject: `Your offer on ${listingAddress} has been accepted!`,
+    subject: `The seller wants to proceed with your offer on ${listingAddress}`,
     html: emailLayout(`
-      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;margin:0 0 16px;color:#0f1a2e;">Offer Accepted!</h2>
+      <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;margin:0 0 16px;color:#0f1a2e;">The Seller Wants to Proceed</h2>
       <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">Hi ${buyerName},</p>
       <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
-        Congratulations! Your offer of <strong style="color:#0f1a2e;font-size:18px;">${amount}</strong>
-        on <strong>${listingAddress}</strong> has been accepted by the seller.
+        Good news: the seller has indicated they would like to proceed with your offer of <strong style="color:#0f1a2e;font-size:18px;">${amount}</strong>
+        on <strong>${listingAddress}</strong>.
       </p>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;margin:0 0 16px;">
+        <p style="font-size:14px;font-weight:600;color:#0f1a2e;margin:0 0 8px;">This is not a binding contract.</p>
+        <p style="font-size:14px;line-height:1.6;color:#334766;margin:0;">
+          Your next step is to engage a licensed settlement agent or solicitor, who will prepare the formal contract of sale.
+          No agreement is legally binding until that contract is signed by both parties.
+        </p>
+      </div>
       <p style="font-size:14px;line-height:1.6;margin:0 0 8px;color:#334766;">
-        A secure conversation has been opened between you and the seller. You can now exchange details and progress the sale.
+        The seller's contact details are available via TrueBid's messaging. Use that channel only to arrange contact with
+        your settlement agent or solicitor. All binding negotiations should happen through your legal representative.
       </p>
-      ${ctaButton(`${BASE_URL}/dashboard/messages`, "View Conversation")}
+      ${ctaButton(`${BASE_URL}/dashboard/buyer`, "View Next Steps")}
     `),
   });
 }
@@ -155,7 +163,7 @@ export async function sendOfferRejectedEmail({
       <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:20px;margin:0 0 16px;color:#0f1a2e;">Offer Update</h2>
       <p style="font-size:15px;line-height:1.6;margin:0 0 12px;">Hi ${buyerName},</p>
       <p style="font-size:15px;line-height:1.6;margin:0 0 16px;">
-        The seller has accepted another offer on <strong>${listingAddress}</strong>.
+        The seller has chosen to proceed with another buyer for <strong>${listingAddress}</strong>.
         Your offer of <strong>${amount}</strong> was not selected.
       </p>
       <p style="font-size:14px;line-height:1.6;margin:0 0 8px;color:#334766;">
@@ -367,6 +375,7 @@ export async function sendHigherOfferEmail({
       ${ctaButton(`${BASE_URL}/listings/${listingId}/offer`, "Update Your Offer")}
       <p style="font-size:11px;color:#c0bdb6;margin:16px 0 0;line-height:1.5;">
         You are receiving this email because you have an active offer on this property. TrueBid is a technology platform, not a licensed real estate agency.
+        Your current offer remains non-binding. You can update or withdraw it at any time.
       </p>
     `),
   });

@@ -270,7 +270,7 @@ export default async function GuidePage({
               flexShrink: 0,
             }}
           >
-            Create a Free Listing
+            List Your Property
           </Link>
         </div>
       </div>

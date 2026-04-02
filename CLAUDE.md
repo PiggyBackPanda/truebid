@@ -154,6 +154,88 @@ If asked to build a feature and unsure whether it conflicts with the constraints
 
 ---
 
+## Copy and Language Standards
+
+These rules apply to every piece of user-facing text in the codebase — pages, components, error messages, button labels, email templates, guide content, and FAQs. They are not optional. Apply them whenever writing new copy or editing existing copy, without needing to be asked.
+
+### Tone and Voice
+- Direct, honest, and plainspoken. Write like a knowledgeable person explaining something clearly, not like a marketing department.
+- Confident without being aggressive. TrueBid is not attacking the real estate industry. It is offering an alternative that has not previously existed.
+- Agents are referred to respectfully as professionals who add genuine value in the right situations.
+- Empowering toward sellers. The goal is to give people information and confidence, not to push them toward any particular decision.
+
+### Hard Rules — Never Violate These
+
+**Formatting**
+- No em dashes anywhere in any copy. Use a comma, a full stop, or rewrite the sentence.
+- No absolute or extreme statements. Nothing is "completely transparent", "total control", "always", "guaranteed", "never fails", or "the only platform".
+
+**Feature and Action Terminology**
+- The platform feature is called Open Offers or Live Offers. Never "auction", "bidding", or "bid".
+- Buyers submit offers. Sellers receive offers. Never "bids", "tenders", or "submissions".
+- The timeframe is the "Open Offer period" or the "offer window". Never "auction period" or "bidding window".
+- Sellers accept or review offers. Never "accept a bid" or "win the auction".
+- Never use the words "bid", "bidding", "bidder", or "auction" in any user-facing string.
+
+**Agent and Cost Language**
+- Never say "pay an agent". Always say "appoint an agent".
+- Never say "agent fees". Say "agent commission".
+- Never say "avoid paying commission" or "skip the agent". Say "keep more of your sale proceeds" or "sell directly".
+- Never say "cut out the middleman".
+
+**Free and Pricing Language**
+- Do not overuse the word "free" or imply the platform will always be free.
+- The platform is free during the launch period only. Use: "no fees during our launch period", "currently free to list", or "free during launch".
+- Never imply permanent free access. A fee model will be introduced in the future.
+
+**User Roles**
+- Use "seller" consistently. Not "vendor", "owner", or "lister".
+- Use "buyer" consistently. Not "bidder" or "applicant".
+- Use "offer" consistently. Not "bid", "tender", or "submission".
+
+### Banned Words and Phrases
+Remove or replace any of the following on sight:
+- seamlessly
+- robust
+- rest assured
+- it is worth noting
+- dive into
+- leverage (as a buzzword)
+- game-changer
+- revolutionary
+- disrupt / disrupting / disruption
+- we understand that
+- empower (as a buzzword — the concept is fine, the word is overused)
+- cutting-edge
+- innovative (unless describing something genuinely novel with specifics)
+- streamlined
+- ecosystem (in a marketing context)
+
+### Structural Language Guidance
+- Do not frame any content as TrueBid versus agents. Frame it as "your options" or "understanding each method".
+- Do not editorially push readers toward any particular sale method. Give them information and let them decide.
+- When writing about situations where an agent makes sense, write that content with the same care and respect as content about TrueBid. It reflects better on the platform than a one-sided comparison ever could.
+- Do not use "disrupt" or any variation. TrueBid is not disrupting anything. It is providing an alternative.
+- The phrase that should guide all copy decisions: "Whatever you choose, choose it knowing your options."
+
+### Quick Reference — Common Replacements
+
+| Do not use | Use instead |
+|---|---|
+| Pay an agent | Appoint an agent |
+| Agent fees | Agent commission |
+| Avoid paying commission | Keep more of your sale proceeds |
+| Cut out the middleman | Sell directly |
+| Hidden offers | Offers not visible to buyers |
+| Bid / bidding / bidder | Offer / submitting an offer / buyer |
+| Auction (in feature context) | Open Offers / Live Offers |
+| Free platform (permanent) | Currently free during launch |
+| List your home for free | List your home free during launch |
+| Disruptive / disrupt | (Remove or reframe entirely) |
+| We understand that | (Remove — just say the thing) |
+
+---
+
 ## Security
 
 - The dev verification bypass (`DevBypassBlock`) and dev upload route (`/api/dev/upload`) must NEVER be reachable in production. Both are gated by `process.env.NODE_ENV === 'development'` checks. Never remove or weaken these guards.

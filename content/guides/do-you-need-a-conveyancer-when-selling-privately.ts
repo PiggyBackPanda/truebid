@@ -3,7 +3,7 @@ import type { Guide } from "@/lib/guides";
 const guide: Guide = {
   slug: "do-you-need-a-conveyancer-when-selling-privately",
   title: "Do You Need a Conveyancer When Selling Privately?",
-  category: "legal-and-contracts",
+  category: "legal-and-costs",
   summary:
     "Yes. But it's not complicated or expensive. Conveyancers handle the parts of a property sale that actually require legal expertise.",
   readTime: "5 min read",

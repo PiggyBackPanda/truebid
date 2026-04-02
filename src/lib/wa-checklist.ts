@@ -17,7 +17,7 @@ export const WA_CHECKLIST: ChecklistItem[] = [
       "A licensed settlement agent prepares your Contract of Sale, manages the transfer of title, and handles settlement. This is essential before you can exchange contracts with a buyer.",
     mandatory: true,
     helpText:
-      "In WA, settlement agents are licensed under the Settlement Agents Act 1981. Typical cost: $700–$1,500. Your settlement agent should be engaged before you accept an offer.",
+      "In WA, settlement agents are licensed under the Settlement Agents Act 1981. Typical cost: $700\u2013$1,500. Your settlement agent should be engaged before you proceed with a buyer.",
     ctaLabel: "Find a settlement agent",
     ctaType: "referral_partner",
     partnerBusinessType: "settlement_agent",
@@ -38,7 +38,7 @@ export const WA_CHECKLIST: ChecklistItem[] = [
     key: "wa_contract_sale",
     title: "Prepare the Contract of Sale",
     description:
-      "The standard WA contract is the REIWA/Law Society Joint Form of General Conditions for the Sale of Land. Your settlement agent prepares this with the agreed terms once you accept an offer.",
+      "The standard WA contract is the REIWA/Law Society Joint Form of General Conditions for the Sale of Land. Your settlement agent prepares this with the agreed terms once you decide to proceed with a buyer.",
     mandatory: true,
     helpText:
       "The contract includes the purchase price, settlement date, deposit amount, any special conditions, and the general conditions of sale. Your settlement agent drafts this, so you don't need to write it yourself.",

@@ -16,7 +16,7 @@ const STEPS: { key: ListingStatus; label: string }[] = [
   { key: "INSPECTIONS_OPEN", label: "Inspections" },
   { key: "ACTIVE", label: "Active" },
   { key: "UNDER_OFFER", label: "Under Offer" },
-  { key: "SOLD", label: "Offer Accepted" },
+  { key: "SOLD", label: "Buyer Selected" },
 ];
 
 // Map each status to its position in the pipeline (0-indexed)
@@ -110,7 +110,7 @@ const BADGE_STYLES: Partial<Record<ListingStatus, { bg: string; color: string; l
   INSPECTIONS_OPEN: { bg: "#fffbeb", color: "#d97706",  label: "Inspections Open" },
   ACTIVE:           { bg: "#dcfce7", color: "#16a34a",  label: "Active" },
   UNDER_OFFER:      { bg: "#fef3c7", color: "#d97706",  label: "Under Offer" },
-  SOLD:             { bg: "#f0fdf4", color: "#15803d",  label: "Offer Accepted" },
+  SOLD:             { bg: "#f0fdf4", color: "#15803d",  label: "Buyer Selected" },
   WITHDRAWN:        { bg: "#fee2e2", color: "#dc2626",  label: "Withdrawn" },
   EXPIRED:          { bg: "#f3f4f6", color: "#6b7280",  label: "Expired" },
 };

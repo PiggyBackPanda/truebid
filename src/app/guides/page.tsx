@@ -2,6 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getGuidesGroupedByCategory, CATEGORY_ORDER, CATEGORIES } from "@/lib/guides";
 
+const CATEGORY_INTROS: Record<string, string> = {
+  "open-offers-explained":
+    "For a full comparison of how Open Offers differs from a private sale and auction, see the How It Works page.",
+  "buying-on-truebid":
+    "New to TrueBid as a buyer? These guides explain how the offer process works, what to expect, and how to make a competitive offer with confidence.",
+};
+
+const CATEGORY_INTRO_LINKS: Record<string, { text: string; href: string }> = {
+  "open-offers-explained": { text: "How It Works page", href: "/how-it-works" },
+};
+
 export const metadata: Metadata = {
   title: "Guides | TrueBid",
   description:
@@ -87,6 +98,33 @@ export default function GuidesPage() {
                   </h2>
                   <div style={{ flex: 1, height: 1, background: "#e5e2db" }} />
                 </div>
+
+                {/* Optional category intro */}
+                {CATEGORY_INTROS[category] && (
+                  <p
+                    style={{
+                      fontFamily: SYS,
+                      fontSize: 14,
+                      color: "#6b7280",
+                      lineHeight: 1.6,
+                      marginBottom: 16,
+                      marginTop: -8,
+                    }}
+                  >
+                    {CATEGORY_INTRO_LINKS[category] ? (() => {
+                      const { text, href } = CATEGORY_INTRO_LINKS[category];
+                      const intro = CATEGORY_INTROS[category];
+                      const parts = intro.split(text);
+                      return (
+                        <>
+                          {parts[0]}
+                          <Link href={href} style={{ color: "#b45309", textDecoration: "underline" }}>{text}</Link>
+                          {parts[1]}
+                        </>
+                      );
+                    })() : CATEGORY_INTROS[category]}
+                  </p>
+                )}
 
                 {/* Guide cards */}
                 <div

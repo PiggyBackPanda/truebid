@@ -13,12 +13,12 @@ const SELLER_STEPS = [
     body: "Hit publish and your listing goes live instantly. Buyers can find your property through our search, browse the details, and for Live Offers listings, see the live offer board. You manage everything from your seller dashboard: track views, respond to questions, and watch offers come in.",
   },
   {
-    title: "Review offers and accept",
+    title: "Review offers and proceed",
     body: "When your Live Offers closing date arrives, review all offers in your dashboard. You'll see each buyer's offer amount, their conditions, and their preferred settlement timeline. You choose the offer that suits you best. It doesn't have to be the highest. An unconditional offer with a quick settlement might be worth more to you than a higher offer subject to finance.",
   },
   {
     title: "Settle with your conveyancer",
-    body: "Once you accept an offer, your settlement agent prepares the Contract of Sale. The buyer arranges their deposit, inspections, and finance. Both parties sign, and your settlement agent handles the transfer of title. We provide a checklist to guide you through every step.",
+    body: "Once you decide to proceed with a buyer, engage a licensed settlement agent to prepare the formal Contract of Sale. The buyer arranges their deposit, inspections, and finance. Both parties sign, and your settlement agent handles the transfer of title. We provide a checklist to guide you through every step.",
   },
 ];
 
@@ -36,8 +36,8 @@ const BUYER_STEPS = [
     body: "You can see every other offer's amount and submission time. Personal details and offer conditions are kept private. If another buyer places a higher offer, you'll be notified instantly so you can decide whether to raise your offer. Sellers consider both price and terms when choosing: an unconditional offer might win over a higher offer with conditions attached.",
   },
   {
-    title: "Win and settle",
-    body: "If the seller accepts your offer, you'll be notified immediately. From there, engage your own settlement agent, arrange your building and pest inspection (if conditional), finalise your finance, and proceed to exchange and settlement. We guide you through every step.",
+    title: "Proceed and settle",
+    body: "If the seller chooses to proceed with your offer, you'll be notified and guided through the next steps, including engaging a settlement agent to prepare the formal contract of sale. From there, arrange your building and pest inspection (if conditional), finalise your finance, and proceed to exchange and settlement.",
   },
 ];
 
@@ -126,7 +126,7 @@ export function HowItWorksToggle() {
               href="/register"
               className="inline-block bg-amber text-navy font-semibold text-sm px-8 py-4 rounded-[10px] hover:bg-amber-light transition-colors shadow-amber"
             >
-              List Your Home for Free
+              List Your Home Free During Launch
             </Link>
           ) : (
             <Link

@@ -499,7 +499,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
             </div>
             <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
               <p className="font-semibold mb-0.5">Engage a conveyancer</p>
-              <p className="opacity-80">Have one lined up before you accept an offer</p>
+              <p className="opacity-80">Have one lined up before you proceed with a buyer</p>
             </div>
           </div>
         </div>
@@ -553,7 +553,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
       {/* Under Offer banner */}
       {listing.status === "UNDER_OFFER" && (
         <div className="text-sm font-medium text-center py-3 px-4" style={{ background: "#334766", color: "#ffffff" }}>
-          Under Offer: This property has a conditional offer accepted.
+          Under Offer: The seller has indicated they want to proceed with a buyer. A formal contract of sale is being prepared.
         </div>
       )}
 

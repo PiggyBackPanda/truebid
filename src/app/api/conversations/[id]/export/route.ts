@@ -290,7 +290,7 @@ export async function GET(
       <span class="meta-value">${escapeHtml(offer.id)}</span>
     </div>
     <div class="meta-item">
-      <span class="meta-label">Accepted Offer Amount</span>
+      <span class="meta-label">Offer Amount (indicative, not a binding contract term)</span>
       <span class="meta-value">${acceptedAmount}</span>
     </div>
     <div class="meta-item">

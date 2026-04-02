@@ -358,7 +358,7 @@ function ReviewForm() {
                       Before listing your property, please confirm the following.
                       TrueBid is not a licensed real estate agency and does not provide legal, financial, or conveyancing advice.
                       As a private seller, you are responsible for complying with all applicable laws.
-                      We recommend engaging a licensed settlement agent or conveyancer before accepting any offer.
+                      We recommend engaging a licensed settlement agent or conveyancer before proceeding with any offer.
                     </p>
                     <p className="mt-2">
                       Find a licensed settlement agent at the Settlement Agents Supervisory Board:{" "}

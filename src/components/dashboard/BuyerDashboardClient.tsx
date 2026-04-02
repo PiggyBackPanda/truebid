@@ -131,7 +131,7 @@ function Avatar({ name }: { name: string }) {
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
   ACTIVE: { bg: "#dcfce7", color: "#15803d", label: "Active" },
   WITHDRAWN: { bg: "#f3f4f6", color: "#374151", label: "Withdrawn" },
-  ACCEPTED: { bg: "#fef3c7", color: "#b45309", label: "Accepted" },
+  ACCEPTED: { bg: "#fef3c7", color: "#b45309", label: "Selected by Seller" },
   REJECTED: { bg: "#fee2e2", color: "#dc2626", label: "Rejected" },
   EXPIRED: { bg: "#f3f4f6", color: "#9ca3af", label: "Expired" },
 };
@@ -150,7 +150,7 @@ const LISTING_STATUS_LABEL: Record<string, string> = {
   COMING_SOON: "Coming Soon",
   DRAFT: "Draft",
   UNDER_OFFER: "Under Offer",
-  SOLD: "Offer Accepted",
+  SOLD: "Buyer Selected",
   WITHDRAWN: "Withdrawn",
   EXPIRED: "Expired",
 };
@@ -560,6 +560,11 @@ function OffersTab({ offers }: { offers: MyOffer[] }) {
                 }}
               >
                 {conditionLabel} · {offer.settlementDays} day settlement
+                {offer.status === "ACCEPTED" && (
+                  <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: 6 }}>
+                    (indicative only, to be confirmed in formal contract of sale)
+                  </span>
+                )}
               </span>
 
               {/* View listing link */}
@@ -581,6 +586,47 @@ function OffersTab({ offers }: { offers: MyOffer[] }) {
                 View Listing
               </Link>
             </div>
+
+            {/* Buyer handoff panel, shown when seller has indicated intent to proceed */}
+            {offer.status === "ACCEPTED" && (
+              <div
+                style={{
+                  marginTop: 16,
+                  background: "#fffbeb",
+                  border: "1px solid #fde68a",
+                  borderRadius: 10,
+                  padding: "16px 20px",
+                  fontSize: 14,
+                  color: "#334766",
+                  lineHeight: 1.6,
+                }}
+              >
+                <p style={{ fontWeight: 600, color: "#0f1623", marginBottom: 8 }}>
+                  The seller wants to proceed with your offer. What to do next:
+                </p>
+                <ol style={{ margin: 0, paddingLeft: 20 }}>
+                  <li style={{ marginBottom: 6 }}>
+                    Engage a licensed settlement agent or solicitor to act on your behalf. They will review and coordinate the formal contract of sale.
+                  </li>
+                  <li style={{ marginBottom: 6 }}>
+                    Use TrueBid&apos;s messaging to share your contact details with the seller so your representatives can coordinate.
+                  </li>
+                  <li>
+                    Do not commit to any terms until your settlement agent has reviewed everything.
+                  </li>
+                </ol>
+                <p
+                  style={{
+                    marginTop: 12,
+                    fontSize: 13,
+                    color: "#92400e",
+                    fontWeight: 500,
+                  }}
+                >
+                  No binding agreement exists until a formal contract of sale is signed by both parties.
+                </p>
+              </div>
+            )}
 
             {/* Last updated */}
             <p

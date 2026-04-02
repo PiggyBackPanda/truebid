@@ -391,7 +391,7 @@ function NotificationPreferences({ initial }: { initial: NotifPrefs }) {
     {
       key: "offerUpdates",
       label: "Offer status updates",
-      desc: "Updates when your offers are accepted, rejected, or ranked.",
+      desc: "Updates when the seller proceeds with or passes on your offer, or when your offer ranking changes.",
     },
     {
       key: "messages",

@@ -225,7 +225,7 @@ function MethodForm() {
 
             {/* Live Offers description */}
             <div className="bg-amber/5 border border-amber/20 rounded-[10px] px-4 py-3 text-sm text-navy leading-relaxed">
-              Live Offers is a transparent offer process — not an auction. Buyers can submit offers during the offer period, and the seller may choose to make previous offer amounts visible to help all buyers make informed decisions. No offer submitted through Live Offers creates a legally binding contract. The seller is not obligated to accept any offer. All final negotiations and contracts happen separately, off this platform.
+              Live Offers is a transparent offer process, not an auction. Buyers can submit offers during the offer period, and the seller may choose to make previous offer amounts visible to help all buyers make informed decisions. No offer submitted through Live Offers creates a legally binding contract. The seller is not obligated to proceed with any offer. All final negotiations and contracts happen separately, off this platform.
             </div>
 
             <div>

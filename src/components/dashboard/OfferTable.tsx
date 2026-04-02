@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { AcceptOfferModal } from "./AcceptOfferModal";
 import type { SellerOffer } from "@/hooks/useSellerDashboard";
@@ -53,6 +53,8 @@ export function OfferTable({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [acceptingOffer, setAcceptingOffer] = useState<SellerOffer | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [openingConversation, setOpeningConversation] = useState(false);
+  const [conversationError, setConversationError] = useState<string | null>(null);
 
   const activeOffers = offers.filter((o) => o.status === "ACTIVE");
 
@@ -72,21 +74,46 @@ export function OfferTable({
     }
   }
 
-  // Post-acceptance screen
+  // Post-selection handoff screen
   if (acceptedOffer) {
+    async function handleOpenConversation() {
+      if (!acceptedOffer) return;
+      setOpeningConversation(true);
+      setConversationError(null);
+      try {
+        const res = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ offerId: acceptedOffer.id }),
+        });
+        if (!res.ok) {
+          const data = (await res.json()) as { error: string };
+          setConversationError(data.error ?? "Could not open conversation. Please try again.");
+          return;
+        }
+        onMessageBuyer(
+          acceptedOffer.buyer.id,
+          `${acceptedOffer.buyer.firstName} ${acceptedOffer.buyer.lastName}`
+        );
+      } catch {
+        setConversationError("Network error. Please try again.");
+      } finally {
+        setOpeningConversation(false);
+      }
+    }
+
     return (
       <div
         style={{
-          background: "#f0fdf4",
-          border: "1px solid #bbf7d0",
+          background: "#f9f8f6",
+          border: "1px solid #e5e2db",
           borderRadius: 16,
           padding: "40px",
-          textAlign: "center",
-          maxWidth: 560,
+          maxWidth: 580,
           margin: "0 auto",
         }}
       >
-        <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+        <div style={{ fontSize: 36, marginBottom: 16 }}>→</div>
         <h2
           style={{
             fontFamily: "Georgia, 'Times New Roman', serif",
@@ -95,18 +122,37 @@ export function OfferTable({
             marginBottom: 8,
           }}
         >
-          Offer Accepted!
+          You&apos;ve selected a buyer
         </h2>
         <p style={{ color: "#334766", fontSize: 15, marginBottom: 24, lineHeight: 1.6 }}>
-          You&apos;ve accepted{" "}
+          You have indicated you want to proceed with{" "}
           <strong>
             {acceptedOffer.buyer.firstName} {acceptedOffer.buyer.lastName}&apos;s
           </strong>{" "}
           offer of{" "}
           <strong>{formatCurrency(acceptedOffer.amountCents)}</strong> (
           {CONDITION_LABELS[acceptedOffer.conditionType] ?? acceptedOffer.conditionType},{" "}
-          {acceptedOffer.settlementDays}-day settlement).
+          {acceptedOffer.settlementDays}-day settlement).{" "}
+          <span style={{ fontSize: 13, color: "#6b7280" }}>
+            Proposed terms (indicative only, to be confirmed in formal contract of sale)
+          </span>
         </p>
+
+        <div
+          style={{
+            background: "#fffbeb",
+            border: "1px solid #fde68a",
+            borderRadius: 10,
+            padding: "16px 20px",
+            marginBottom: 24,
+            fontSize: 14,
+            color: "#334766",
+            lineHeight: 1.6,
+          }}
+        >
+          <strong style={{ color: "#0f1623" }}>No binding agreement exists yet.</strong>{" "}
+          No formal contract of sale has been signed. What happens next is between you, the buyer, and your respective legal representatives. TrueBid is a marketplace only.
+        </div>
 
         <div
           style={{
@@ -126,14 +172,16 @@ export function OfferTable({
               fontFamily: "var(--font-sans)",
             }}
           >
-            Next Steps:
+            What happens next:
           </p>
           {[
-            "Contact your settlement agent to prepare the Contract of Sale",
-            "Provide the buyer with the contract for review",
-            "Arrange for the buyer's deposit to be held in your settlement agent's trust account",
-            "The buyer may arrange building and pest inspections (if conditional)",
-            "Both parties sign the contract. Congratulations!",
+            "Engage a licensed settlement agent or solicitor to prepare the formal contract of sale. Find one at the Settlement Agents Supervisory Board: www.sasb.wa.gov.au",
+            "Share your contact details with the buyer so your respective representatives can coordinate.",
+            "Do not agree to any terms verbally or in writing until your settlement agent has reviewed everything.",
+            "Provide the buyer with the contract for review once your settlement agent has prepared it.",
+            "Arrange for the buyer's deposit to be held in your settlement agent's trust account.",
+            "The buyer may arrange building and pest inspections (if conditional).",
+            "Both parties sign the contract.",
           ].map((step, i) => (
             <div
               key={i}
@@ -162,26 +210,38 @@ export function OfferTable({
           ))}
         </div>
 
+        {conversationError && (
+          <div
+            style={{
+              background: "#fef2f2",
+              border: "1px solid #fca5a5",
+              borderRadius: 8,
+              padding: "10px 14px",
+              marginBottom: 16,
+              fontSize: 13,
+              color: "#dc2626",
+            }}
+          >
+            {conversationError}
+          </div>
+        )}
+
         <button
-          onClick={() =>
-            onMessageBuyer(
-              acceptedOffer.buyer.id,
-              `${acceptedOffer.buyer.firstName} ${acceptedOffer.buyer.lastName}`
-            )
-          }
+          onClick={handleOpenConversation}
+          disabled={openingConversation}
           style={{
-            background: "#0f1623",
+            background: openingConversation ? "#e5e2db" : "#0f1623",
             color: "#ffffff",
             border: "none",
             borderRadius: 8,
             padding: "12px 24px",
-            cursor: "pointer",
+            cursor: openingConversation ? "not-allowed" : "pointer",
             fontFamily: "var(--font-sans)",
             fontSize: 14,
             fontWeight: 500,
           }}
         >
-          Message the Buyer
+          {openingConversation ? "Opening…" : "Open conversation to share contact details"}
         </button>
       </div>
     );
@@ -233,7 +293,7 @@ export function OfferTable({
           lineHeight: 1.6,
         }}
       >
-        <strong style={{ color: "#0f1623" }}>The decision is yours.</strong> You are not obligated to accept any offer. TrueBid does not recommend or rank offers on your behalf. Review each offer on its own merits and choose what is right for you.
+        <strong style={{ color: "#0f1623" }}>The decision is yours.</strong> You are not obligated to proceed with any offer. TrueBid does not recommend or rank offers on your behalf. Review each offer on its own merits and choose what is right for you.
       </div>
 
       {acceptingOffer && (
@@ -282,9 +342,8 @@ export function OfferTable({
               const isActive = offer.status === "ACTIVE";
 
               return (
-                <>
+                <Fragment key={offer.id}>
                   <tr
-                    key={offer.id}
                     style={{
                       borderBottom: "1px solid #e5e2db",
                       background: isExpanded ? "#f9f8f6" : undefined,
@@ -405,7 +464,7 @@ export function OfferTable({
                           <button
                             onClick={() => setAcceptingOffer(offer)}
                             style={{
-                              background: "#16a34a",
+                              background: "#0f1623",
                               color: "#ffffff",
                               border: "none",
                               borderRadius: 6,
@@ -415,7 +474,7 @@ export function OfferTable({
                               fontWeight: 600,
                             }}
                           >
-                            Accept ✓
+                            Proceed →
                           </button>
                           <button
                             onClick={() => handleReject(offer)}
@@ -525,7 +584,7 @@ export function OfferTable({
                             onClick={() => setAcceptingOffer(offer)}
                             style={{
                               marginTop: 16,
-                              background: "#16a34a",
+                              background: "#0f1623",
                               color: "#ffffff",
                               border: "none",
                               borderRadius: 8,
@@ -536,13 +595,13 @@ export function OfferTable({
                               fontFamily: "var(--font-sans)",
                             }}
                           >
-                            Accept This Offer
+                            Proceed with This Offer
                           </button>
                         )}
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>

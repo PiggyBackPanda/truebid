@@ -12,9 +12,9 @@ export type Guide = {
 export const CATEGORIES: Record<string, string> = {
   "selling-without-an-agent": "Selling Without an Agent",
   "pricing-your-property": "Pricing Your Property",
-  "legal-and-contracts": "Legal & Contracts",
-  "open-offers-explained": "Live Offers Explained",
-  "costs-of-selling": "Costs of Selling",
+  "open-offers-explained": "Understanding Live Offers",
+  "buying-on-truebid": "Buying on TrueBid",
+  "legal-and-costs": "Legal and Costs",
 };
 
 // Ordered list of category slugs for consistent display order
@@ -22,8 +22,8 @@ export const CATEGORY_ORDER = [
   "selling-without-an-agent",
   "pricing-your-property",
   "open-offers-explained",
-  "legal-and-contracts",
-  "costs-of-selling",
+  "buying-on-truebid",
+  "legal-and-costs",
 ];
 
 export function getAllGuides(): Guide[] {

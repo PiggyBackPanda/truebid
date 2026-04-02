@@ -8,6 +8,7 @@ import {
 } from "@/lib/api-helpers";
 import { emitToListing } from "@/lib/socket";
 import { sendOfferAcceptedEmail, sendOfferRejectedEmail } from "@/lib/email";
+import { logger } from "@/lib/logger";
 
 // POST /api/offers/[id]/accept: seller accepts an offer
 export async function POST(
@@ -52,7 +53,7 @@ export async function POST(
     }
 
     if (offer.listing.status !== "ACTIVE") {
-      throw new ApiError(400, "LISTING_NOT_ACTIVE", "This listing is not in a state that allows offer acceptance");
+      throw new ApiError(400, "LISTING_NOT_ACTIVE", "This listing is not currently open for offers");
     }
 
     const address = `${offer.listing.streetAddress}, ${offer.listing.suburb} ${offer.listing.state}`;
@@ -73,7 +74,7 @@ export async function POST(
     });
 
     await prisma.$transaction([
-      // Accept this offer
+      // Proceed with this offer
       prisma.offer.update({
         where: { id },
         data: { status: "ACCEPTED", acceptedAt: now },
@@ -83,20 +84,12 @@ export async function POST(
         where: { id: offer.listingId },
         data: { status: "UNDER_OFFER" },
       }),
-      // Reject all other active offers
+      // Close all other active offers
       prisma.offer.updateMany({
         where: { listingId: offer.listingId, status: "ACTIVE", id: { not: id } },
         data: { status: "REJECTED", rejectedAt: now },
       }),
-      // Open a secure conversation between buyer and seller
-      prisma.conversation.create({
-        data: {
-          listingId: offer.listingId,
-          offerId: id,
-          buyerId: offer.buyer.id,
-          sellerId: offer.listing.sellerId,
-        },
-      }),
+      // Conversation is NOT created here — seller must explicitly open it via POST /api/conversations
     ]);
 
     // Broadcast acceptance to all listing viewers
@@ -111,7 +104,7 @@ export async function POST(
       buyerName: offer.buyer.firstName,
       listingAddress: address,
       amountCents: offer.amountCents,
-    }).catch(() => {});
+    }).catch((err) => logger.error("Failed to send offer accepted email", { offerId: id, error: err }));
 
     // Email all rejected buyers
     for (const rejected of otherActiveOffers) {
@@ -120,7 +113,7 @@ export async function POST(
         buyerName: rejected.buyer.firstName,
         listingAddress: address,
         amountCents: rejected.amountCents,
-      }).catch(() => {});
+      }).catch((err) => logger.error("Failed to send offer rejected email", { offerId: rejected.id, error: err }));
     }
 
     return Response.json({

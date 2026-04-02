@@ -85,18 +85,18 @@ export function AcceptOfferModal({
             marginBottom: 8,
           }}
         >
-          Accept this offer?
+          Proceed with this buyer?
         </h2>
 
         <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 20, lineHeight: 1.6 }}>
-          You are about to accept{" "}
+          You are about to proceed with{" "}
           <strong style={{ color: "#0f1623" }}>
             {offer.buyer.firstName} {offer.buyer.lastName}&apos;s
           </strong>{" "}
           offer of{" "}
           <strong style={{ color: "#0f1623" }}>{formatCurrency(offer.amountCents)}</strong>{" "}
           ({conditionLabel}, {offer.settlementDays}-day settlement). All other
-          offers will be rejected and buyers will be notified.
+          offers will be closed and buyers will be notified.
         </p>
 
         {checklistIncomplete && (
@@ -133,9 +133,20 @@ export function AcceptOfferModal({
           </div>
         )}
 
-        <p style={{ fontSize: 12, color: "#9ca3af", marginBottom: 20, lineHeight: 1.5 }}>
-          This is your decision. TrueBid is a technology platform and does not advise on, recommend, or influence offer acceptance.
-        </p>
+        <div
+          style={{
+            background: "#fffbeb",
+            border: "1px solid #fde68a",
+            borderRadius: 8,
+            padding: "12px 16px",
+            marginBottom: 20,
+            fontSize: 13,
+            color: "#334766",
+            lineHeight: 1.5,
+          }}
+        >
+          Selecting this buyer does not create a binding contract. A formal contract of sale must be prepared and signed by both parties through a licensed settlement agent or solicitor before any agreement is legally binding. TrueBid does not advise on, recommend, or influence this process.
+        </div>
 
         <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
           <button
@@ -169,7 +180,7 @@ export function AcceptOfferModal({
               fontWeight: 600,
             }}
           >
-            {loading ? "Accepting…" : "Accept Offer"}
+            {loading ? "Proceeding…" : "Proceed with this buyer"}
           </button>
         </div>
       </div>

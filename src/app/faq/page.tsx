@@ -13,11 +13,12 @@ const FAQ_CATEGORIES = [
     items: [
       {
         q: "What is TrueBid?",
-        a: "TrueBid is a property sales platform built for Australia, currently free to use. Every offer on a property is visible to all registered buyers in real time: no hidden negotiations, no hidden offer processes. You can see where you stand at any point during the offer period.",
+        a: "TrueBid is a property sales platform built for Australia, currently free to use. Every offer on a property is visible to all registered buyers in real time: no hidden negotiations, no hidden offer processes. You can see where you stand at any point during the offer period. The How It Works page walks through the full process step by step.",
+        inlineLink: { text: "How It Works page", href: "/how-it-works" },
       },
       {
         q: "How is TrueBid different from a traditional sale?",
-        a: "In a traditional private sale, buyers have no idea what others are offering. Agents can play buyers off each other behind closed doors. TrueBid puts every offer on the table, publicly and in real time, so the process is fair and the outcome is based on what buyers actually want to pay.",
+        a: "In a traditional private sale, buyers have no visibility into what others are offering. The process happens privately between each buyer and the agent, with no way to know where you stand. TrueBid puts every offer on the table, publicly and in real time, so the process is transparent and the outcome reflects what buyers genuinely want to pay.",
       },
       {
         q: "Who is TrueBid for?",
@@ -69,12 +70,12 @@ const FAQ_CATEGORIES = [
         a: "If two offers are identical, the earlier submission takes priority. This is another reason anti-snipe protection matters \u2014 it gives all buyers a genuine opportunity to put their best offer forward.",
       },
       {
-        q: "Can a seller still accept an offer before the deadline?",
-        a: "Yes. Sellers can accept an offer at any time if it meets their expectations. The Live Offers period is a minimum window, not a fixed end point.",
+        q: "Can a seller proceed with a buyer before the deadline?",
+        a: "Yes. Sellers can choose to proceed with a buyer at any time during the offer period without waiting for it to close.",
       },
       {
-        q: "What happens after an offer is accepted?",
-        a: "Once a seller accepts an offer, the standard contract process begins \u2014 the same as any property sale in Australia. TrueBid facilitates the offer stage; your conveyancer or solicitor handles the legal contract.",
+        q: "What happens after a seller proceeds with a buyer?",
+        a: "Once a seller indicates they want to proceed with a buyer, both parties are guided through the next steps, primarily engaging a licensed settlement agent or solicitor to prepare the formal contract of sale. No binding agreement exists until that contract is signed by both parties.",
       },
     ],
   },
@@ -91,11 +92,11 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Can I make offers on multiple properties at once?",
-        a: "Yes, but be aware that if multiple offers are accepted simultaneously, you may be legally obligated on more than one contract depending on your state\u2019s property laws. We recommend speaking with a conveyancer or solicitor before placing offers on multiple properties.",
+        a: "Yes, but be aware that if a seller chooses to proceed with you on multiple properties simultaneously, you may be legally obligated on more than one contract depending on your state\u2019s property laws. We recommend speaking with a conveyancer or solicitor before placing offers on multiple properties.",
       },
       {
         q: "What is a cooling-off period and does it apply to TrueBid sales?",
-        a: "Cooling-off periods vary by state and apply to the contract stage, not the offer stage. Once your offer is accepted and contracts are exchanged, the standard rules for your state apply. Your conveyancer can advise you on your specific situation.",
+        a: "Cooling-off periods vary by state and apply to the contract stage, not the offer stage. Once the seller proceeds with your offer and contracts are exchanged, the standard rules for your state apply. Your conveyancer can advise you on your specific situation.",
       },
       {
         q: "I\u2019m a first home buyer. Does TrueBid support first home buyer grants or schemes?",
@@ -103,7 +104,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What if I want to make an offer before the Live Offers period opens?",
-        a: "Some sellers may accept early offers. Check the individual listing for details. If a Live Offers period is active, all offers must go through the platform.",
+        a: "Some sellers may choose to proceed with an early offer. Check the individual listing for details. If a Live Offers period is active, all offers must go through the platform.",
       },
       {
         q: "Is there a cost to buyers?",
@@ -124,7 +125,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What does it cost to list on TrueBid?",
-        a: "Listing on TrueBid is free during our current launch period. Fees will be introduced in the future with advance notice to registered users. Any listings active at the time of the fee change will complete their current listing period at no charge. We do not charge commission on sales.",
+        a: "Listing on TrueBid is free during our current launch period. Fees will be introduced in the future with advance notice to registered users. Any listings active at the time of the fee change will complete their current listing period at no charge. We do not charge commission.",
       },
       {
         q: "Can I set a minimum offer threshold?",
@@ -140,7 +141,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What if I don\u2019t get the price I want?",
-        a: "You are never obligated to accept an offer you are not happy with. If the Live Offers period closes without an acceptable offer, you can relist, negotiate privately, or choose not to sell.",
+        a: "You are never obligated to proceed with any offer. If the Live Offers period closes without a suitable offer, you can relist, negotiate privately, or choose not to sell.",
       },
       {
         q: "Can I use TrueBid alongside a real estate agent?",
@@ -157,7 +158,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Do I need a conveyancer or solicitor to buy or sell through TrueBid?",
-        a: "TrueBid strongly recommends engaging a licensed conveyancer or solicitor before you make or accept any offer. They will review the contract of sale, advise you on your rights and obligations, and handle the settlement process. This applies to both buyers and sellers.",
+        a: "TrueBid strongly recommends engaging a licensed conveyancer or solicitor before you make or respond to any offer. They will review the contract of sale, advise you on your rights and obligations, and handle the settlement process. This applies to both buyers and sellers.",
       },
       {
         q: "What is a Section 32 and do I need one?",
@@ -173,15 +174,15 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What happens at settlement?",
-        a: "Settlement is the final stage of a property sale, where ownership is legally transferred to the buyer and the remaining purchase funds are paid to the seller. TrueBid\u2019s role ends at the accepted offer stage \u2014 your conveyancer manages everything from contract signing through to settlement.",
+        a: "Settlement is the final stage of a property sale, where ownership is legally transferred to the buyer and the remaining purchase funds are paid to the seller. TrueBid\u2019s role ends when the seller indicates they want to proceed: your conveyancer manages everything from contract signing through to settlement.",
       },
       {
         q: "What if the property doesn\u2019t settle on time?",
         a: "Delayed settlements are handled under the terms of the contract of sale. Most contracts include penalty provisions for late settlement. This is a matter between the parties and their legal representatives \u2014 not something TrueBid administers.",
       },
       {
-        q: "Can a seller back out after accepting an offer on TrueBid?",
-        a: "Before contracts are signed, a seller may choose not to proceed, though this could affect their reputation on the platform and may have implications depending on the circumstances. Once contracts are exchanged, withdrawing is a serious legal matter and the seller should seek immediate legal advice.",
+        q: "Can a seller change their mind after indicating they want to proceed with a buyer?",
+        a: "Before contracts are signed, a seller may choose not to proceed. No binding obligation exists at the offer stage on TrueBid. Once contracts are exchanged, withdrawing is a serious legal matter and the seller should seek immediate legal advice.",
       },
     ],
   },
@@ -197,12 +198,12 @@ const FAQ_CATEGORIES = [
         a: "Yes. TrueBid uses industry-standard encryption and does not sell your data to third parties. Your personal details are never visible to other buyers.",
       },
       {
-        q: "What happens if a buyer pulls out after their offer is accepted?",
-        a: "This depends on the stage of the transaction. If contracts have been exchanged, the buyer may forfeit their deposit and face legal consequences under standard Australian property law. If contracts have not yet been signed, TrueBid records the event and the buyer\u2019s access to the platform may be reviewed.",
+        q: "What happens if a buyer withdraws after the seller has chosen to proceed with them?",
+        a: "This depends on the stage of the transaction. If contracts have been exchanged, the buyer may forfeit their deposit and face legal consequences under standard Australian property law. If contracts have not yet been signed, no binding obligation exists and TrueBid records the event. The buyer\u2019s access to the platform may be reviewed.",
       },
       {
         q: "What if someone submits a fake or malicious offer?",
-        a: "Verified identity requirements significantly reduce this risk. If a buyer fails to proceed after an accepted offer, this is recorded on their account and may affect future platform access.",
+        a: "Verified identity requirements significantly reduce this risk. If a buyer fails to proceed after the seller has indicated they want to move forward, this is recorded on their account and may affect future platform access.",
       },
       {
         q: "How do I report a problem with a buyer or seller?",
@@ -337,7 +338,16 @@ export default function FaqPage() {
                             fontFamily: "var(--font-sans)",
                           }}
                         >
-                          {item.a}
+                          {item.inlineLink ? (() => {
+                            const parts = item.a.split(item.inlineLink.text);
+                            return (
+                              <>
+                                {parts[0]}
+                                <Link href={item.inlineLink.href} style={{ color: "#b45309", textDecoration: "underline" }}>{item.inlineLink.text}</Link>
+                                {parts[1]}
+                              </>
+                            );
+                          })() : item.a}
                         </p>
                       </div>
                     </details>

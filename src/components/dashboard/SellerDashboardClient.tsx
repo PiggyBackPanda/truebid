@@ -58,7 +58,7 @@ const STATUS_LABELS: Record<string, string> = {
   COMING_SOON: "Coming Soon",
   ACTIVE: "Active",
   UNDER_OFFER: "Under Offer",
-  SOLD: "Offer Accepted",
+  SOLD: "Buyer Selected",
 };
 
 function EditListingTab({

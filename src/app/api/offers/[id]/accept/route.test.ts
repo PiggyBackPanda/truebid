@@ -42,6 +42,8 @@ vi.mock("@/lib/email", () => ({
   sendOfferRejectedEmail: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() } }));
+
 import { POST } from "./route";
 
 // ── Tests ────────────────────────────────────────────────────────────────────

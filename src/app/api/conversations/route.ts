@@ -1,5 +1,6 @@
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireAuth, errorResponse } from "@/lib/api-helpers";
+import { requireAuth, errorResponse, ApiError } from "@/lib/api-helpers";
 
 // GET /api/conversations: list all conversations for the current user
 export async function GET() {
@@ -95,6 +96,65 @@ export async function GET() {
     const totalUnread = results.reduce((sum, c) => sum + c.unreadCount, 0);
 
     return Response.json({ conversations: results, totalUnread });
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+// POST /api/conversations: seller explicitly opens a conversation with a buyer after proceeding with their offer
+export async function POST(req: NextRequest) {
+  try {
+    const user = await requireAuth();
+    const { offerId } = (await req.json()) as { offerId: string };
+
+    if (!offerId) {
+      throw new ApiError(400, "MISSING_OFFER_ID", "offerId is required");
+    }
+
+    const offer = await prisma.offer.findUnique({
+      where: { id: offerId },
+      select: {
+        id: true,
+        status: true,
+        buyerId: true,
+        listingId: true,
+        listing: { select: { sellerId: true } },
+      },
+    });
+
+    if (!offer) {
+      throw new ApiError(404, "NOT_FOUND", "Offer not found");
+    }
+
+    if (offer.listing.sellerId !== user.id) {
+      throw new ApiError(403, "FORBIDDEN", "Only the seller can open a conversation");
+    }
+
+    if (offer.status !== "ACCEPTED") {
+      throw new ApiError(400, "INVALID_STATUS", "A conversation can only be opened after proceeding with an offer");
+    }
+
+    // Idempotent: return existing conversation if already created
+    const existing = await prisma.conversation.findUnique({
+      where: { offerId },
+      select: { id: true },
+    });
+
+    if (existing) {
+      return Response.json({ conversationId: existing.id });
+    }
+
+    const conversation = await prisma.conversation.create({
+      data: {
+        offerId,
+        listingId: offer.listingId,
+        buyerId: offer.buyerId,
+        sellerId: user.id,
+      },
+      select: { id: true },
+    });
+
+    return Response.json({ conversationId: conversation.id });
   } catch (error) {
     return errorResponse(error);
   }

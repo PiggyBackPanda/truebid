@@ -149,6 +149,11 @@ export function OfferForm({
         <h2 className="font-serif text-navy text-xl mb-2">Offer placed!</h2>
         <p className="text-text-muted text-sm">
           Your offer of <strong>{formatCurrency(amountCents)}</strong> has been submitted.
+        </p>
+        <p className="text-text-muted text-xs mt-2">
+          Remember: this is an expression of interest only. It does not create a binding contract and you can withdraw your offer at any time before the seller proceeds.
+        </p>
+        <p className="text-text-muted text-sm mt-2">
           Redirecting you back to the listing…
         </p>
       </div>
@@ -362,7 +367,7 @@ export function OfferForm({
             required
           />
           <span className="text-sm text-navy leading-relaxed">
-            I understand that submitting this offer does not create a legally binding contract. My offer is an expression of interest only. The seller is not obligated to accept any offer. Any contract of sale must be separately negotiated and executed between myself and the seller, outside of this platform.
+            I understand that submitting this offer does not create a legally binding contract. My offer is an expression of interest only. The seller is not obligated to proceed with any offer. Any contract of sale must be separately negotiated and executed between myself and the seller, outside of this platform.
           </span>
         </label>
       </div>

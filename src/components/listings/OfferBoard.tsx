@@ -98,7 +98,7 @@ function OfferRow({
 
           {isAccepted && (
             <span className="text-[10px] font-bold uppercase tracking-wide text-green bg-green-bg px-1.5 py-0.5 rounded-full">
-              ACCEPTED
+              SELECTED
             </span>
           )}
 
@@ -232,8 +232,8 @@ export function OfferBoard({
           {/* Live Offers info panel */}
           <div className="bg-amber/5 border-b border-amber/15 px-4 py-3">
             <p className="text-[11px] text-amber-900 leading-relaxed">
-              <strong>Live Offers is a transparent offer process — not an auction.</strong>{" "}
-              No offer submitted here creates a legally binding contract. The seller is not obligated to accept any offer.
+              <strong>Live Offers is a transparent offer process, not an auction.</strong>{" "}
+              No offer submitted here creates a legally binding contract. The seller is not obligated to proceed with any offer.
               All final negotiations and contracts happen separately, off this platform.
             </p>
           </div>
@@ -278,7 +278,7 @@ export function OfferBoard({
           {/* Seller control notice + anti-snipe note */}
           <div className="px-4 py-3 border-t border-border bg-bg space-y-1.5">
             <p className="text-[10px] text-text-muted text-center leading-relaxed">
-              The seller reviews all offers and makes the final decision. They are not obligated to accept any offer, including the highest.
+              The seller reviews all offers and makes the final decision. They are not obligated to proceed with any offer, including the highest.
             </p>
             <p className="text-[10px] text-text-muted text-center leading-relaxed">
               Anti-snipe protection is active: offers placed in the final 10 minutes automatically extend the offer period by 10 minutes.
